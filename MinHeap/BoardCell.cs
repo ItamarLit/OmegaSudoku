@@ -11,14 +11,14 @@ namespace OmegaSudoku.MinHeap
         public int CellY { get; }
         public HashSet<int> Possibilites { get; }
 
-        private int CellValue { get; set; }
+        public int CellValue { get; set; }
 
         public BoardCell(int xPos, int yPos, int boardSize, int startingNumber, int cellVal)
         {
             CellX = xPos;
             CellY = yPos;
             CellValue = cellVal;
-            if (CellValue == -1)
+            if (CellValue == 0)
             {
                 Possibilites = new HashSet<int>();
                 // set the starting possibilites to a board cell
