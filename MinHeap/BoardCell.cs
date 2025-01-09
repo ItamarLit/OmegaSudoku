@@ -7,9 +7,9 @@ namespace OmegaSudoku.MinHeap
         /// <summary>
         /// This is the class used to store data of a cell, it is used as a heap node aswell
         /// </summary>
-        private int CellX { get; }
-        private int CellY { get; }
-        private HashSet<int> Possibilites { get; }
+        public int CellX { get; }
+        public int CellY { get; }
+        public HashSet<int> Possibilites { get; }
 
         private int CellValue { get; set; }
 
@@ -20,6 +20,7 @@ namespace OmegaSudoku.MinHeap
             CellValue = cellVal;
             if (CellValue == -1)
             {
+                Possibilites = new HashSet<int>();
                 // set the starting possibilites to a board cell
                 for (int i = startingNumber; i < boardSize; i++)
                 {
@@ -33,5 +34,9 @@ namespace OmegaSudoku.MinHeap
             Possibilites.Remove(possibiltiyValue);
         }
         
+        public int NumberOfPossibilites()
+        {
+            return Possibilites.Count;
+        }
     }
 }
