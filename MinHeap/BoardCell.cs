@@ -38,5 +38,10 @@ namespace OmegaSudoku.MinHeap
         {
             return Possibilites.Count;
         }
+
+        public bool CellIsEmpty()
+        {
+            return CellValue == 0;
+        }
     }
 }

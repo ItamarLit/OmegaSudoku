@@ -17,17 +17,24 @@ namespace OmegaSudoku.MinHeap
             NodeList = new List<BoardCell>();
         }
 
-        public void CreateMinHeap(List<BoardCell> CellList)
+        public void CreateMinHeap(BoardCell[,] CellList)
         {
             int startingListIndex = 0;
             // this func will only be called once and will create the min heap
-            foreach(BoardCell bc in CellList)
+            for(int i = 0; i < CellList.GetLength(0); i++)
             {
-                // insert the value into the first index
-                NodeList.Insert(startingListIndex, bc);
-                // heapify
-                MinHeapify(startingListIndex);
+                for(int j=0; j < CellList.GetLength(1); j++)
+                {
+                    if (CellList[i, j].CellIsEmpty())
+                    {
+                        // insert the value into the first index
+                        NodeList.Insert(startingListIndex, CellList[i, j]);
+                        // heapify
+                        MinHeapify(startingListIndex);
+                    }
+                }
             }
+
         }
 
         public void DeleteMinHeap()
