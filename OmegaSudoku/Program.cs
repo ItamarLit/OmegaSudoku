@@ -1,16 +1,17 @@
-﻿namespace OmegaSudoku
+﻿using OmegaSudoku.IO;
+using System;
+namespace OmegaSudoku
 {
     class Program
     {
         static void Main(string[] args)
         {
-            while (true)
-            {
-                Console.WriteLine("This is a test");
-                
-
-            }
-
+            
+            OutputHandler.RequestBoard();
+            InputHandler.GetInput();
+            InputHandler.CheckInput();
+            BoardCell[,] board = InputHandler.SetUpBoard();
+            OutputHandler.PrintBoard(board);
         }
     }
 }
