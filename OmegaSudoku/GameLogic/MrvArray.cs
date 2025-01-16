@@ -31,10 +31,12 @@ namespace OmegaSudoku.GameLogic
             return removedCell;
         }
 
-        public void InsertCell(int possibilitesNum, (int x, int y) tuple, BoardCell cell)
+        public void InsertCell(BoardCell cell)
         {
+            int possibilitesNum = cell.NumberOfPossibilites();
+            
             // Func that inserts a cell into the MrvArray
-            MRVPossibilitesArray[possibilitesNum].Add(tuple, cell);
+            MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol), cell);
         }
 
         public BoardCell GetLowestPossibilityCell()
@@ -51,6 +53,14 @@ namespace OmegaSudoku.GameLogic
             return null;
         }
 
-
+        public void PrintArray()
+        {
+            // print func used for debugging
+            for (int index = 1; index < MRVPossibilitesArray.Length; index++)
+            {
+                Console.WriteLine($"Possibility number: {index}, amount of cells: {MRVPossibilitesArray[index].Count}");
+            }
+           
+        }
     }
 }

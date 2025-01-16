@@ -13,18 +13,18 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
 
         // create non setable properties for x,y and the possibiliets array in a cell
-        public int CellX { get; }
-        public int CellY { get; }
+        public int CellRow { get; }
+        public int CellCol { get; }
         public int[] Possibilites { get; }
         public int CellValue { get; set; }
 
         public BoardCell(int xPos, int yPos, int boardSize, int startingNumber, int cellVal)
         {
             // set the cell x,y and possibilite array
-            CellX = xPos;
-            CellY = yPos;
+            CellRow = xPos;
+            CellCol = yPos;
             CellValue = cellVal;
-            Possibilites = new int[boardSize];
+            Possibilites = new int[boardSize + 1];
             if (CellValue == 0)
             {
                 // create the count arr for the possibilites
@@ -40,9 +40,13 @@ namespace OmegaSudoku.GameLogic
 
         public void DecreasePossibility(int possibiltiyValue)
         {
-            Possibilites[possibiltiyValue] = 0;
-            // dec the counter
-            Possibilites[0] -= 1;
+            Console.WriteLine(possibiltiyValue);
+            if (Possibilites[possibiltiyValue] != 0) 
+            {
+                Possibilites[possibiltiyValue] = 0;
+                // dec the counter
+                Possibilites[0] -= 1;
+            }
         }
 
         public int NumberOfPossibilites()
