@@ -1,4 +1,5 @@
-﻿using OmegaSudoku.IO;
+﻿using OmegaSudoku.GameLogic;
+using OmegaSudoku.IO;
 using System;
 namespace OmegaSudoku
 {
