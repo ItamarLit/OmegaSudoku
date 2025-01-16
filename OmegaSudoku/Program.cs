@@ -13,11 +13,12 @@ namespace OmegaSudoku
             InputHandler.CheckInput();
             BoardCell[,] board = InputHandler.SetUpBoard();
             OutputHandler.PrintBoard(board);
-            SudokuController sc = new SudokuController(board);
+            MrvArray mrvArray = new MrvArray(board.GetLength(0));
+            SudokuLogicHandler sc = new SudokuLogicHandler(board, mrvArray);
             sc.CheckInitalBoard();
             sc.SetInitailBoardPossibilites();
             OutputHandler.PrintBoardPossibilites(board);
-            sc.MrvArray.PrintArray();
+            mrvArray.PrintArray();
         }
     }
 }

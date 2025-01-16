@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace OmegaSudoku.GameLogic
 {
-    class SudokuController
+    class SudokuLogicHandler
     {
         /// <summary>
         /// This class will control all the game logic, including checks of the board and setting up the board
@@ -14,7 +14,7 @@ namespace OmegaSudoku.GameLogic
         // mrvArray instance
         private readonly MrvArray _mrvArray;
 
-        public SudokuController(BoardCell[,] board, MrvArray mrvInstance)
+        public SudokuLogicHandler(BoardCell[,] board, MrvArray mrvInstance)
         {
             GameBoard = board;
             // create the mrv array
