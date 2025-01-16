@@ -9,28 +9,29 @@ namespace OmegaSudoku.IO
         /// the class will check to see that the board is valid and then the board can be attempted to solve
         /// </summary>
 
-        private static string Input { get; set; }
+        private static string _input;
+
         // set the valid size for the board
-        private const int ValidSudokuSize = 9;
+        private const int VALID_SUDOKU_SIZE = 9;
         // set the starting number for the sudoku to 1 ( 1 - 9 )
-        private const int StartingSudokuNumber = 1;
-        public static void GetInput()
+        private const int STARTING_SUDOKU_NUMBER = 1;
+        public static void GetUserInput()
         {
             // get the users input
-            Input = Console.ReadLine();
+            _input = Console.ReadLine();
         }
 
         public static void CheckInput()
         {
             // check for only numeric values
-            if (!double.TryParse(Input, out double boardValue))
+            if (!double.TryParse(_input, out double boardValue))
             {
                 // Need to throw an exception here
                 Console.WriteLine("Invalid board given");
             }
             // check sudoku rules for valid board
-            int boardSize = (int)Math.Sqrt((double)Input.Length);
-            if (boardSize != ValidSudokuSize)
+            int boardSize = (int)Math.Sqrt((double)_input.Length);
+            if (boardSize != VALID_SUDOKU_SIZE)
             {
                 // Need to throw an exception here
                 Console.WriteLine("Invalid board size entered");
@@ -40,24 +41,24 @@ namespace OmegaSudoku.IO
         public static BoardCell[,] SetUpBoard()
         {
             // setup the board
-            BoardCell[,] board = new BoardCell[ValidSudokuSize, ValidSudokuSize];
+            BoardCell[,] board = new BoardCell[VALID_SUDOKU_SIZE, VALID_SUDOKU_SIZE];
             int cellValue;
             int rowIndex;
             int columnIndex;
-            for (int index = 0; index < Input.Length; index++)
+            for (int index = 0; index < _input.Length; index++)
             {
                 // convert char into int
-                cellValue = Input[index] - '0';
-                rowIndex = index / ValidSudokuSize;
-                columnIndex = index % ValidSudokuSize;
+                cellValue = _input[index] - '0';
+                rowIndex = index / VALID_SUDOKU_SIZE;
+                columnIndex = index % VALID_SUDOKU_SIZE;
                 // check the cellValue
-                if (cellValue > ValidSudokuSize || cellValue < StartingSudokuNumber - 1)
+                if (cellValue > VALID_SUDOKU_SIZE || cellValue < STARTING_SUDOKU_NUMBER - 1)
                 {
                     // Need to throw an exception here
                     Console.WriteLine($"Invalid cell value entered: {cellValue}");
                 }
                 // the ValidSudokuSize and StartingSudokuNumber are for setting the number range on the board ( setting the possible values in a cell)
-                board[rowIndex, columnIndex] = new BoardCell(rowIndex, columnIndex, ValidSudokuSize, StartingSudokuNumber, cellValue);
+                board[rowIndex, columnIndex] = new BoardCell(rowIndex, columnIndex, VALID_SUDOKU_SIZE, STARTING_SUDOKU_NUMBER, cellValue);
             }
             return board;
         }

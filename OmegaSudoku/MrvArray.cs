@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OmegaSudoku
 {
@@ -9,8 +10,8 @@ namespace OmegaSudoku
         /// This class holds the mrv array that is used to get the cell with the minimum amount of possibilites in it
         /// </summary>
 
-        // Create an Arra
-        private Dictionary<(int, int), BoardCell>[] MRVPossibilitesArray { get ; set; }
+        // Create an Array property
+        public Dictionary<(int, int), BoardCell>[] MRVPossibilitesArray { get ; private set; }
 
         public MrvArray(int boardSize)
         {
@@ -26,13 +27,30 @@ namespace OmegaSudoku
         public BoardCell RemoveCell(int possibilitesNum, (int x, int y) tuple)
         {
             // Func that removes a cell from the MrvArray
-            return null;
+            MRVPossibilitesArray[possibilitesNum].Remove(tuple, out BoardCell removedCell);
+            return removedCell;
         }
 
         public void InsertCell(int possibilitesNum, (int x, int y) tuple, BoardCell cell)
         {
             // Func that inserts a cell into the MrvArray
+            MRVPossibilitesArray[possibilitesNum].Add(tuple, cell);
         }
+
+        public BoardCell GetLowestPossibilityCell()
+        {
+            for (int index = 1; index < MRVPossibilitesArray.Length; index++) 
+            {
+                if (MRVPossibilitesArray[index].Count != 0)
+                {
+                    // get the first cell in the first non empty hashmap in descending order
+                    return MRVPossibilitesArray[index].First().Value;
+                }
+            }
+            // if the array is empty return null = board solved
+            return null;
+        }
+
 
     }
 }

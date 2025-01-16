@@ -8,7 +8,7 @@ namespace OmegaSudoku
         {
             
             OutputHandler.RequestBoard();
-            InputHandler.GetInput();
+            InputHandler.GetUserInput();
             InputHandler.CheckInput();
             BoardCell[,] board = InputHandler.SetUpBoard();
             OutputHandler.PrintBoard(board);

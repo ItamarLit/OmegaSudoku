@@ -11,14 +11,16 @@ namespace OmegaSudoku
         /// <summary>
         /// This is the class used to store data of a cell
         /// </summary>
+        
+        // create non setable properties for x,y and the possibiliets array in a cell
         public int CellX { get; }
         public int CellY { get; }
         public int[] Possibilites { get; }
-
         public int CellValue { get; set; }
 
         public BoardCell(int xPos, int yPos, int boardSize, int startingNumber, int cellVal)
         {
+            // set the cell x,y and possibilite array
             CellX = xPos;
             CellY = yPos;
             CellValue = cellVal;
