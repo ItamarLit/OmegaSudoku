@@ -8,17 +8,17 @@ namespace OmegaSudoku.GameLogic
     class SudokuController
     {
         /// <summary>
-        /// This class will control all the game logic, including checks of the board 
-        /// and it will also include the function that will attempt to solve the board
+        /// This class will control all the game logic, including checks of the board and setting up the board
         /// </summary>
         public BoardCell[,] GameBoard { get; }
-        public MrvArray MrvArray { get; }
+        // mrvArray instance
+        private readonly MrvArray _mrvArray;
 
-        public SudokuController(BoardCell[,] board)
+        public SudokuController(BoardCell[,] board, MrvArray mrvInstance)
         {
             GameBoard = board;
             // create the mrv array
-            MrvArray = new MrvArray(GameBoard.GetLength(0));
+            _mrvArray = mrvInstance;
         }
 
         public void CheckInitalBoard()
@@ -53,7 +53,7 @@ namespace OmegaSudoku.GameLogic
                 if (GetCellValue(cellX, cellY) == 0)
                 {
                     // insert the cell into the array
-                    MrvArray.InsertCell(GameBoard[cellX, cellY]);
+                    _mrvArray.InsertCell(GameBoard[cellX, cellY]);
                 }
             }
         }
@@ -167,7 +167,7 @@ namespace OmegaSudoku.GameLogic
             return counter == 1;
         }
 
-        private void DecreasePossibilites(int rowPos, int colPos, int valueToRemove)
+        public void DecreasePossibilites(int rowPos, int colPos, int valueToRemove)
         {
             // This func is used to reduce the board possibilites based on the current change
             // create an array of lists of cell positons to remove
@@ -182,7 +182,6 @@ namespace OmegaSudoku.GameLogic
                     int cellRow = unitCellsArray[i][innerIndex].Item1;
                     int cellCol = unitCellsArray[i][innerIndex].Item2;
                     // attempt to remove the value
-                    Console.WriteLine($"{cellRow}, {cellCol}");
                     GameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
                 }
             }
