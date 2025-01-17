@@ -30,7 +30,7 @@ namespace OmegaSudoku.GameLogic
 
         public bool Solve()
         {
-            // this is the main solve func
+            // This is the main solve func used to attempt to solve the given board
             // get the lowest possibility cell
             (int, int) lowestPossibilityCell = _mrvArray.GetLowestPossibilityCell();
             if (IsEmptyArray(lowestPossibilityCell)) 
@@ -44,6 +44,7 @@ namespace OmegaSudoku.GameLogic
             List<int> possibilites = _board[row, col].GetPossibilites();
             if(possibilites.Count > 0)
             {
+                // go over all the potential values
                 foreach (int potentialValue in possibilites)
                 {
                     // set the cell value but leave the possibilites in case i need to return
@@ -53,7 +54,8 @@ namespace OmegaSudoku.GameLogic
                     // remove the possibilites
                     RemoveAffectedMRVCells(affectedCells);
                     _logicHandler.DecreasePossibilites(row, col, potentialValue);
-                    // fix the mrvArray
+                    // If the func returns false this means there has been a mistake or the board is unsolvable
+                    // because the func returns false only when a cell that has no value also has no possible value
                     if (!InsertAffectedMRVCells(affectedCells))
                     {
                         return false;
@@ -87,6 +89,7 @@ namespace OmegaSudoku.GameLogic
 
         private void RemoveAffectedMRVCells(List<(int, int)> affectedCells)
         {
+            // This func removes all the affected cells pos from the MRVarray
             foreach ((int row1, int col1) in affectedCells)
             {
                 // remove the cell from the mrv array
@@ -97,7 +100,8 @@ namespace OmegaSudoku.GameLogic
 
         private bool InsertAffectedMRVCells(List<(int, int)> affectedCells)
         {
-            // fix the mrvArray
+            // This func inserts all the affected cells pos from the MRVarray
+            // The func will return false if any cell has no more possibilites and has no value
             foreach ((int row1, int col1) in affectedCells)
             {
                 if (!_mrvArray.InsertCell(_board[row1, col1]))
