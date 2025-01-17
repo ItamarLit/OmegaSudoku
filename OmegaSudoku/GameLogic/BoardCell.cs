@@ -30,7 +30,7 @@ namespace OmegaSudoku.GameLogic
             {
                 // create the count arr for the possibilites
                 // set the starting possibilites to a board cell
-                for (int i = startingNumber; i < boardSize; i++)
+                for (int i = startingNumber; i < Possibilites.Length; i++)
                 {
                     Possibilites[i] = 1;
                 }
@@ -51,10 +51,10 @@ namespace OmegaSudoku.GameLogic
 
         public void IncreasePossibility(int possibilityValue)
         {
-            if (Possibilites[possibilityValue] != 0)
+            if (Possibilites[possibilityValue] == 0)
             {
                 Possibilites[possibilityValue] = 1;
-                // inc the counter
+                // dec the counter
                 Possibilites[0] += 1;
             }
         }

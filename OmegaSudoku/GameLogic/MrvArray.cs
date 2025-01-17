@@ -26,22 +26,30 @@ namespace OmegaSudoku.GameLogic
 
         public void RemoveCell(BoardCell cell)
         {
+            // this func is called after removing a possibility
             int possibilitesNum = cell.NumberOfPossibilites();
-            (int x, int y) tuple = (cell.CellRow, cell.CellCol);
-            // Func that removes a cell from the MrvArray
-            MRVPossibilitesArray[possibilitesNum].Remove(tuple);
+            if(possibilitesNum != 0)
+            {
+                (int x, int y) tuple = (cell.CellRow, cell.CellCol);
+                // Func that removes a cell from the MrvArray
+                MRVPossibilitesArray[possibilitesNum].Remove(tuple);
+            }
+          
         }
 
         public bool InsertCell(BoardCell cell)
         {
             // this func will return a bool value so i can know if there is a cell that has no values
             int possibilitesNum = cell.NumberOfPossibilites();
-            if (possibilitesNum == 0) 
+            if(cell.CellValue == 0)
             {
-                return false;
+                if(possibilitesNum == 0)
+                {
+                    return false;
+                }
+                // Func that inserts a cell into the MrvArray
+                MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol));
             }
-            // Func that inserts a cell into the MrvArray
-            MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol));
             return true;
         }
 
