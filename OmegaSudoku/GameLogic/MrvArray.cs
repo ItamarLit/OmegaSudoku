@@ -67,16 +67,5 @@ namespace OmegaSudoku.GameLogic
             // if the array is empty return (-1 , -1) = board solved
             return (-1, -1);
         }
-
-
-        public void PrintArray()
-        {
-            // print func used for debugging
-            for (int index = 1; index < MRVPossibilitesArray.Length; index++)
-            {
-                Console.WriteLine($"Possibility number: {index}, amount of cells: {MRVPossibilitesArray[index].Count}");
-            }
-           
-        }
     }
 }

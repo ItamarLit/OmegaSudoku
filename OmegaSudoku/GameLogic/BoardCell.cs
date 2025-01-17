@@ -41,6 +41,7 @@ namespace OmegaSudoku.GameLogic
 
         public void DecreasePossibility(int possibiltiyValue)
         {
+            // This func removes the possibility to the cell
             if (Possibilites[possibiltiyValue] != 0) 
             {
                 Possibilites[possibiltiyValue] = 0;
@@ -51,6 +52,7 @@ namespace OmegaSudoku.GameLogic
 
         public void IncreasePossibility(int possibilityValue)
         {
+            // This func adds the possibility to the cell
             if (Possibilites[possibilityValue] == 0)
             {
                 Possibilites[possibilityValue] = 1;
@@ -76,6 +78,7 @@ namespace OmegaSudoku.GameLogic
 
         public List<int> GetPossibilites()
         {
+            // This func gets all the values the cell can be
             List<int> potientialValues = new List<int>();
             for(int i = 1; i < Possibilites.Length; i++)
             {

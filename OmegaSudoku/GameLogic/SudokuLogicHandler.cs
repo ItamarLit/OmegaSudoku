@@ -10,13 +10,15 @@ namespace OmegaSudoku.GameLogic
         /// <summary>
         /// This class will control all the game logic, including checks of the board and setting up the board
         /// </summary>
-        public BoardCell[,] GameBoard { get; }
+        
+        // hold the board as private
+        private readonly BoardCell[,] _gameBoard;
         // mrvArray instance
         private readonly MrvArray _mrvArray;
 
         public SudokuLogicHandler(BoardCell[,] board, MrvArray mrvInstance)
         {
-            GameBoard = board;
+            _gameBoard = board;
             // create the mrv array
             _mrvArray = mrvInstance;
         }
@@ -53,7 +55,7 @@ namespace OmegaSudoku.GameLogic
                 if (GetCellValue(cellX, cellY) == 0)
                 {
                     // insert the cell into the array
-                    _mrvArray.InsertCell(GameBoard[cellX, cellY]);
+                    _mrvArray.InsertCell(_gameBoard[cellX, cellY]);
                 }
             }
         }
@@ -63,9 +65,9 @@ namespace OmegaSudoku.GameLogic
         {
             // this func will return a list of tuples of row, col positions of all cells on the board
             List<(int, int)> boardCells = new List<(int, int)>();
-            for (int row = 0; row < GameBoard.GetLength(0); row++)
+            for (int row = 0; row < _gameBoard.GetLength(0); row++)
             {
-                for (int col = 0; col < GameBoard.GetLength(1); col++) 
+                for (int col = 0; col < _gameBoard.GetLength(1); col++) 
                 {
                     boardCells.Add((row, col));
                 }
@@ -77,7 +79,7 @@ namespace OmegaSudoku.GameLogic
         {
             // this func will return a list of tuples of row, col positions inside a row
             List<(int, int)> rowCells = new List<(int, int)>();
-            for (int i = 0; i < GameBoard.GetLength(1); i++)
+            for (int i = 0; i < _gameBoard.GetLength(1); i++)
             {
                 rowCells.Add((rowLvl, i));
             }
@@ -88,7 +90,7 @@ namespace OmegaSudoku.GameLogic
         {
             // this func will return a list of tuples of row, col positions inside a column
             List<(int, int)> columnCells = new List<(int, int)>();
-            for (int i = 0; i < GameBoard.GetLength(0); i++)
+            for (int i = 0; i < _gameBoard.GetLength(0); i++)
             {
                 columnCells.Add((i , columnNum));
             }
@@ -100,7 +102,7 @@ namespace OmegaSudoku.GameLogic
             // this func will return a list of tuples of row, col positons inside a cube
             // cube size is root of the board width / length
             // the top left cube is 0,0 the bottom right cube is 2,2
-            int cubeSize = (int)Math.Sqrt(GameBoard.GetLength(0));
+            int cubeSize = (int)Math.Sqrt(_gameBoard.GetLength(0));
             int cubeCol = (colPos / cubeSize) * cubeSize;
             int cubeRow = (rowPos / cubeSize) * cubeSize;
 
@@ -119,7 +121,7 @@ namespace OmegaSudoku.GameLogic
         private int GetCellValue(int rowPos, int colPos)
         {
             // get the game cell value
-            return GameBoard[rowPos, colPos].CellValue;
+            return _gameBoard[rowPos, colPos].CellValue;
         }
 
         private bool IsValidMove(int rowPos, int colPos)
@@ -184,7 +186,7 @@ namespace OmegaSudoku.GameLogic
                 int cellRow = affectedUnitCells[i].Item1;
                 int cellCol = affectedUnitCells[i].Item2;
                 // attempt to remove the value
-                GameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
+                _gameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
             }
         }
 
@@ -196,20 +198,21 @@ namespace OmegaSudoku.GameLogic
                 int cellRow = affectedUnitCells[i].Item1;
                 int cellCol = affectedUnitCells[i].Item2;
                 // attempt to remove the value
-                GameBoard[cellRow, cellCol].IncreasePossibility(valueToReturn);
+                _gameBoard[cellRow, cellCol].IncreasePossibility(valueToReturn);
             }
         }
 
         public List<(int, int)> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
             // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
+            // the cell at row, col is also in the list
             List<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
             List<(int, int)> filteredCells = new List<(int, int)>();
             foreach ((int, int) unitCellTuple in unitCells) 
             {
                 int cellRow = unitCellTuple.Item1;
                 int cellCol = unitCellTuple.Item2;
-                if (GameBoard[cellRow, cellCol].HasValue(filterValue)) 
+                if (_gameBoard[cellRow, cellCol].HasValue(filterValue)) 
                 {
                     filteredCells.Add(unitCellTuple);
                 }
