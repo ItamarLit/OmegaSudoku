@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,12 +41,21 @@ namespace OmegaSudoku.GameLogic
 
         public void DecreasePossibility(int possibiltiyValue)
         {
-            Console.WriteLine(possibiltiyValue);
             if (Possibilites[possibiltiyValue] != 0) 
             {
                 Possibilites[possibiltiyValue] = 0;
                 // dec the counter
                 Possibilites[0] -= 1;
+            }
+        }
+
+        public void IncreasePossibility(int possibilityValue)
+        {
+            if (Possibilites[possibilityValue] != 0)
+            {
+                Possibilites[possibilityValue] = 1;
+                // inc the counter
+                Possibilites[0] += 1;
             }
         }
 
@@ -62,6 +72,19 @@ namespace OmegaSudoku.GameLogic
         public bool HasValue(int value)
         {
             return Possibilites[value] != 0;
+        }
+
+        public List<int> GetPossibilites()
+        {
+            List<int> potientialValues = new List<int>();
+            for(int i = 1; i < Possibilites.Length; i++)
+            {
+                if (Possibilites[i] != 0)
+                {
+                    potientialValues.Add(i);
+                }
+            }
+            return potientialValues;
         }
     }
 }
