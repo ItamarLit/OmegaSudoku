@@ -167,24 +167,42 @@ namespace OmegaSudoku.GameLogic
             return counter == 1;
         }
 
+        public List<(int, int)> GetUnitCellsPos(int rowPos, int colPos)
+        {
+            // combine all the unit cells using union to get rid of duplicates
+            List<(int, int)> unitCells = new List<(int, int)>();
+            unitCells = GetRowCells(rowPos).Union(GetColumnCells(colPos)).Union(GetCubeCells(rowPos, colPos)).ToList();
+            return unitCells;
+        }
+
         public void DecreasePossibilites(int rowPos, int colPos, int valueToRemove)
         {
             // This func is used to reduce the board possibilites based on the current change
-            // create an array of lists of cell positons to remove
-            List<(int, int)>[] unitCellsArray = { GetRowCells(rowPos), GetColumnCells(colPos), GetCubeCells(rowPos, colPos) };
-            // the number of rowCells = colCells = cubeCells
-            int cellCount = unitCellsArray[0].Count;
-
-            for (int i = 0; i < unitCellsArray.Length; i++)
+            List<(int, int)> affectedUnitCells = GetFilteredUnitCells(rowPos, colPos, valueToRemove);
+            for (int i = 0; i < affectedUnitCells.Count; i++)
             {
-                for (int innerIndex = 0; innerIndex < cellCount; innerIndex++) 
+                int cellRow = affectedUnitCells[i].Item1;
+                int cellCol = affectedUnitCells[i].Item2;
+                // attempt to remove the value
+                GameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
+            }
+        }
+
+        public List<(int, int)> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
+        {
+            // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
+            List<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
+            List<(int, int)> filteredCells = new List<(int, int)>();
+            foreach ((int, int) unitCellTuple in unitCells) 
+            {
+                int cellRow = unitCellTuple.Item1;
+                int cellCol = unitCellTuple.Item2;
+                if (GameBoard[cellRow, cellCol].HasValue(filterValue)) 
                 {
-                    int cellRow = unitCellsArray[i][innerIndex].Item1;
-                    int cellCol = unitCellsArray[i][innerIndex].Item2;
-                    // attempt to remove the value
-                    GameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
+                    filteredCells.Add(unitCellTuple);
                 }
             }
+            return filteredCells;
         }
 
     }

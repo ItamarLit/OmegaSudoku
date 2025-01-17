@@ -58,6 +58,11 @@ namespace OmegaSudoku.GameLogic
         {
             return CellValue == 0;
         }
+
+        public bool HasValue(int value)
+        {
+            return Possibilites[value] != 0;
+        }
     }
 }
 
