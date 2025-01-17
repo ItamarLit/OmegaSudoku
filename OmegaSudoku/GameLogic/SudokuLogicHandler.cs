@@ -44,7 +44,7 @@ namespace OmegaSudoku.GameLogic
                 // check if the cell in the cube has the same value of the checked cell
                 if (GetCellValue(cellX, cellY) != 0)
                 {
-                    DecreasePossibilites(cellX, cellY, GetCellValue(cellX, cellY) );
+                    DecreasePossibilites(cellX, cellY, GetCellValue(cellX, cellY));
                 }
             }
             // after setting the board up we can mrv array
@@ -185,6 +185,18 @@ namespace OmegaSudoku.GameLogic
                 int cellCol = affectedUnitCells[i].Item2;
                 // attempt to remove the value
                 GameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
+            }
+        }
+
+        public void IncreasePossibilites(List<(int, int)> affectedUnitCells, int valueToReturn)
+        {
+            // This func is used to increase the board possibilites based on the current change
+            for (int i = 0; i < affectedUnitCells.Count; i++)
+            {
+                int cellRow = affectedUnitCells[i].Item1;
+                int cellCol = affectedUnitCells[i].Item2;
+                // attempt to remove the value
+                GameBoard[cellRow, cellCol].IncreasePossibility(valueToReturn);
             }
         }
 
