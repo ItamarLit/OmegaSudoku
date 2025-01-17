@@ -43,6 +43,7 @@ namespace OmegaSudoku.GameLogic
             int possibilitesNum = cell.NumberOfPossibilites();
             if(cell.CellValue == 0)
             {
+                // if a cell has no value and also no possibilites and we havent finished the board then ret false
                 if(possibilitesNum == 0)
                 {
                     return false;

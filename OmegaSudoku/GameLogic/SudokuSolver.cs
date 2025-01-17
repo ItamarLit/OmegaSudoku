@@ -51,21 +51,12 @@ namespace OmegaSudoku.GameLogic
                     // save the affected cell positions incase the attempt is wrong
                     List<(int, int)> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
                     // remove the possibilites
-                    foreach ((int row1, int col1) in affectedCells)
-                    {
-                        // remove the cell from the mrv array and put it in the correct place
-                        _mrvArray.RemoveCell(_board[row1, col1]);
-                      
-                    }
+                    RemoveAffectedMRVCells(affectedCells);
                     _logicHandler.DecreasePossibilites(row, col, potentialValue);
                     // fix the mrvArray
-                    foreach ((int row1, int col1) in affectedCells)
+                    if (!InsertAffectedMRVCells(affectedCells))
                     {
-                        if (!_mrvArray.InsertCell(_board[row1, col1]))
-                        {
-                            return false;
-                        }
-
+                        return false;
                     }
                     if (Solve())
                     {
@@ -73,21 +64,12 @@ namespace OmegaSudoku.GameLogic
                     }
                     // got false from backtracking need to reset the board
                     _board[row, col].CellValue = 0;
-                    foreach ((int row1, int col1) in affectedCells)
-                    {
-                        // remove the cell from the mrv array and put it in the correct place
-                        _mrvArray.RemoveCell(_board[row1, col1]);
-
-                    }
+                    RemoveAffectedMRVCells(affectedCells);
                     _logicHandler.IncreasePossibilites(affectedCells, potentialValue);
                     // fix the mrvArray
-                    foreach ((int row1, int col1) in affectedCells)
+                    if (!InsertAffectedMRVCells(affectedCells))
                     {
-                        if (!_mrvArray.InsertCell(_board[row1, col1]))
-                        {
-                            return false;
-                        }
-
+                        return false;
                     }
                 }  
             }
@@ -103,18 +85,29 @@ namespace OmegaSudoku.GameLogic
             return false;
         }
 
-        //private bool UpdateMrvArray(List<(int, int)> affectedCells)
-        //{
-        //    foreach ((int row, int col) in affectedCells)
-        //    {
-        //        // remove the cell from the mrv array and put it in the correct place
-        //        _mrvArray.RemoveCell(_board[row, col]);
-        //        if(!_mrvArray.InsertCell(_board[row, col])) 
-        //        {
-        //            return false;
-        //        }
-        //    }
-        //    return true;
-        //}
+        private void RemoveAffectedMRVCells(List<(int, int)> affectedCells)
+        {
+            foreach ((int row1, int col1) in affectedCells)
+            {
+                // remove the cell from the mrv array
+                _mrvArray.RemoveCell(_board[row1, col1]);
+
+            }
+        }
+
+        private bool InsertAffectedMRVCells(List<(int, int)> affectedCells)
+        {
+            // fix the mrvArray
+            foreach ((int row1, int col1) in affectedCells)
+            {
+                if (!_mrvArray.InsertCell(_board[row1, col1]))
+                {
+                    return false;
+                }
+
+            }
+            return true;
+        }
+
     }
 }

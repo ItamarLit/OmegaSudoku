@@ -15,9 +15,6 @@ namespace OmegaSudoku
             OutputHandler.PrintBoard(board);
             MrvArray mrvArray = new MrvArray(board.GetLength(0));
             SudokuSolver ss = new SudokuSolver(board, mrvArray);
-            OutputHandler.PrintBoardPossibilites(board);
-
-            Console.WriteLine(ss.Solve());
             OutputHandler.PrintBoard(board);
             //OutputHandler.PrintBoard(board);
             
