@@ -19,9 +19,10 @@ namespace OmegaSudoku
             while (!endRunFlag) 
             {
                 try
-                {
+                {   
                     OutputHandler.RequestBoard();
                     InputHandler.GetUserInput();
+                    DateTime start = DateTime.Now;
                     if (!InputHandler.CheckInput())
                     {
                         endRunFlag = true;
@@ -40,6 +41,9 @@ namespace OmegaSudoku
                         {
                             OutputHandler.ShowImpossibleBoardMsg();
                         }
+                        DateTime end = DateTime.Now;
+                        TimeSpan elapsed = end - start;
+                        OutputHandler.ShowProgramRuntime(elapsed);
                     }
                 }
                 // The only excptions that can occur are mine so i can catch Exception

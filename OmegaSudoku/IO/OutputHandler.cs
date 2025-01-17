@@ -26,6 +26,11 @@ namespace OmegaSudoku.IO
             Console.WriteLine("The entered board is impossible to solve");
         }
 
+        public static void ShowProgramRuntime(TimeSpan elapsedTime)
+        {
+            Console.WriteLine($"The program ran for: {elapsedTime.Milliseconds} milliseconds");
+        }
+
         public static void OutputError(string msg)
         {
             Console.WriteLine(msg);
