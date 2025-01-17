@@ -1,5 +1,6 @@
 ﻿using OmegaSudoku.GameLogic;
 using System;
+using OmegaSudoku.Exceptions;
 
 namespace OmegaSudoku.IO
 {
@@ -27,15 +28,15 @@ namespace OmegaSudoku.IO
             // check for only numeric values
             if (!double.TryParse(_input, out double boardValue))
             {
-                // Need to throw an exception here
-                Console.WriteLine("Invalid board given");
+                // Throw invalid board info exception
+                throw new BoardInfoException();
             }
             // check sudoku rules for valid board
             int boardSize = (int)Math.Sqrt((double)_input.Length);
             if (boardSize != VALID_SUDOKU_SIZE)
             {
-                // Need to throw an exception here
-                Console.WriteLine("Invalid board size entered");
+                // Throw invalid board size exception
+                throw new BoardSizeException(boardSize);
             }
         }
 
@@ -55,8 +56,8 @@ namespace OmegaSudoku.IO
                 // check the cellValue
                 if (cellValue > VALID_SUDOKU_SIZE || cellValue < STARTING_SUDOKU_NUMBER - 1)
                 {
-                    // Need to throw an exception here
-                    Console.WriteLine($"Invalid cell value entered: {cellValue}");
+                    // Throw cell info exception
+                    throw new CellInfoExeption(cellValue);
                 }
                 // the ValidSudokuSize and StartingSudokuNumber are for setting the number range on the board ( setting the possible values in a cell)
                 board[rowIndex, columnIndex] = new BoardCell(rowIndex, columnIndex, VALID_SUDOKU_SIZE, STARTING_SUDOKU_NUMBER, cellValue);

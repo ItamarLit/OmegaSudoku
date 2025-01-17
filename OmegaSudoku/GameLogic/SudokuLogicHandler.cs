@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using OmegaSudoku.Exceptions;
 
 namespace OmegaSudoku.GameLogic
 {
@@ -31,11 +31,10 @@ namespace OmegaSudoku.GameLogic
                 // check if the cell in the cube has the same value of the checked cell
                 if (GetCellValue(cellRow, cellCol) != 0 && !IsValidMove(cellRow, cellCol))
                 {
-                    // NEED to throw an exception
-                    Console.WriteLine($"Bad init board at pos: {cellRow}, {cellCol}");
+                    // Throw invalid initial board exception
+                    throw new InvalidInitialBoardException();
                 }
             }
-            Console.WriteLine("Valid board");
         }
 
         public void SetInitailBoardPossibilites()
