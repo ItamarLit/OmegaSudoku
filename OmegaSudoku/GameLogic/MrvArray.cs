@@ -11,47 +11,54 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
 
         // Create an Array property
-        public Dictionary<(int, int), BoardCell>[] MRVPossibilitesArray { get; private set; }
+        public List<(int, int)>[] MRVPossibilitesArray { get; private set; }
 
         public MrvArray(int boardSize)
         {
             // Create the array of hashmaps where a (x,y) tuple is the key and a BoardCell is the value
-            MRVPossibilitesArray = new Dictionary<(int, int), BoardCell>[boardSize + 1];
+            MRVPossibilitesArray = new List<(int, int)>[boardSize + 1];
             // Init the hashmaps inside the array, cell 1 will represent cells with only one possibility and so on
             for (int i = 1; i < boardSize + 1; i++)
             {
-                MRVPossibilitesArray[i] = new Dictionary<(int, int), BoardCell>();
+                MRVPossibilitesArray[i] = new List<(int, int)>();
             }
         }
 
-        public BoardCell RemoveCell(int possibilitesNum, (int x, int y) tuple)
-        {
-            // Func that removes a cell from the MrvArray
-            MRVPossibilitesArray[possibilitesNum].Remove(tuple, out BoardCell removedCell);
-            return removedCell;
-        }
-
-        public void InsertCell(BoardCell cell)
+        public void RemoveCell(BoardCell cell)
         {
             int possibilitesNum = cell.NumberOfPossibilites();
-            
-            // Func that inserts a cell into the MrvArray
-            MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol), cell);
+            (int x, int y) tuple = (cell.CellRow, cell.CellCol);
+            // Func that removes a cell from the MrvArray
+            MRVPossibilitesArray[possibilitesNum].Remove(tuple);
         }
 
-        public BoardCell GetLowestPossibilityCell()
+        public bool InsertCell(BoardCell cell)
+        {
+            // this func will return a bool value so i can know if there is a cell that has no values
+            int possibilitesNum = cell.NumberOfPossibilites();
+            if (possibilitesNum == 0) 
+            {
+                return false;
+            }
+            // Func that inserts a cell into the MrvArray
+            MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol));
+            return true;
+        }
+
+        public (int, int) GetLowestPossibilityCell()
         {
             for (int index = 1; index < MRVPossibilitesArray.Length; index++)
             {
                 if (MRVPossibilitesArray[index].Count != 0)
                 {
                     // get the first cell in the first non empty hashmap in descending order
-                    return MRVPossibilitesArray[index].First().Value;
+                    return MRVPossibilitesArray[index].First();
                 }
             }
-            // if the array is empty return null = board solved
-            return null;
+            // if the array is empty return (-1 , -1) = board solved
+            return (-1, -1);
         }
+
 
         public void PrintArray()
         {
