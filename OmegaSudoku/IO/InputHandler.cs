@@ -23,8 +23,13 @@ namespace OmegaSudoku.IO
             _input = Console.ReadLine();
         }
 
-        public static void CheckInput()
+        public static bool CheckInput()
         {
+            // This func will check the basic input
+            if (_input == "EXIT") 
+            {
+                return false;
+            }
             // check for only numeric values
             if (!double.TryParse(_input, out double boardValue))
             {
@@ -36,8 +41,9 @@ namespace OmegaSudoku.IO
             if (boardSize != VALID_SUDOKU_SIZE)
             {
                 // Throw invalid board size exception
-                throw new BoardSizeException(boardSize);
+                throw new BoardSizeException(_input.Length);
             }
+            return true;
         }
 
         public static BoardCell[,] SetUpBoard()
