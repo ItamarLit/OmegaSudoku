@@ -15,7 +15,7 @@ namespace OmegaSudoku
         public static void RunEngine()
         {
             bool endRunFlag = false;
-            OutputHandler.ShowInstructions();
+            Console.WriteLine("Hi welcome to the amazing sudoku engine, enter any 9x9 board, to exit the engine write: EXIT");
             while (!endRunFlag) 
             {
                 try

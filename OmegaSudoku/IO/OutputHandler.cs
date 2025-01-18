@@ -16,11 +16,6 @@ namespace OmegaSudoku.IO
             Console.WriteLine("Please enter the sudoku board: ");
         }
 
-        public static void ShowInstructions()
-        {
-            Console.WriteLine("Hi welcome to the amazing sudoku engine, enter any 9x9 board, to exit the engine write: EXIT");
-        }
-
         public static void ShowImpossibleBoardMsg()
         {
             Console.WriteLine("The entered board is impossible to solve");
