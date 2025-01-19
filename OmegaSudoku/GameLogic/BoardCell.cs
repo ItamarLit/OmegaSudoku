@@ -16,7 +16,7 @@ namespace OmegaSudoku.GameLogic
         // create non setable properties for x,y and the possibiliets array in a cell
         public int CellRow { get; }
         public int CellCol { get; }
-        public int[] Possibilites { get; }
+        public int[] Possibilites { get; set; }
         public int CellValue { get; set; }
 
         public BoardCell(int xPos, int yPos, int boardSize, int startingNumber, int cellVal)

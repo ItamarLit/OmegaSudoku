@@ -123,7 +123,7 @@ namespace OmegaSudoku.GameLogic
             return _gameBoard[rowPos, colPos].CellValue;
         }
 
-        private bool IsValidMove(int rowPos, int colPos)
+        public bool IsValidMove(int rowPos, int colPos)
         {
             // this func will return true / false if the move is valid
             int cellValue = GetCellValue(rowPos, colPos);   
@@ -204,19 +204,32 @@ namespace OmegaSudoku.GameLogic
         public List<(int, int)> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
             // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
-            // the cell at row, col is also in the list
+            // the cell at row, col is not in the list
             List<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
             List<(int, int)> filteredCells = new List<(int, int)>();
             foreach ((int, int) unitCellTuple in unitCells) 
             {
                 int cellRow = unitCellTuple.Item1;
                 int cellCol = unitCellTuple.Item2;
-                if (_gameBoard[cellRow, cellCol].HasValue(filterValue)) 
+                if (_gameBoard[cellRow, cellCol].HasValue(filterValue) && !(cellRow == rowPos && cellCol == colPos)) 
                 {
                     filteredCells.Add(unitCellTuple);
                 }
             }
             return filteredCells;
+        }
+
+        public bool IsInvalidUpdate(List<(int, int)> affectedCells)
+        {
+            // This func is used to check the board after every update to look for illegal cells ( no possibilites and no value)
+            foreach ((int row, int col) in affectedCells)
+            {
+                if (_gameBoard[row, col].GetPossibilites().Count == 0 && _gameBoard[row, col].CellValue == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
     }

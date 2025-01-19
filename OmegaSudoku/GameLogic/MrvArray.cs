@@ -28,30 +28,24 @@ namespace OmegaSudoku.GameLogic
         {
             // this func is called after removing a possibility
             int possibilitesNum = cell.NumberOfPossibilites();
+            (int x, int y) tuple = (cell.CellRow, cell.CellCol);
+            // Func that removes a cell from the MrvArray
             if(possibilitesNum != 0)
             {
-                (int x, int y) tuple = (cell.CellRow, cell.CellCol);
-                // Func that removes a cell from the MrvArray
                 MRVPossibilitesArray[possibilitesNum].Remove(tuple);
+
             }
-          
         }
 
-        public bool InsertCell(BoardCell cell)
+        public void InsertCell(BoardCell cell)
         {
-            // this func will return a bool value so i can know if there is a cell that has no values
             int possibilitesNum = cell.NumberOfPossibilites();
-            if(cell.CellValue == 0)
+            Console.WriteLine(possibilitesNum);
+            if(possibilitesNum != 0)
             {
-                // if a cell has no value and also no possibilites and we havent finished the board then ret false
-                if(possibilitesNum == 0)
-                {
-                    return false;
-                }
-                // Func that inserts a cell into the MrvArray
                 MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol));
+
             }
-            return true;
         }
 
         public (int, int) GetLowestPossibilityCell()
@@ -66,6 +60,28 @@ namespace OmegaSudoku.GameLogic
             }
             // if the array is empty return (-1 , -1) = board solved
             return (-1, -1);
+        }
+
+        public void RemoveAffectedMRVCells(List<BoardCell> affectedCells)
+        {
+            // This func removes all the affected cells from the MRVarray
+            foreach (BoardCell cell in affectedCells)
+            {
+                // remove the cell from the mrv array
+                RemoveCell(cell);
+
+            }
+        }
+
+        public void InsertAffectedMRVCells(List<BoardCell> affectedCells)
+        {
+            // This func inserts all the affected cells pos from the MRVarray
+            foreach (BoardCell cell in affectedCells)
+            {
+                // remove the cell from the mrv array
+                InsertCell(cell);
+
+            }
         }
     }
 }
