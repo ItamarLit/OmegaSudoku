@@ -45,7 +45,8 @@ namespace OmegaSudoku.GameLogic
                 // check if the cell in the cube has the same value of the checked cell
                 if (GetCellValue(cellX, cellY) != 0)
                 {
-                    DecreasePossibilites(cellX, cellY, GetCellValue(cellX, cellY));
+                    List<(int, int)> affectedUnitCells = GetFilteredUnitCells(cellX, cellY, GetCellValue(cellX, cellY));
+                    DecreasePossibilites(affectedUnitCells, GetCellValue(cellX, cellY));
                 }
             }
             // after setting the board up we can mrv array
@@ -176,10 +177,9 @@ namespace OmegaSudoku.GameLogic
             return unitCells;
         }
 
-        public void DecreasePossibilites(int rowPos, int colPos, int valueToRemove)
+        public void DecreasePossibilites(List<(int, int)> affectedUnitCells, int valueToRemove)
         {
             // This func is used to reduce the board possibilites based on the current change
-            List<(int, int)> affectedUnitCells = GetFilteredUnitCells(rowPos, colPos, valueToRemove);
             for (int i = 0; i < affectedUnitCells.Count; i++)
             {
                 int cellRow = affectedUnitCells[i].Item1;
@@ -197,6 +197,10 @@ namespace OmegaSudoku.GameLogic
                 int cellRow = affectedUnitCells[i].Item1;
                 int cellCol = affectedUnitCells[i].Item2;
                 // attempt to remove the value
+                if (cellRow == 3 && cellCol == 7)
+                {
+                    Console.WriteLine($"Increasing: {valueToReturn}");
+                }
                 _gameBoard[cellRow, cellCol].IncreasePossibility(valueToReturn);
             }
         }
@@ -211,7 +215,7 @@ namespace OmegaSudoku.GameLogic
             {
                 int cellRow = unitCellTuple.Item1;
                 int cellCol = unitCellTuple.Item2;
-                if (_gameBoard[cellRow, cellCol].HasValue(filterValue) && !(cellRow == rowPos && cellCol == colPos)) 
+                if (_gameBoard[cellRow, cellCol].HasValue(filterValue) && !(cellRow == rowPos && cellCol == colPos) && _gameBoard[cellRow, cellCol].CellIsEmpty()) 
                 {
                     filteredCells.Add(unitCellTuple);
                 }

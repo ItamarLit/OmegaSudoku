@@ -40,12 +40,7 @@ namespace OmegaSudoku.GameLogic
         public void InsertCell(BoardCell cell)
         {
             int possibilitesNum = cell.NumberOfPossibilites();
-            Console.WriteLine(possibilitesNum);
-            if(possibilitesNum != 0)
-            {
-                MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol));
-
-            }
+            MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol));
         }
 
         public (int, int) GetLowestPossibilityCell()

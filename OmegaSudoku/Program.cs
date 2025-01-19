@@ -9,7 +9,7 @@ namespace OmegaSudoku
     {
         static void Main(string[] args)
         {
-            // run the engine
+            //run the engine
             SudokuEngine.RunEngine();
         }
     }
