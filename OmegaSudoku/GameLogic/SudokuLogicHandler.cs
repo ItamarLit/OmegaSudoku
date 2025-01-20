@@ -19,10 +19,13 @@ namespace OmegaSudoku.GameLogic
         public SudokuLogicHandler(BoardCell[,] board, MrvArray mrvInstance)
         {
             _gameBoard = board;
-            // create the mrv array
             _mrvArray = mrvInstance;
         }
 
+        /// <summary>
+        /// This func checks the initial user inputed board and throws an exception if it is invalid
+        /// </summary>
+        /// <exception cref="InvalidInitialBoardException"></exception>
         public void CheckInitalBoard()
         {
             // go over all the filled cells and check that they are valid
@@ -37,6 +40,9 @@ namespace OmegaSudoku.GameLogic
             }
         }
 
+        /// <summary>
+        /// This func sets up the board and mrv with the initial possibilites after purging invalid ones
+        /// </summary>
         public void SetInitailBoardPossibilites()
         {
             // set the board possibilites
@@ -60,7 +66,6 @@ namespace OmegaSudoku.GameLogic
             }
         }
 
-
         private List<(int, int)> GetAllBoardCells()
         {
             // this func will return a list of tuples of row, col positions of all cells on the board
@@ -75,6 +80,11 @@ namespace OmegaSudoku.GameLogic
             return boardCells;
         }
 
+        /// <summary>
+        /// This func returns all of the cells in a give row lvl
+        /// </summary>
+        /// <param name="rowLvl"></param>
+        /// <returns>A list of tuples of row, col positions of a row</returns>
         private List<(int, int)> GetRowCells(int rowLvl)
         {
             // this func will return a list of tuples of row, col positions inside a row
@@ -124,6 +134,12 @@ namespace OmegaSudoku.GameLogic
             return _gameBoard[rowPos, colPos].CellValue;
         }
 
+        /// <summary>
+        /// This func checks if a cell at pos (row, col) is valid to be there
+        /// </summary>
+        /// <param name="rowPos"></param>
+        /// <param name="colPos"></param>
+        /// <returns>Returns true if the pos of cell is valid else returns false</returns>
         public bool IsValidMove(int rowPos, int colPos)
         {
             // this func will return true / false if the move is valid
@@ -169,6 +185,12 @@ namespace OmegaSudoku.GameLogic
             return counter == 1;
         }
 
+        /// <summary>
+        /// This func returns a list of unit cells including the cell at row, col
+        /// </summary>
+        /// <param name="rowPos"></param>
+        /// <param name="colPos"></param>
+        /// <returns>List of tuples of unit cells</returns>
         public List<(int, int)> GetUnitCellsPos(int rowPos, int colPos)
         {
             // combine all the unit cells using union to get rid of duplicates
@@ -201,6 +223,13 @@ namespace OmegaSudoku.GameLogic
             }
         }
 
+        /// <summary>
+        /// This func returns a list of BoardCells neighbours that doesnt include row, col BoardCell
+        /// </summary>
+        /// <param name="rowPos"></param>
+        /// <param name="colPos"></param>
+        /// <param name="filterValue"></param>
+        /// <returns>List of boardCells</returns>
         public List<BoardCell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
             // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
@@ -219,6 +248,11 @@ namespace OmegaSudoku.GameLogic
             return filteredCells;
         }
 
+        /// <summary>
+        /// This func returns true if the update of the cell is invalid (has no value and 0 remaining possibilites)
+        /// </summary>
+        /// <param name="affectedCells"></param>
+        /// <returns>true if the update is invalid else false</returns>
         public bool IsInvalidUpdate(List<BoardCell> affectedCells)
         {
             // This func is used to check the board after every update to look for illegal cells ( no possibilites and no value)
