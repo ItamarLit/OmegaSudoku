@@ -52,7 +52,7 @@ namespace OmegaSudoku.GameLogic
                     // set the cell value but leave the possibilites in case i need to return
                     _board[row, col].CellValue = potentialValue;
                     // save the affected cell positions incase the attempt is wrong
-                    List<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
+                    HashSet<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
                     // remove the possibilites
                     _mrvArray.RemoveAffectedMRVCells(affectedCells);
                     // remove the current cell
@@ -87,7 +87,7 @@ namespace OmegaSudoku.GameLogic
         /// <param name="row"></param>
         /// <param name="col"></param>
         /// <param name="potentialValue"></param>
-        private void ResetState(List<BoardCell> affectedCells, int row, int col, int potentialValue)
+        private void ResetState(HashSet<BoardCell> affectedCells, int row, int col, int potentialValue)
         {
             _board[row, col].CellValue = 0;
             _logicHandler.IncreasePossibilites(affectedCells, potentialValue);

@@ -51,7 +51,7 @@ namespace OmegaSudoku.GameLogic
                 // check if the cell in the cube has the same value of the checked cell
                 if (GetCellValue(cellX, cellY) != 0)
                 {
-                    List<BoardCell> affectedUnitCells = GetFilteredUnitCells(cellX, cellY, GetCellValue(cellX, cellY));
+                    HashSet<BoardCell> affectedUnitCells = GetFilteredUnitCells(cellX, cellY, GetCellValue(cellX, cellY));
                     DecreasePossibilites(affectedUnitCells, GetCellValue(cellX, cellY));
                 }
             }
@@ -199,25 +199,25 @@ namespace OmegaSudoku.GameLogic
             return unitCells;
         }
 
-        public void DecreasePossibilites(List<BoardCell> affectedUnitCells, int valueToRemove)
+        public void DecreasePossibilites(HashSet<BoardCell> affectedUnitCells, int valueToRemove)
         {
             // This func is used to reduce the board possibilites based on the current change
-            for (int i = 0; i < affectedUnitCells.Count; i++)
+            foreach(BoardCell cell in affectedUnitCells)
             {
-                int cellRow = affectedUnitCells[i].CellRow;
-                int cellCol = affectedUnitCells[i].CellCol;
+                int cellRow = cell.CellRow;
+                int cellCol = cell.CellCol;
                 // attempt to remove the value
                 _gameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
             }
         }
 
-        public void IncreasePossibilites(List<BoardCell> affectedUnitCells, int valueToReturn)
+        public void IncreasePossibilites(HashSet<BoardCell> affectedUnitCells, int valueToReturn)
         {
             // This func is used to increase the board possibilites based on the current change
-            for (int i = 0; i < affectedUnitCells.Count; i++)
+            foreach (BoardCell cell in affectedUnitCells)
             {
-                int cellRow = affectedUnitCells[i].CellRow;
-                int cellCol = affectedUnitCells[i].CellCol;
+                int cellRow = cell.CellRow;
+                int cellCol = cell.CellCol;
                 // attempt to remove the value
                 _gameBoard[cellRow, cellCol].IncreasePossibility(valueToReturn);
             }
@@ -230,12 +230,12 @@ namespace OmegaSudoku.GameLogic
         /// <param name="colPos"></param>
         /// <param name="filterValue"></param>
         /// <returns>List of boardCells</returns>
-        public List<BoardCell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
+        public HashSet<BoardCell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
             // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
             // the cell at row, col is not in the list
             List<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
-            List<BoardCell> filteredCells = new List<BoardCell>();
+            HashSet<BoardCell> filteredCells = new HashSet<BoardCell>();
             foreach ((int, int) unitCellTuple in unitCells) 
             {
                 int cellRow = unitCellTuple.Item1;
@@ -253,7 +253,7 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="affectedCells"></param>
         /// <returns>true if the update is invalid else false</returns>
-        public bool IsInvalidUpdate(List<BoardCell> affectedCells)
+        public bool IsInvalidUpdate(HashSet<BoardCell> affectedCells)
         {
             // This func is used to check the board after every update to look for illegal cells ( no possibilites and no value)
             foreach (BoardCell cell in affectedCells)

@@ -65,7 +65,7 @@ namespace OmegaSudoku.GameLogic
             return (-1, -1);
         }
 
-        public void RemoveAffectedMRVCells(List<BoardCell> affectedCells)
+        public void RemoveAffectedMRVCells(HashSet<BoardCell> affectedCells)
         {
             // This func removes all the affected cells from the MRVarray
             foreach (BoardCell cell in affectedCells)
@@ -76,7 +76,7 @@ namespace OmegaSudoku.GameLogic
             }
         }
 
-        public void InsertAffectedMRVCells(List<BoardCell> affectedCells)
+        public void InsertAffectedMRVCells(HashSet<BoardCell> affectedCells)
         {
             // This func inserts all the affected cells pos from the MRVarray
             foreach (BoardCell cell in affectedCells)

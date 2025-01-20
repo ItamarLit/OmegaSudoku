@@ -29,6 +29,7 @@ namespace OmegaSudoku
                         OutputHandler.PrintBoard(board);
                         MrvArray mrvArray = new MrvArray(board.GetLength(0));
                         SudokuSolver solver = new SudokuSolver(board, mrvArray);
+                        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         if (solver.Solve())
                         {
                             OutputHandler.PrintBoard(board);
@@ -37,6 +38,8 @@ namespace OmegaSudoku
                         {
                             OutputHandler.ShowImpossibleBoardMsg();
                         }
+                        stopwatch.Stop();
+                        Console.WriteLine($"Solver runtime: {stopwatch.ElapsedMilliseconds} ms");
                         DateTime end = DateTime.Now;
                         TimeSpan elapsed = end - start;
                         OutputHandler.ShowProgramRuntime(elapsed);
