@@ -11,16 +11,16 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
 
         // Create an Array property
-        public List<(int, int)>[] MRVPossibilitesArray { get; private set; }
+        public HashSet<(int, int)>[] MRVPossibilitesArray { get; private set; }
 
         public MrvArray(int boardSize)
         {
             // Create the array of hashmaps where a (x,y) tuple is the key and a BoardCell is the value
-            MRVPossibilitesArray = new List<(int, int)>[boardSize + 1];
-            // Init the hashmaps inside the array, cell 1 will represent cells with only one possibility and so on
+            MRVPossibilitesArray = new HashSet<(int, int)>[boardSize + 1];
+            // Init the hashsets inside the array, cell 1 will represent cells with only one possibility and so on
             for (int i = 1; i < boardSize + 1; i++)
             {
-                MRVPossibilitesArray[i] = new List<(int, int)>();
+                MRVPossibilitesArray[i] = new HashSet<(int, int)>();
             }
         }
 
