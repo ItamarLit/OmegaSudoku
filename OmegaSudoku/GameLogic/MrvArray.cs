@@ -24,25 +24,33 @@ namespace OmegaSudoku.GameLogic
             }
         }
 
+        /// <summary>
+        /// This func removes a cell from the mrvArray based on the cells possibilites
+        /// </summary>
+        /// <param name="cell"></param>
         public void RemoveCell(BoardCell cell)
         {
             // this func is called after removing a possibility
             int possibilitesNum = cell.NumberOfPossibilites();
             (int x, int y) tuple = (cell.CellRow, cell.CellCol);
             // Func that removes a cell from the MrvArray
-            if(possibilitesNum != 0)
-            {
-                MRVPossibilitesArray[possibilitesNum].Remove(tuple);
-
-            }
+            MRVPossibilitesArray[possibilitesNum].Remove(tuple);    
         }
 
+        /// <summary>
+        /// This func inserts a cell into the mrvArray based on the cells possibilites
+        /// </summary>
+        /// <param name="cell"></param>
         public void InsertCell(BoardCell cell)
         {
             int possibilitesNum = cell.NumberOfPossibilites();
             MRVPossibilitesArray[possibilitesNum].Add((cell.CellRow, cell.CellCol));
         }
 
+        /// <summary>
+        /// This func finds the lowest possibility cell
+        /// </summary>
+        /// <returns>Returns the cells row, col pos or -1, -1 if the array is empty</returns>
         public (int, int) GetLowestPossibilityCell()
         {
             for (int index = 1; index < MRVPossibilitesArray.Length; index++)
@@ -77,6 +85,20 @@ namespace OmegaSudoku.GameLogic
                 InsertCell(cell);
 
             }
+        }
+
+        /// <summary>
+        /// Func that checks if the mrvArray is empty, this is signed by (-1, -1) tuple
+        /// </summary>
+        /// <param name="rowColTuple"></param>
+        /// <returns></returns>
+        public bool IsEmptyArray((int, int) rowColTuple)
+        {
+            if (rowColTuple.Item1 == -1 && rowColTuple.Item2 == -1)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

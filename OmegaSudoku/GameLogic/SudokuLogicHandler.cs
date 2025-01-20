@@ -45,7 +45,7 @@ namespace OmegaSudoku.GameLogic
                 // check if the cell in the cube has the same value of the checked cell
                 if (GetCellValue(cellX, cellY) != 0)
                 {
-                    List<(int, int)> affectedUnitCells = GetFilteredUnitCells(cellX, cellY, GetCellValue(cellX, cellY));
+                    List<BoardCell> affectedUnitCells = GetFilteredUnitCells(cellX, cellY, GetCellValue(cellX, cellY));
                     DecreasePossibilites(affectedUnitCells, GetCellValue(cellX, cellY));
                 }
             }
@@ -177,58 +177,54 @@ namespace OmegaSudoku.GameLogic
             return unitCells;
         }
 
-        public void DecreasePossibilites(List<(int, int)> affectedUnitCells, int valueToRemove)
+        public void DecreasePossibilites(List<BoardCell> affectedUnitCells, int valueToRemove)
         {
             // This func is used to reduce the board possibilites based on the current change
             for (int i = 0; i < affectedUnitCells.Count; i++)
             {
-                int cellRow = affectedUnitCells[i].Item1;
-                int cellCol = affectedUnitCells[i].Item2;
+                int cellRow = affectedUnitCells[i].CellRow;
+                int cellCol = affectedUnitCells[i].CellCol;
                 // attempt to remove the value
                 _gameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
             }
         }
 
-        public void IncreasePossibilites(List<(int, int)> affectedUnitCells, int valueToReturn)
+        public void IncreasePossibilites(List<BoardCell> affectedUnitCells, int valueToReturn)
         {
             // This func is used to increase the board possibilites based on the current change
             for (int i = 0; i < affectedUnitCells.Count; i++)
             {
-                int cellRow = affectedUnitCells[i].Item1;
-                int cellCol = affectedUnitCells[i].Item2;
+                int cellRow = affectedUnitCells[i].CellRow;
+                int cellCol = affectedUnitCells[i].CellCol;
                 // attempt to remove the value
-                if (cellRow == 3 && cellCol == 7)
-                {
-                    Console.WriteLine($"Increasing: {valueToReturn}");
-                }
                 _gameBoard[cellRow, cellCol].IncreasePossibility(valueToReturn);
             }
         }
 
-        public List<(int, int)> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
+        public List<BoardCell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
             // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
             // the cell at row, col is not in the list
             List<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
-            List<(int, int)> filteredCells = new List<(int, int)>();
+            List<BoardCell> filteredCells = new List<BoardCell>();
             foreach ((int, int) unitCellTuple in unitCells) 
             {
                 int cellRow = unitCellTuple.Item1;
                 int cellCol = unitCellTuple.Item2;
                 if (_gameBoard[cellRow, cellCol].HasValue(filterValue) && !(cellRow == rowPos && cellCol == colPos) && _gameBoard[cellRow, cellCol].CellIsEmpty()) 
                 {
-                    filteredCells.Add(unitCellTuple);
+                    filteredCells.Add(_gameBoard[cellRow, cellCol]);
                 }
             }
             return filteredCells;
         }
 
-        public bool IsInvalidUpdate(List<(int, int)> affectedCells)
+        public bool IsInvalidUpdate(List<BoardCell> affectedCells)
         {
             // This func is used to check the board after every update to look for illegal cells ( no possibilites and no value)
-            foreach ((int row, int col) in affectedCells)
+            foreach (BoardCell cell in affectedCells)
             {
-                if (_gameBoard[row, col].GetPossibilites().Count == 0 && _gameBoard[row, col].CellValue == 0)
+                if (_gameBoard[cell.CellRow, cell.CellCol].GetPossibilites().Count == 0 && _gameBoard[cell.CellRow, cell.CellCol].CellValue == 0)
                 {
                     return true;
                 }

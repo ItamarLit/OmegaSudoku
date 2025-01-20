@@ -28,17 +28,21 @@ namespace OmegaSudoku.GameLogic
             _logicHandler.SetInitailBoardPossibilites();
         }
 
+        /// <summary>
+        /// This is the main solve func used to attempt to solve the given board
+        /// </summary>
+        /// <returns>
+        /// The func returns true if it solved the board and false if not
+        /// </returns>
         public bool Solve()
         {
-            // This is the main solve func used to attempt to solve the given board
             // get the lowest possibility cell
             (int row, int col) = _mrvArray.GetLowestPossibilityCell();
-            if (IsEmptyArray((row, col)))
+            if (_mrvArray.IsEmptyArray((row, col)))
             {
                 // if there are no more cells to fill the sudoku is solved
                 return true;
             }
-            // get the first value from the possibilites
             List<int> possibilites = _board[row, col].GetPossibilites();
             if (possibilites.Count > 0)
             {
@@ -48,65 +52,46 @@ namespace OmegaSudoku.GameLogic
                     // set the cell value but leave the possibilites in case i need to return
                     _board[row, col].CellValue = potentialValue;
                     // save the affected cell positions incase the attempt is wrong
-                    List<(int, int)> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
+                    List<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
                     // remove the possibilites
-                    _mrvArray.RemoveAffectedMRVCells(GetAffectedCells(affectedCells));
+                    _mrvArray.RemoveAffectedMRVCells(affectedCells);
                     // remove the current cell
                     _mrvArray.RemoveCell(_board[row, col]);
                     _logicHandler.DecreasePossibilites(affectedCells, potentialValue);
-                    // If the func returns false this means there has been a mistake or the board is unsolvable
-                    // because the func returns false only when a cell that has no value also has no possible value
                     if (_logicHandler.IsInvalidUpdate(affectedCells))
                     {
-                        // need to reset the array and add back possibilites here
+                        // reset the array and add back possibilites
                         ResetState(affectedCells, row, col, potentialValue);
                     }
                     else
                     {
-                        // insert the cells into place if the board is invalid
-                        _mrvArray.InsertAffectedMRVCells(GetAffectedCells(affectedCells));
+                        _mrvArray.InsertAffectedMRVCells(affectedCells);
                         if (Solve())
                         {
                             return true;
                         }
                         // remove old MRV cells
-                        _mrvArray.RemoveAffectedMRVCells(GetAffectedCells(affectedCells));
-                        // got false from backtracking need to reset the board
+                        _mrvArray.RemoveAffectedMRVCells(affectedCells);
+                        // reset the board
                         ResetState(affectedCells, row, col, potentialValue);
                     }
-                  
                 }
             }
             return false;
         }
 
-        public bool IsEmptyArray((int, int) rowColTuple)
-        {
-            if (rowColTuple.Item1 == -1 && rowColTuple.Item2 == -1)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private List<BoardCell> GetAffectedCells(List<(int, int)> affectedCells)
-        {
-
-            List<BoardCell> affectedBoardCells = new List<BoardCell>();
-            foreach ((int row1, int col1) in affectedCells)
-            {
-                // remove the cell from the mrv array
-                affectedBoardCells.Add(_board[row1, col1]);
-
-            }
-            return affectedBoardCells;
-        }
-
-        private void ResetState(List<(int, int)> affectedCells, int row, int col, int potentialValue)
+        /// <summary>
+        /// This func resets the game board after a failed backtracking attempt
+        /// </summary>
+        /// <param name="affectedCells"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="potentialValue"></param>
+        private void ResetState(List<BoardCell> affectedCells, int row, int col, int potentialValue)
         {
             _board[row, col].CellValue = 0;
             _logicHandler.IncreasePossibilites(affectedCells, potentialValue);
-            _mrvArray.InsertAffectedMRVCells(GetAffectedCells(affectedCells));
+            _mrvArray.InsertAffectedMRVCells(affectedCells);
             // insert the current cell
             _mrvArray.InsertCell(_board[row, col]);
 
