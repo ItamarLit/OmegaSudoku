@@ -76,10 +76,10 @@ namespace OmegaSudoku.GameLogic
             return Possibilites[value] != 0;
         }
 
-        public List<int> GetPossibilites()
+        public HashSet<int> GetPossibilites()
         {
             // This func gets all the values the cell can be
-            List<int> potientialValues = new List<int>();
+            HashSet<int> potientialValues = new HashSet<int>();
             for(int i = 1; i < Possibilites.Length; i++)
             {
                 if (Possibilites[i] != 0)
