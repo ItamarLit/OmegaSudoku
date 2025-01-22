@@ -91,5 +91,10 @@ namespace OmegaSudoku.GameLogic
             }
             return false;
         }
+
+        public bool HasSinglePossibiltyCell()
+        {
+            return MRVPossibilitiesDict[1].Count > 0;
+        }
     }
 }

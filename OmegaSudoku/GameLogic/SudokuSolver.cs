@@ -46,6 +46,8 @@ namespace OmegaSudoku.GameLogic
                 // if there are no more cells to fill the sudoku is solved
                 return true;
             }
+            // attempt to fill cells with one possibility
+            SolveSinglePossibilityCells();
             HashSet<int> possibilites = _board[row, col].GetPossibilites();
             if (possibilites.Count > 0)
             {
@@ -54,11 +56,12 @@ namespace OmegaSudoku.GameLogic
                     StateChange currentState = new StateChange();
                     if (TrySolveCell(potentialValue, row, col, currentState))
                     {
-
                         return true;
                     }
                 }
             }
+            // reset the single possibility cells
+            ResetCellsUsingStack();
             return false;
         }
 
@@ -90,63 +93,19 @@ namespace OmegaSudoku.GameLogic
             return false;
         }
         
-        public void SetSinglePossibilityCells()
+        public void SolveSinglePossibilityCells()
         {
-
+            StateChange currentState = new StateChange();
+            while (_mrvDict.HasSinglePossibiltyCell())
+            {
+                (int row, int col) = _mrvDict.GetLowestPossibilityCell();
+                int potentialValue = _board[row, col].GetPossibilites().First();
+                _board[row, col].CellValue = potentialValue;
+                currentState.CellValueChanges.Add((row, col, 0));
+                _mrvDict.RemoveCell(_board[row, col]);
+            }
+            _stateChangesStack.Push(currentState);
         }
-
-        //public bool Solve()
-        //{
-        //    // get the lowest possibility cell
-        //    (int row, int col) = _mrvDict.GetLowestPossibilityCell();
-        //    if (_mrvDict.IsEmptyMap((row, col)))
-        //    {
-        //        // if there are no more cells to fill the sudoku is solved
-        //        return true;
-        //    }
-        //    HashSet<int> possibilites = _board[row, col].GetPossibilites();
-        //    if (possibilites.Count > 0)
-        //    {
-        //        // go over all the potential values
-        //        foreach (int potentialValue in possibilites)
-        //        {
-        //            StateChange currentState = new StateChange();
-        //            currentState.CellValueChanges.Add((row, col, 0));
-        //            _board[row, col].CellValue = potentialValue;
-        //            // save the affected cell positions incase the attempt is wrong
-        //            HashSet<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
-        //            SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
-        //            // remove the possibilites
-        //            _mrvDict.UpdateMRVCells(affectedCells, false);
-        //            // remove the current cell
-        //            _mrvDict.RemoveCell(_board[row, col]);
-        //            _logicHandler.DecreasePossibilites(affectedCells, potentialValue);
-                    
-        //            _stateChangesStack.Push(currentState);
-
-        //            // call hidden singles check here
-        //            if (_logicHandler.IsInvalidUpdate(affectedCells))
-        //            {
-        //                // reset the array and add back possibilites
-        //                ResetState(affectedCells, row, col, potentialValue);
-        //            }
-        //            else
-        //            {
-        //                _mrvDict.UpdateMRVCells(affectedCells, true);
-        //                if (Solve())
-        //                {
-        //                    return true;
-        //                }
-        //                // remove old MRV cells
-        //                _mrvDict.UpdateMRVCells(affectedCells, false);
-        //                // reset the board
-        //                ResetState(affectedCells, row, col, potentialValue);
-                        
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //}
 
         public void DecreaseGamePossibilites(HashSet<BoardCell> affectedCells, int row, int col, int potentialValue)
         {
