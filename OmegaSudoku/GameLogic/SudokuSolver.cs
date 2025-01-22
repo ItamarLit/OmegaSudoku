@@ -13,16 +13,16 @@ namespace OmegaSudoku.GameLogic
 
         private readonly BoardCell[,] _board;
 
-        private readonly MrvArray _mrvArray;
+        private readonly Mrvdict _mrvDict;
 
         private readonly SudokuLogicHandler _logicHandler;
 
-        public SudokuSolver(BoardCell[,] gameBoard, MrvArray mrvInstance)
+        public SudokuSolver(BoardCell[,] gameBoard, Mrvdict mrvInstance)
         {
             _board = gameBoard;
-            _mrvArray = mrvInstance;
+            _mrvDict = mrvInstance;
             // create the game logic handler
-            _logicHandler = new SudokuLogicHandler(_board, _mrvArray);
+            _logicHandler = new SudokuLogicHandler(_board, _mrvDict);
             // set up the board
             _logicHandler.CheckInitalBoard();
             _logicHandler.SetInitailBoardPossibilites();
@@ -37,8 +37,8 @@ namespace OmegaSudoku.GameLogic
         public bool Solve()
         {
             // get the lowest possibility cell
-            (int row, int col) = _mrvArray.GetLowestPossibilityCell();
-            if (_mrvArray.IsEmptyArray((row, col)))
+            (int row, int col) = _mrvDict.GetLowestPossibilityCell();
+            if (_mrvDict.IsEmptyMap((row, col)))
             {
                 // if there are no more cells to fill the sudoku is solved
                 return true;
@@ -54,9 +54,9 @@ namespace OmegaSudoku.GameLogic
                     // save the affected cell positions incase the attempt is wrong
                     HashSet<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
                     // remove the possibilites
-                    _mrvArray.RemoveAffectedMRVCells(affectedCells);
+                    _mrvDict.UpdateMRVCells(affectedCells, false);
                     // remove the current cell
-                    _mrvArray.RemoveCell(_board[row, col]);
+                    _mrvDict.RemoveCell(_board[row, col]);
                     _logicHandler.DecreasePossibilites(affectedCells, potentialValue);
                     if (_logicHandler.IsInvalidUpdate(affectedCells))
                     {
@@ -65,13 +65,13 @@ namespace OmegaSudoku.GameLogic
                     }
                     else
                     {
-                        _mrvArray.InsertAffectedMRVCells(affectedCells);
+                        _mrvDict.UpdateMRVCells(affectedCells, true);
                         if (Solve())
                         {
                             return true;
                         }
                         // remove old MRV cells
-                        _mrvArray.RemoveAffectedMRVCells(affectedCells);
+                        _mrvDict.UpdateMRVCells(affectedCells, false);
                         // reset the board
                         ResetState(affectedCells, row, col, potentialValue);
                     }
@@ -91,9 +91,9 @@ namespace OmegaSudoku.GameLogic
         {
             _board[row, col].CellValue = 0;
             _logicHandler.IncreasePossibilites(affectedCells, potentialValue);
-            _mrvArray.InsertAffectedMRVCells(affectedCells);
+            _mrvDict.UpdateMRVCells(affectedCells, true);
             // insert the current cell
-            _mrvArray.InsertCell(_board[row, col]);
+            _mrvDict.InsertCell(_board[row, col]);
 
         }
 

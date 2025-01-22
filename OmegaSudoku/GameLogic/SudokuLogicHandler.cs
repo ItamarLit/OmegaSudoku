@@ -14,12 +14,12 @@ namespace OmegaSudoku.GameLogic
         // hold the board as private
         private readonly BoardCell[,] _gameBoard;
         // mrvArray instance
-        private readonly MrvArray _mrvArray;
+        private readonly Mrvdict _mrvDict;
 
-        public SudokuLogicHandler(BoardCell[,] board, MrvArray mrvInstance)
+        public SudokuLogicHandler(BoardCell[,] board, Mrvdict mrvInstance)
         {
             _gameBoard = board;
-            _mrvArray = mrvInstance;
+            _mrvDict = mrvInstance;
         }
 
         /// <summary>
@@ -46,7 +46,8 @@ namespace OmegaSudoku.GameLogic
         public void SetInitailBoardPossibilites()
         {
             // set the board possibilites
-            foreach ((int cellX, int cellY) in GetAllBoardCells())
+            HashSet<(int, int)> boardCells = GetAllBoardCells();
+            foreach ((int cellX, int cellY) in boardCells)
             {
                 // check if the cell in the cube has the same value of the checked cell
                 if (GetCellValue(cellX, cellY) != 0)
@@ -56,20 +57,20 @@ namespace OmegaSudoku.GameLogic
                 }
             }
             // after setting the board up we can mrv array
-            foreach ((int cellX, int cellY) in GetAllBoardCells())
+            foreach ((int cellX, int cellY) in boardCells)
             {
                 if (GetCellValue(cellX, cellY) == 0)
                 {
                     // insert the cell into the array
-                    _mrvArray.InsertCell(_gameBoard[cellX, cellY]);
+                    _mrvDict.InsertCell(_gameBoard[cellX, cellY]);
                 }
             }
         }
 
-        private List<(int, int)> GetAllBoardCells()
+        private HashSet<(int, int)> GetAllBoardCells()
         {
             // this func will return a list of tuples of row, col positions of all cells on the board
-            List<(int, int)> boardCells = new List<(int, int)>();
+            HashSet<(int, int)> boardCells = new HashSet<(int, int)>();
             for (int row = 0; row < _gameBoard.GetLength(0); row++)
             {
                 for (int col = 0; col < _gameBoard.GetLength(1); col++) 
@@ -85,10 +86,10 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="rowLvl"></param>
         /// <returns>A list of tuples of row, col positions of a row</returns>
-        private List<(int, int)> GetRowCells(int rowLvl)
+        private HashSet<(int, int)> GetRowCells(int rowLvl)
         {
             // this func will return a list of tuples of row, col positions inside a row
-            List<(int, int)> rowCells = new List<(int, int)>();
+            HashSet<(int, int)> rowCells = new HashSet<(int, int)>();
             for (int i = 0; i < _gameBoard.GetLength(1); i++)
             {
                 rowCells.Add((rowLvl, i));
@@ -96,10 +97,10 @@ namespace OmegaSudoku.GameLogic
             return rowCells;
         }
 
-        private List<(int, int)> GetColumnCells(int columnNum)
+        private HashSet<(int, int)> GetColumnCells(int columnNum)
         {
             // this func will return a list of tuples of row, col positions inside a column
-            List<(int, int)> columnCells = new List<(int, int)>();
+            HashSet<(int, int)> columnCells = new HashSet<(int, int)>();
             for (int i = 0; i < _gameBoard.GetLength(0); i++)
             {
                 columnCells.Add((i , columnNum));
@@ -107,7 +108,7 @@ namespace OmegaSudoku.GameLogic
             return columnCells; 
         }
 
-        private List<(int, int)> GetCubeCells(int rowPos, int colPos)
+        private HashSet<(int, int)> GetCubeCells(int rowPos, int colPos)
         {
             // this func will return a list of tuples of row, col positons inside a cube
             // cube size is root of the board width / length
@@ -116,7 +117,7 @@ namespace OmegaSudoku.GameLogic
             int cubeCol = (colPos / cubeSize) * cubeSize;
             int cubeRow = (rowPos / cubeSize) * cubeSize;
 
-            List<(int, int)> cubeCells = new List<(int, int)>();
+            HashSet<(int, int)> cubeCells = new HashSet<(int, int)>();
             for (int rowAdd = 0; rowAdd < cubeSize; rowAdd++)
             {
                 for (int colAdd = 0; colAdd < cubeSize; colAdd++)
@@ -150,7 +151,7 @@ namespace OmegaSudoku.GameLogic
         private bool IsValidRow(int rowLvl, int cellValue)
         {
             // func that returns if a row is valid
-            List<(int, int)> rowCells = GetRowCells(rowLvl);
+            HashSet<(int, int)> rowCells = GetRowCells(rowLvl);
             return CheckForDoubles(rowCells, cellValue);
 
         }
@@ -158,18 +159,18 @@ namespace OmegaSudoku.GameLogic
         private bool IsValidCol(int colNum, int cellValue)
         {
             // func that returns if a col is valid
-            List<(int, int)> colCells = GetColumnCells(colNum);
+            HashSet<(int, int)> colCells = GetColumnCells(colNum);
             return CheckForDoubles(colCells, cellValue);
         }
 
         private bool IsValidCube(int rowPos, int colPos, int cellValue)
         {
             // func that returns if a cube is valid
-            List<(int, int)> cubeCells = GetCubeCells(rowPos, colPos);
+            HashSet<(int, int)> cubeCells = GetCubeCells(rowPos, colPos);
             return CheckForDoubles(cubeCells, cellValue);
         }
 
-        private bool CheckForDoubles(List<(int, int)> cells, int cellValue)
+        private bool CheckForDoubles(HashSet<(int, int)> cells, int cellValue)
         {
             // this func is used to check for illegal double cell values in a cell list
             int counter = 0;
@@ -186,16 +187,17 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func returns a list of unit cells including the cell at row, col
+        /// This func returns a hashset of unit cells including the cell at row, col
         /// </summary>
         /// <param name="rowPos"></param>
         /// <param name="colPos"></param>
         /// <returns>List of tuples of unit cells</returns>
-        public List<(int, int)> GetUnitCellsPos(int rowPos, int colPos)
+        public HashSet<(int, int)> GetUnitCellsPos(int rowPos, int colPos)
         {
-            // combine all the unit cells using union to get rid of duplicates
-            List<(int, int)> unitCells = new List<(int, int)>();
-            unitCells = GetRowCells(rowPos).Union(GetColumnCells(colPos)).Union(GetCubeCells(rowPos, colPos)).ToList();
+            // combine all the unit cells into one hashset
+            HashSet<(int, int)> unitCells = GetRowCells(rowPos);
+            unitCells.UnionWith(GetColumnCells(colPos));
+            unitCells.UnionWith(GetCubeCells(rowPos, colPos));
             return unitCells;
         }
 
@@ -234,7 +236,7 @@ namespace OmegaSudoku.GameLogic
         {
             // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
             // the cell at row, col is not in the list
-            List<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
+            HashSet<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
             HashSet<BoardCell> filteredCells = new HashSet<BoardCell>();
             foreach ((int, int) unitCellTuple in unitCells) 
             {

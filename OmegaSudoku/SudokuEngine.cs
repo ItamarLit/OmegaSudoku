@@ -14,8 +14,8 @@ namespace OmegaSudoku
             Console.WriteLine("Hi welcome to the amazing sudoku engine, enter any 9x9 board, to exit the engine write: EXIT");
             while (!endRunFlag) 
             {
-                try
-                {   
+                //try
+                //{   
                     OutputHandler.RequestBoard();
                     InputHandler.GetUserInput();
                     DateTime start = DateTime.Now;
@@ -27,7 +27,7 @@ namespace OmegaSudoku
                     {
                         BoardCell[,] board = InputHandler.SetUpBoard();
                         OutputHandler.PrintBoard(board);
-                        MrvArray mrvArray = new MrvArray(board.GetLength(0));
+                        Mrvdict mrvArray = new Mrvdict(board.GetLength(0));
                         SudokuSolver solver = new SudokuSolver(board, mrvArray);
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         if (solver.Solve())
@@ -44,12 +44,12 @@ namespace OmegaSudoku
                         TimeSpan elapsed = end - start;
                         OutputHandler.ShowProgramRuntime(elapsed);
                     }
-                }
-                // The only excptions that can occur are mine so i can catch Exception
-                catch (Exception e) 
-                {
-                    OutputHandler.OutputError(e.Message);
-                }
+                //}
+                //// The only excptions that can occur are mine so i can catch Exception
+                //catch (Exception e) 
+                //{
+                //    OutputHandler.OutputError(e.Message);
+                //}
                
             }
         }

@@ -37,8 +37,7 @@ namespace OmegaSudoku.IO
                 throw new BoardInfoException();
             }
             // check sudoku rules for valid board
-            int boardSize = (int)Math.Sqrt((double)_input.Length);
-            if (boardSize != VALID_SUDOKU_SIZE)
+            if (Math.Sqrt((double)_input.Length) != VALID_SUDOKU_SIZE)
             {
                 // Throw invalid board size exception
                 throw new BoardSizeException(_input.Length);
