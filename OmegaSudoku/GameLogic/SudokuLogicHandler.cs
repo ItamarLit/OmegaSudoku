@@ -170,7 +170,7 @@ namespace OmegaSudoku.GameLogic
             return CheckForDoubles(cubeCells, cellValue);
         }
 
-        private bool CheckForDoubles(HashSet<(int, int)> cells, int cellValue)
+        private bool CheckForDoubles(IEnumerable<(int, int)> cells, int cellValue)
         {
             // this func is used to check for illegal double cell values in a cell list
             int counter = 0;
@@ -201,7 +201,7 @@ namespace OmegaSudoku.GameLogic
             return unitCells;
         }
 
-        public void DecreasePossibilites(HashSet<BoardCell> affectedUnitCells, int valueToRemove)
+        public void DecreasePossibilites(IEnumerable<BoardCell> affectedUnitCells, int valueToRemove)
         {
             // This func is used to reduce the board possibilites based on the current change
             foreach(BoardCell cell in affectedUnitCells)
@@ -210,18 +210,6 @@ namespace OmegaSudoku.GameLogic
                 int cellCol = cell.CellCol;
                 // attempt to remove the value
                 _gameBoard[cellRow, cellCol].DecreasePossibility(valueToRemove);
-            }
-        }
-
-        public void IncreasePossibilites(HashSet<BoardCell> affectedUnitCells, int valueToReturn)
-        {
-            // This func is used to increase the board possibilites based on the current change
-            foreach (BoardCell cell in affectedUnitCells)
-            {
-                int cellRow = cell.CellRow;
-                int cellCol = cell.CellCol;
-                // attempt to remove the value
-                _gameBoard[cellRow, cellCol].IncreasePossibility(valueToReturn);
             }
         }
 
@@ -255,12 +243,12 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="affectedCells"></param>
         /// <returns>true if the update is invalid else false</returns>
-        public bool IsInvalidUpdate(HashSet<BoardCell> affectedCells)
+        public bool IsInvalidUpdate(IEnumerable<BoardCell> affectedCells)
         {
             // This func is used to check the board after every update to look for illegal cells ( no possibilites and no value)
             foreach (BoardCell cell in affectedCells)
             {
-                if (_gameBoard[cell.CellRow, cell.CellCol].GetPossibilites().Count == 0 && _gameBoard[cell.CellRow, cell.CellCol].CellValue == 0)
+                if (_gameBoard[cell.CellRow, cell.CellCol].GetPossibilites().Count() == 0 && _gameBoard[cell.CellRow, cell.CellCol].CellValue == 0)
                 {
                     return true;
                 }

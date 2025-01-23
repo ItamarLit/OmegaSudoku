@@ -64,7 +64,7 @@ namespace OmegaSudoku.GameLogic
             return (-1, -1);
         }
 
-        public void UpdateMRVCells(HashSet<BoardCell> affectedCells, bool isInsert)
+        public void UpdateMRVCells(IEnumerable<BoardCell> affectedCells, bool isInsert)
         {
             foreach (BoardCell cell in affectedCells)
             {

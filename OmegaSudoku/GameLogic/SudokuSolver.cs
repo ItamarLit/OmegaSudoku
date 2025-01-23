@@ -19,7 +19,6 @@ namespace OmegaSudoku.GameLogic
 
         private readonly Stack<StateChange> _stateChangesStack;
 
-        public static int depth = 0;
         public SudokuSolver(BoardCell[,] gameBoard, Mrvdict mrvInstance)
         {
             _board = gameBoard;
@@ -134,7 +133,7 @@ namespace OmegaSudoku.GameLogic
             return singleCellsAddedCount;
         }
 
-        public void DecreaseGamePossibilites(HashSet<BoardCell> affectedCells, int row, int col, int potentialValue)
+        public void DecreaseGamePossibilites(IEnumerable<BoardCell> affectedCells, int row, int col, int potentialValue)
         {
             // remove the possibilites
             _mrvDict.UpdateMRVCells(affectedCells, false);
@@ -143,7 +142,7 @@ namespace OmegaSudoku.GameLogic
             _logicHandler.DecreasePossibilites(affectedCells, potentialValue);
         }
 
-        private void Backtrack(HashSet<BoardCell> affectedCells, int row, int col, int potentialValue)
+        private void Backtrack(IEnumerable<BoardCell> affectedCells, int row, int col, int potentialValue)
         {
             _mrvDict.UpdateMRVCells(affectedCells, false);
             ResetState(row, col, potentialValue);
@@ -160,10 +159,8 @@ namespace OmegaSudoku.GameLogic
         {
             HashSet<BoardCell> affectedCells = ResetCellsUsingStack();
             _mrvDict.UpdateMRVCells(affectedCells, true);
-            // insert the current cell
-            //_mrvDict.InsertCell(_board[row, col]);
-
         }
+
         private HashSet<BoardCell> ResetCellsUsingStack()
         {
             StateChange oldState = _stateChangesStack.Pop();
@@ -189,7 +186,7 @@ namespace OmegaSudoku.GameLogic
             return changedCells; 
         }
         
-        private void SetAffectedCellsInStack(StateChange currentState, HashSet<BoardCell> affectedCells, int removedPossibility)
+        private void SetAffectedCellsInStack(StateChange currentState, IEnumerable<BoardCell> affectedCells, int removedPossibility)
         {
             foreach (BoardCell cell in affectedCells)
             {
