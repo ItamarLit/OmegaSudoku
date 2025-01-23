@@ -16,6 +16,7 @@ namespace OmegaSudoku
             {
                 try
                 {
+                    SudokuSolver.depth = 0;
                     OutputHandler.RequestBoard();
                     InputHandler.GetUserInput();
                     if (!InputHandler.CheckInput())
@@ -39,15 +40,16 @@ namespace OmegaSudoku
                         }
                         stopwatch.Stop();
                         OutputHandler.ShowProgramRuntime(stopwatch.ElapsedMilliseconds);
+                        Console.WriteLine($"Depth: {SudokuSolver.depth}");
                     }
                 }
-                // The only excptions that can occur are mine so i can catch Exception
-                catch (Exception e)
-                {
+                    //The only excptions that can occur are mine so i can catch Exception
+                    catch (Exception e)
+                    {
                     OutputHandler.OutputError(e.Message);
                 }
 
-            }
+        }
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.GameLogic
 {
-    class BoardCell
+    public class BoardCell
     {
         /// <summary>
         /// This is the class used to store data of a cell

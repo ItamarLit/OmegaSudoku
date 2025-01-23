@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using OmegaSudoku.GameLogic.Heurisitcs;
 
 namespace OmegaSudoku.GameLogic
 {
-    class SudokuSolver
+    public class SudokuSolver
     {
         /// <summary>
         /// This class holds the main solve func that is used to attempt to solve the board and other helper funcs
@@ -18,6 +18,8 @@ namespace OmegaSudoku.GameLogic
         private readonly SudokuLogicHandler _logicHandler;
 
         private readonly Stack<StateChange> _stateChangesStack;
+
+        public static int depth = 0;
 
         public SudokuSolver(BoardCell[,] gameBoard, Mrvdict mrvInstance)
         {
@@ -40,6 +42,7 @@ namespace OmegaSudoku.GameLogic
         /// 
         public bool Solve()
         {
+            depth++;
             // attempt to fill cells with one possibility
             int addedSingles = SolveSinglePossibilityCells();
             if (addedSingles == -1)
@@ -93,11 +96,16 @@ namespace OmegaSudoku.GameLogic
             }
             // Insert the affected cells back into the mrv array
             _mrvDict.UpdateMRVCells(affectedCells, true);
-            if (Solve())
+            // apply heuristics on cells
+            StateChange currentStateFromStack = _stateChangesStack.Pop();
+            HiddenSinglesUtil.ApplyHiddenSingles(currentStateFromStack, row, col, _board, _logicHandler, _mrvDict);
+            // repush the state after handling heuristics
+            _stateChangesStack.Push(currentState);
+            if (Solve())    
             {
                 return true;
             }
-            Backtrack(affectedCells, row, col, potentialValue);
+            ResetState(row, col, potentialValue);
             return false;
         }
         
@@ -142,11 +150,6 @@ namespace OmegaSudoku.GameLogic
             _logicHandler.DecreasePossibilites(affectedCells, potentialValue);
         }
 
-        private void Backtrack(IEnumerable<BoardCell> affectedCells, int row, int col, int potentialValue)
-        {
-            _mrvDict.UpdateMRVCells(affectedCells, false);
-            ResetState(row, col, potentialValue);
-        }
 
         /// <summary>
         /// This func resets the game board after a failed backtracking attempt

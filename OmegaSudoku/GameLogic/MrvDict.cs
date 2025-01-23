@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace OmegaSudoku.GameLogic
 {
-    class Mrvdict
+    public class Mrvdict
     {
         /// <summary>
         /// This class holds the mrv dict that is used to get the cell with the minimum amount of possibilites in it

@@ -5,7 +5,7 @@ using OmegaSudoku.Exceptions;
 
 namespace OmegaSudoku.GameLogic
 {
-    class SudokuLogicHandler
+    public class SudokuLogicHandler
     {
         /// <summary>
         /// This class will control all the game logic, including checks of the board and setting up the board
@@ -86,7 +86,7 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="rowLvl"></param>
         /// <returns>A list of tuples of row, col positions of a row</returns>
-        private HashSet<(int, int)> GetRowCells(int rowLvl)
+        public HashSet<(int, int)> GetRowCells(int rowLvl)
         {
             // this func will return a list of tuples of row, col positions inside a row
             HashSet<(int, int)> rowCells = new HashSet<(int, int)>();
@@ -97,7 +97,7 @@ namespace OmegaSudoku.GameLogic
             return rowCells;
         }
 
-        private HashSet<(int, int)> GetColumnCells(int columnNum)
+        public HashSet<(int, int)> GetColumnCells(int columnNum)
         {
             // this func will return a list of tuples of row, col positions inside a column
             HashSet<(int, int)> columnCells = new HashSet<(int, int)>();
@@ -108,7 +108,7 @@ namespace OmegaSudoku.GameLogic
             return columnCells; 
         }
 
-        private HashSet<(int, int)> GetCubeCells(int rowPos, int colPos)
+        public HashSet<(int, int)> GetCubeCells(int rowPos, int colPos)
         {
             // this func will return a list of tuples of row, col positons inside a cube
             // cube size is root of the board width / length
