@@ -8,7 +8,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 {
     public class HeurisitcUtils
     {
-        public static Dictionary<int, HashSet<(int, int)>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, HashSet<(int, int)> unitCells)
+        public static Dictionary<int, HashSet<(int, int)>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
         {
             Dictionary<int, HashSet<(int, int)>> possibilityDict = new Dictionary<int, HashSet<(int, int)>>();
             foreach ((int unitRow, int unitCol) in unitCells)
@@ -30,8 +30,25 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 
             }
             return possibilityDict;
+        }
 
 
+        public static HashSet<BoardCell> GetPairPossibilityCells(int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
+        {
+            HashSet<BoardCell> pairPossibilityCells = new HashSet<BoardCell>();
+            foreach ((int unitRow, int unitCol) in unitCells)
+            {
+                BoardCell currentCell = board[unitRow, unitCol];
+                if (!(unitRow == row && unitCol == col) && currentCell.CellValue == 0)
+                {
+                    if(currentCell.GetPossibilites().Count == 2)
+                    {
+                        pairPossibilityCells.Add(currentCell);
+                    }
+                }
+
+            }
+            return pairPossibilityCells;
         }
     }
 }
