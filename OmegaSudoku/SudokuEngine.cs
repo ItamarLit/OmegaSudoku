@@ -16,7 +16,6 @@ namespace OmegaSudoku
             {
                 try
                 {
-                    SudokuSolver.depth = 0;
                     OutputHandler.RequestBoard();
                     InputHandler.GetUserInput();
                     if (!InputHandler.CheckInput())
@@ -39,7 +38,7 @@ namespace OmegaSudoku
                             OutputHandler.ShowImpossibleBoardMsg();
                         }
                         stopwatch.Stop();
-                        Console.WriteLine($"Solver runtime: {stopwatch.ElapsedMilliseconds} ms");
+                        OutputHandler.ShowProgramRuntime(stopwatch.ElapsedMilliseconds);
                     }
                 }
                 // The only excptions that can occur are mine so i can catch Exception

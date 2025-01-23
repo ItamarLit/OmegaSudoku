@@ -21,9 +21,9 @@ namespace OmegaSudoku.IO
             Console.WriteLine("The entered board is impossible to solve");
         }
 
-        public static void ShowProgramRuntime(TimeSpan elapsedTime)
+        public static void ShowProgramRuntime(long elapsedTime)
         {
-            Console.WriteLine($"The program ran for: {elapsedTime.Milliseconds} milliseconds");
+            Console.WriteLine($"The program ran for: {elapsedTime} milliseconds");
         }
 
         public static void OutputError(string msg)
@@ -54,28 +54,5 @@ namespace OmegaSudoku.IO
             }
         }
 
-        public static void PrintBoardPossibilites(BoardCell[,] board)
-        {
-            // used for debugging
-            Console.WriteLine("Board Possibilites count:");
-            Console.WriteLine("-------------");
-            for (int i = 0; i < board.GetLength(0); i++)
-            {
-                for (int j = 0; j < board.GetLength(1); j++)
-                {
-                    if (j % 3 == 0)
-                    {
-                        Console.Write("|");
-                    }
-                    Console.Write(board[i, j].NumberOfPossibilites());
-                }
-                Console.Write("|");
-                Console.WriteLine();
-                if ((i + 1) % 3 == 0)
-                {
-                    Console.WriteLine("-------------");
-                }
-            }
-        }
     }
 }
