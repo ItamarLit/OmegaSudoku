@@ -30,7 +30,10 @@ namespace OmegaSudoku.GameLogic
         public void RemoveCell(BoardCell cell)
         {
             int possibilitesNum = cell.NumberOfPossibilites();
-            MRVPossibilitiesDict[possibilitesNum].Remove((cell.CellRow, cell.CellCol));    
+            if(possibilitesNum > 0)
+            {
+                MRVPossibilitiesDict[possibilitesNum].Remove((cell.CellRow, cell.CellCol));
+            }
         }
 
         /// <summary>
