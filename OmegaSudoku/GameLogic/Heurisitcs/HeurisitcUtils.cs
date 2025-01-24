@@ -13,6 +13,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             Dictionary<int, HashSet<(int, int)>> possibilityDict = new Dictionary<int, HashSet<(int, int)>>();
             foreach ((int unitRow, int unitCol) in unitCells)
             {
+                // skip filled cells and the current cell pos
                 if (!(unitRow == row && unitCol == col) && board[unitRow, unitCol].CellValue == 0)
                 {
                     HashSet<int> possibilities = board[unitRow, unitCol].GetPossibilites();
@@ -23,7 +24,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                         {
                             possibilityDict[value] = new HashSet<(int, int)>();
                         }
-
+                        // add the cell to the dict
                         possibilityDict[value].Add((unitRow, unitCol));
                     }
                 }
@@ -39,6 +40,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             foreach ((int unitRow, int unitCol) in unitCells)
             {
                 BoardCell currentCell = board[unitRow, unitCol];
+                // skip the filled cells and the current cell
                 if (!(unitRow == row && unitCol == col) && currentCell.CellValue == 0)
                 {
                     if(currentCell.GetPossibilites().Count == 2)

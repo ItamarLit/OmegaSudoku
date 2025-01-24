@@ -90,13 +90,12 @@ namespace OmegaSudoku.GameLogic
             StateChange currentState = new StateChange();
             bool metError = false;
             bool madeProgress = true;
-            
             while (!metError && madeProgress)
             {
                 int currentValueChanges = currentState.CellValueChanges.Count;
                 int currentPossiblityChanges = currentState.CellPossibilityChanges.Count;
                 // attempt to apply naked singles
-                int addedHiddenSingles = SolveSinglePossibilityCells(currentState);
+                int addedHiddenSingles = NakedSingleUtil.SolveSinglePossibilityCells(currentState, _board, _mrvDict, ref _lastUpdatedCell, _logicHandler);
                 if (addedHiddenSingles == -1)
                 {
                     metError = true;
@@ -137,38 +136,6 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func is used to place the naked singles on the board
-        /// </summary>
-        /// <param name="currentState"></param>
-        /// <returns></returns>
-        public int SolveSinglePossibilityCells(StateChange currentState)
-        {
-            int singleCellsAddedCount = 0;
-            // run while there are naked singles on the board
-            while (_mrvDict.HasSinglePossibiltyCell())
-            {
-                // get the row, col of the cell
-                (int row, int col) = _mrvDict.GetLowestPossibilityCell();
-                int potentialValue = _board[row, col].GetPossibilites().First();
-                currentState.CellValueChanges.Add((row, col, _board[row, col].CellValue));
-                _board[row, col].CellValue = potentialValue;
-                // remove the possibility
-                HashSet<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
-                SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
-                DecreaseGamePossibilites(affectedCells, row, col, potentialValue);
-                // check if the update was valid
-                if (_logicHandler.IsInvalidUpdate(affectedCells))
-                {
-                    return -1;
-                }
-                _lastUpdatedCell = (row, col);
-                _mrvDict.UpdateMRVCells(affectedCells, true);
-                singleCellsAddedCount++;
-            }
-            return singleCellsAddedCount;
-        }
-
-        /// <summary>
         /// This func attepts to solve the board by placing a value in a cell and recursivly calling the solve
         /// </summary>
         /// <param name="potentialValue"></param>
@@ -183,8 +150,8 @@ namespace OmegaSudoku.GameLogic
             _board[row, col].CellValue = potentialValue;
             // save the affected cell positions incase the attempt is wrong
             HashSet<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
-            SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
-            DecreaseGamePossibilites(affectedCells, row, col, potentialValue);
+            SolverUtils.SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
+            SolverUtils.DecreaseGamePossibilites(affectedCells, row, col, potentialValue, _mrvDict, _logicHandler, _board);
             // save the current state
             _stateChangesStack.Push(currentState);
 
@@ -205,24 +172,6 @@ namespace OmegaSudoku.GameLogic
             ResetState();
             return false;
         }
-
-
-        /// <summary>
-        /// This func is used to remove possiblites from the board after choosing a value to place in a cell
-        /// </summary>
-        /// <param name="affectedCells"></param>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <param name="potentialValue"></param>
-        public void DecreaseGamePossibilites(IEnumerable<BoardCell> affectedCells, int row, int col, int potentialValue)
-        {
-            // remove the possibilites
-            _mrvDict.UpdateMRVCells(affectedCells, false);
-            // remove the current cell
-            _mrvDict.RemoveCell(_board[row, col]);
-            _logicHandler.DecreasePossibilites(affectedCells, potentialValue);
-        }
-
 
         /// <summary>
         /// This func resets the game board after a failed backtracking attempt
@@ -264,21 +213,5 @@ namespace OmegaSudoku.GameLogic
             }
             return changedCells;
         }
-
-        /// <summary>
-        /// This func sets the changed cells and there possiblities in the stack
-        /// </summary>
-        /// <param name="currentState"></param>
-        /// <param name="affectedCells"></param>
-        /// <param name="removedPossibility"></param>
-        private void SetAffectedCellsInStack(StateChange currentState, IEnumerable<BoardCell> affectedCells, int removedPossibility)
-        {
-            foreach (BoardCell cell in affectedCells)
-            {
-                currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, removedPossibility));
-            }
-        }
-
-
     }
 }
