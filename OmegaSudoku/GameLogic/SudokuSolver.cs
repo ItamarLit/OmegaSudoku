@@ -79,12 +79,14 @@ namespace OmegaSudoku.GameLogic
             return false;
         }
 
-        
+
         /// <summary>
         /// This func applys the different heuristics to the board
         /// 1. Naked singles
         /// 2. Hidden singles
-        /// 3. Naked pairs
+        /// 3. Hidden pairs
+        /// 4. Hidden triplets
+        /// 5. Naked pairs
         /// </summary>
         /// <returns></returns>
         public HeuristicResult ApplyHeuristics()
@@ -97,39 +99,58 @@ namespace OmegaSudoku.GameLogic
             {
                 int previousValueChanges = currentState.CellValueChanges.Count;
                 int previousPossibilityChanges = currentState.CellPossibilityChanges.Count;
-                // attempt to apply naked singles
-                int addedHiddenSingles = NakedSingleUtil.SolveSinglePossibilityCells(currentState, _board, _mrvDict, ref _lastUpdatedCell, _logicHandler);
-                if (addedHiddenSingles == -1)
+                // attempt to apply naked singles first
+                bool addedHiddenSingles = NakedSingleUtil.SolveSinglePossibilityCells(currentState, _board, _mrvDict, ref _lastUpdatedCell, _logicHandler);
+                if (!addedHiddenSingles)
                 {
                     // invalid board after naked singles
                     metError = true;
+                    break;
                 }
-                if (_lastUpdatedCell != null && !metError)
+                if (_lastUpdatedCell != null)
                 {
                     int lastUpdatedRow = _lastUpdatedCell.Value.Item1;
                     int lastUpdatedCol = _lastUpdatedCell.Value.Item2;
-                    // apply hidden singles
-                    HiddenSinglesUtil.ApplyHiddenSingles(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict);
-                    // apply naked pairs
-                    bool wasValid = NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict);
-                    if (!wasValid)
+                    // attempt to apply hidden singles
+                    if(!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
                     {
                         // invalid board
                         metError = true;
+                        break;
                     }
+                    // apply hidden pairs
+                    if(!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
+                    {
+                        // invalid board
+                        metError = true;
+                        break;
+                    }
+                    // after applying hidden pairs apply naked pairs to remove the possiblites
+                    if(!NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
+                    {
+                        // invalid board
+                        metError = true;
+                        break;
+                    }
+                    // apply hidden triplets only if no progress made
+                    if (!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 3))
+                    {
+                        metError = true;
+                        break;
+                    }
+
                 }
                 // check if the heuristics did anything
-                madeProgress = currentState.CellValueChanges.Count > previousValueChanges || currentState.CellPossibilityChanges.Count > previousPossibilityChanges;
-
+                madeProgress = MadeProgress(previousValueChanges, previousPossibilityChanges, currentState);
             }
-            if(metError)
+            if (metError)
             {
                 // push the current state object and reset the board
                 _stateChangesStack.Push(currentState);
                 ResetState();
                 return HeuristicResult.InvalidState;
             }
-            if(currentState.CellValueChanges.Count > 0 || currentState.CellPossibilityChanges.Count > 0)
+            if (currentState.CellValueChanges.Count > 0 || currentState.CellPossibilityChanges.Count > 0)
             {
                 _stateChangesStack.Push(currentState);
                 // made progress
@@ -137,6 +158,11 @@ namespace OmegaSudoku.GameLogic
             }
             // no progress
             return HeuristicResult.NoChange;
+        }
+
+        private bool MadeProgress(int prevValChanges, int prevPossiblityChanges, StateChange currentState)
+        {
+            return currentState.CellValueChanges.Count > prevValChanges || currentState.CellPossibilityChanges.Count > prevPossiblityChanges;
         }
 
         /// <summary>

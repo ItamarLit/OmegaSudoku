@@ -12,9 +12,8 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// This class is used as a utilitly class that applys the naked singles heursitic
         /// </summary>
        
-        public static int SolveSinglePossibilityCells(StateChange currentState, BoardCell[,] board, Mrvdict mrvInstance, ref (int, int)? lastUpdatedCell, SudokuLogicHandler logicHandler)
+        public static bool SolveSinglePossibilityCells(StateChange currentState, BoardCell[,] board, Mrvdict mrvInstance, ref (int, int)? lastUpdatedCell, SudokuLogicHandler logicHandler)
         {
-            int singleCellsAddedCount = 0;
             // run while there are naked singles on the board
             while (mrvInstance.HasSinglePossibiltyCell())
             {
@@ -30,13 +29,12 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 // check if the update was valid
                 if (logicHandler.IsInvalidUpdate(affectedCells))
                 {
-                    return -1;
+                    return false;
                 }
                 lastUpdatedCell = (row, col);
                 mrvInstance.UpdateMRVCells(affectedCells, true);
-                singleCellsAddedCount++;
             }
-            return singleCellsAddedCount;
+            return true;
         }
     }
 }
