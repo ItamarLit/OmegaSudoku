@@ -8,6 +8,10 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 {
     public class NakedSingleUtil
     {
+        /// <summary>
+        /// This class is used as a utilitly class that applys the naked singles heursitic
+        /// </summary>
+       
         public static int SolveSinglePossibilityCells(StateChange currentState, BoardCell[,] board, Mrvdict mrvInstance, ref (int, int)? lastUpdatedCell, SudokuLogicHandler logicHandler)
         {
             int singleCellsAddedCount = 0;

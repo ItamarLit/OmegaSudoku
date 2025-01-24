@@ -9,6 +9,9 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 {
     public class NakedPairsUtil
     {
+        /// <summary>
+        /// This class is used as a utilitly class that applys the naked pairs heursitic
+        /// </summary>
         public static bool ApplyNakedPairs(StateChange currentState, int row, int col, BoardCell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // get the affected cells from the last change
@@ -16,7 +19,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             for (int i = 0; i < affectedUnitCells.Length; i++)
             {
                 // get all cells with 2 possiblites
-                HashSet<BoardCell> pairCells = HeurisitcUtils.GetPairPossibilityCells(row, col, board, affectedUnitCells[i]);
+                HashSet<BoardCell> pairCells = GetPairPossibilityCells(row, col, board, affectedUnitCells[i]);
                 HashSet<(BoardCell, BoardCell)> nakedPairCells = FindNakedPairs(pairCells);
                 if (nakedPairCells == null)
                 {
@@ -132,6 +135,24 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return firstCell.CellCol == secondCell.CellCol;
         }
 
+        private static HashSet<BoardCell> GetPairPossibilityCells(int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
+        {
+            HashSet<BoardCell> pairPossibilityCells = new HashSet<BoardCell>();
+            foreach ((int unitRow, int unitCol) in unitCells)
+            {
+                BoardCell currentCell = board[unitRow, unitCol];
+                // skip the filled cells and the current cell
+                if (!(unitRow == row && unitCol == col) && currentCell.CellValue == 0)
+                {
+                    if (currentCell.GetPossibilites().Count == 2)
+                    {
+                        pairPossibilityCells.Add(currentCell);
+                    }
+                }
+
+            }
+            return pairPossibilityCells;
+        }
     }
 }
     

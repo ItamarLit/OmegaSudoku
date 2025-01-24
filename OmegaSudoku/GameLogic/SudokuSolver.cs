@@ -46,9 +46,10 @@ namespace OmegaSudoku.GameLogic
         public bool Solve()
         {
             depth++;
-            int errorMet = ApplyHeuristics();
-            if(errorMet == -1)
+            HeuristicResult heuristicRes = ApplyHeuristics();
+            if(heuristicRes == HeuristicResult.InvalidState)
             {
+                // invalid board 
                 return false;
             }
             (int row, int col) = _mrvDict.GetLowestPossibilityCell();
@@ -70,7 +71,8 @@ namespace OmegaSudoku.GameLogic
                     }
                 }
             }
-            if(errorMet == 1)
+            // if the guess fails reset the board to before heuristics
+            if(heuristicRes == HeuristicResult.ProgressMade)
             {
                 ResetState();
             }
@@ -85,54 +87,56 @@ namespace OmegaSudoku.GameLogic
         /// 3. Naked pairs
         /// </summary>
         /// <returns></returns>
-        public int ApplyHeuristics()
+        public HeuristicResult ApplyHeuristics()
         {
             StateChange currentState = new StateChange();
             bool metError = false;
             bool madeProgress = true;
+            // run loop until i get an error or until i stop changing 
             while (!metError && madeProgress)
             {
-                int currentValueChanges = currentState.CellValueChanges.Count;
-                int currentPossiblityChanges = currentState.CellPossibilityChanges.Count;
+                int previousValueChanges = currentState.CellValueChanges.Count;
+                int previousPossibilityChanges = currentState.CellPossibilityChanges.Count;
                 // attempt to apply naked singles
                 int addedHiddenSingles = NakedSingleUtil.SolveSinglePossibilityCells(currentState, _board, _mrvDict, ref _lastUpdatedCell, _logicHandler);
                 if (addedHiddenSingles == -1)
                 {
+                    // invalid board after naked singles
                     metError = true;
-                    // need to push current state and pop it 
                 }
                 if (_lastUpdatedCell != null && !metError)
                 {
                     int lastUpdatedRow = _lastUpdatedCell.Value.Item1;
                     int lastUpdatedCol = _lastUpdatedCell.Value.Item2;
+                    // apply hidden singles
                     HiddenSinglesUtil.ApplyHiddenSingles(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict);
-                    // check if we were able to apply naked pairs
+                    // apply naked pairs
                     bool wasValid = NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict);
                     if (!wasValid)
                     {
+                        // invalid board
                         metError = true;
                     }
                 }
-                if(currentState.CellValueChanges.Count - currentValueChanges <= 0 && currentState.CellPossibilityChanges.Count - currentPossiblityChanges <= 0)
-                {
-                    break;
-                }
-                madeProgress = currentState.CellValueChanges.Count  > 0 || currentState.CellPossibilityChanges.Count  > 0;
+                // check if the heuristics did anything
+                madeProgress = currentState.CellValueChanges.Count > previousValueChanges || currentState.CellPossibilityChanges.Count > previousPossibilityChanges;
 
             }
             if(metError)
             {
-                // push the current state object
+                // push the current state object and reset the board
                 _stateChangesStack.Push(currentState);
                 ResetState();
-                return -1;
+                return HeuristicResult.InvalidState;
             }
-            else if(!metError && madeProgress && currentState.CellValueChanges.Count != 0 || currentState.CellPossibilityChanges.Count != 0)
+            if(currentState.CellValueChanges.Count > 0 || currentState.CellPossibilityChanges.Count > 0)
             {
                 _stateChangesStack.Push(currentState);
-                return 1;
+                // made progress
+                return HeuristicResult.ProgressMade;
             }
-            return 0;
+            // no progress
+            return HeuristicResult.NoChange;
         }
 
         /// <summary>

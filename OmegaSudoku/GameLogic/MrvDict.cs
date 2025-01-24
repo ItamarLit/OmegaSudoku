@@ -99,5 +99,7 @@ namespace OmegaSudoku.GameLogic
         {
             return MRVPossibilitiesDict[1].Count > 0;
         }
+
+        
     }
 }
