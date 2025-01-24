@@ -52,7 +52,7 @@ namespace OmegaSudoku.GameLogic
         /// <returns>Returns the cells (row, col) pos or (-1, -1) if the array is empty</returns>
         public (int, int) GetLowestPossibilityCell()
         {
-            for (int index = 1; index < MRVPossibilitiesDict.Count; index++)
+            for (int index = 1; index <= MRVPossibilitiesDict.Count; index++)
             {
                 if (MRVPossibilitiesDict[index].Count != 0)
                 {

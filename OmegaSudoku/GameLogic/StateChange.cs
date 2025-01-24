@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.GameLogic
 {
-    public struct StateChange
+    public class StateChange
     {
         /// <summary>
         /// This struct is used to hold data of changes during backtracking, 

@@ -256,5 +256,16 @@ namespace OmegaSudoku.GameLogic
             return false;
         }
 
+        public HashSet<BoardCell> GetCellsByIndexes(IEnumerable<(int, int)> cellIndexes)
+        {
+            HashSet<BoardCell> cells = new HashSet<BoardCell>();
+            foreach((int, int) cell in cellIndexes)
+            {
+                cells.Add(_gameBoard[cell.Item1, cell.Item2]);
+            }
+            return cells;
+        }
+
+
     }
 }
