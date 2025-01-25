@@ -88,7 +88,6 @@ namespace OmegaSudoku.GameLogic
         /// <returns>A list of tuples of row, col positions of a row</returns>
         public HashSet<(int, int)> GetRowCells(int rowLvl)
         {
-            // this func will return a list of tuples of row, col positions inside a row
             HashSet<(int, int)> rowCells = new HashSet<(int, int)>();
             for (int i = 0; i < _gameBoard.GetLength(1); i++)
             {
@@ -99,7 +98,6 @@ namespace OmegaSudoku.GameLogic
 
         public HashSet<(int, int)> GetColumnCells(int columnNum)
         {
-            // this func will return a list of tuples of row, col positions inside a column
             HashSet<(int, int)> columnCells = new HashSet<(int, int)>();
             for (int i = 0; i < _gameBoard.GetLength(0); i++)
             {
@@ -108,9 +106,14 @@ namespace OmegaSudoku.GameLogic
             return columnCells; 
         }
 
+        /// <summary>
+        /// This func will return a list of tuples of row, col positons inside a cube
+        /// </summary>
+        /// <param name="rowPos"></param>
+        /// <param name="colPos"></param>
+        /// <returns></returns>
         public HashSet<(int, int)> GetCubeCells(int rowPos, int colPos)
         {
-            // this func will return a list of tuples of row, col positons inside a cube
             // cube size is root of the board width / length
             // the top left cube is 0,0 the bottom right cube is 2,2
             int cubeSize = (int)Math.Sqrt(_gameBoard.GetLength(0));
@@ -214,7 +217,7 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func returns a list of BoardCells neighbours that doesnt include row, col BoardCell
+        /// This func returns a list of BoardCells neighbours that doesnt include row, col BoardCell and filled cells
         /// </summary>
         /// <param name="rowPos"></param>
         /// <param name="colPos"></param>
@@ -222,8 +225,7 @@ namespace OmegaSudoku.GameLogic
         /// <returns>List of boardCells</returns>
         public HashSet<BoardCell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
-            // func that gets a filtered list of unit cells with no dups and no cells without the filter num as a possibility
-            // the cell at row, col is not in the list
+            // the cell at row, col is not in the hash set
             HashSet<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
             HashSet<BoardCell> filteredCells = new HashSet<BoardCell>();
             foreach ((int, int) unitCellTuple in unitCells) 
@@ -256,6 +258,11 @@ namespace OmegaSudoku.GameLogic
             return false;
         }
 
+        /// <summary>
+        /// This func returns a hashset of Board cells based on an enumerable of indexes
+        /// </summary>
+        /// <param name="cellIndexes"></param>
+        /// <returns></returns>
         public HashSet<BoardCell> GetCellsByIndexes(IEnumerable<(int, int)> cellIndexes)
         {
             HashSet<BoardCell> cells = new HashSet<BoardCell>();

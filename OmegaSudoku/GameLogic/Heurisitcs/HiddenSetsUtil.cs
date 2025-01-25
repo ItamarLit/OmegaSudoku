@@ -9,6 +9,18 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 {
     public class HiddenSetsUtil
     {
+        /// <summary>
+        /// This class is used to apply the heuristic of hidden N sets in sudoku, a hidden set occurs when N cell have N unique possiblites between them
+        /// After identifiying this i can remove the other possiblites from the cells turning them into Naked sets
+        /// </summary>
+        /// <param name="currentState"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="board"></param>
+        /// <param name="logicHandler"></param>
+        /// <param name="mrvInstance"></param>
+        /// <param name="setSize"></param>
+        /// <returns></returns>
         public static bool ApplyHiddenSet(StateChange currentState, int row, int col, BoardCell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance, int setSize)
         {
             // get the unit cells 
@@ -18,7 +30,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 // create the possiblity dict
                 Dictionary<int, HashSet<(int, int)>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
                 List<int> candidates = possibilityDict.Keys.ToList();
-                // generate the different triples of the values
+                // generate the different sets of the values
                 List<List<int>> sets = GetCombinationsInSet(candidates, setSize);
                 bool finishedSuccessfully = false;
                 foreach (var set in sets)
@@ -30,13 +42,13 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     }
                     if (setCells.Count < setSize)
                     {
-                        // invalid board there cant be 2 cells with only 3 possiblites
+                        // invalid board there cant be n cells with n + 1 possiblites
                         return false;
                     }
                     else if (setCells.Count == setSize)
                     {
-                        // found a hidden tripple
-                        finishedSuccessfully =  RemoveRedundantPossibilitiesFromSet(logicHandler, setCells, set, mrvInstance, currentState);
+                        // check if the board after removing possiblites is valid
+                        finishedSuccessfully = RemoveRedundantPossibilitiesFromSet(logicHandler, setCells, set, mrvInstance, currentState);
                         if (!finishedSuccessfully)
                         {
                             return finishedSuccessfully;
@@ -49,26 +61,28 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return true;
         }
 
-        private static bool RemoveRedundantPossibilitiesFromSet(SudokuLogicHandler logicHandler, HashSet<(int, int)> tripleCells, List<int> tripleCandidates, Mrvdict mrvInstance, StateChange currentState)
+        private static bool RemoveRedundantPossibilitiesFromSet(SudokuLogicHandler logicHandler, HashSet<(int, int)> setCells, List<int> setCandidates, Mrvdict mrvInstance, StateChange currentState)
         {
-            HashSet<BoardCell> trippleCells = logicHandler.GetCellsByIndexes(tripleCells);
+            HashSet<BoardCell> trippleCells = logicHandler.GetCellsByIndexes(setCells);
             foreach (BoardCell cell in trippleCells)
             {
-
+                // remove the cell from the dict
                 mrvInstance.RemoveCell(cell);
-
                 foreach (int candidate in cell.GetPossibilites().ToList())
                 {
-                    if (!tripleCandidates.Contains(candidate))
+                    // remove all the other candidates from the set that dont appear in the combo
+                    if (!setCandidates.Contains(candidate))
                     {
                         cell.DecreasePossibility(candidate);
                         currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, candidate));
                     }
                 }
-                if (cell.GetPossibilites().Count == 0)
+                // invalid board state
+                if (cell.NumberOfPossibilites() == 0)
                 {
                     return false;
                 }
+                // re add the cell after updating its possiblites
                 mrvInstance.InsertCell(cell);
 
             }
@@ -76,6 +90,15 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return true;
         }
 
+        /// <summary>
+        /// This func sums the possiblites in a unit
+        /// </summary>
+        /// <param name="logicHandler"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="board"></param>
+        /// <param name="unitCells"></param>
+        /// <returns></returns>
         private static Dictionary<int, HashSet<(int, int)>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
         {
             Dictionary<int, HashSet<(int, int)>> possibilityDict = new Dictionary<int, HashSet<(int, int)>>();
@@ -109,7 +132,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <returns></returns>
         private static List<List<int>> GetCombinationsInSet(List<int> list, int length)
         {
-            
+
             List<List<int>> result = new List<List<int>>();
             // base case of the recursion
             if (length == 0)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OmegaSudoku.GameLogic.Heurisitcs;
+using OmegaSudoku.IO;
 
 namespace OmegaSudoku.GameLogic
 {
@@ -42,7 +43,6 @@ namespace OmegaSudoku.GameLogic
         /// The func returns true if it solved the board and false if not
         /// </returns>
         /// 
-
         public bool Solve()
         {
             depth++;
@@ -81,11 +81,10 @@ namespace OmegaSudoku.GameLogic
 
 
         /// <summary>
-        /// This func applys the different heuristics to the board
+        /// This func applys the different heuristics to the board, it checks if progress was made each time
         /// 1. Naked singles
         /// 2. Hidden singles
         /// 3. Hidden pairs
-        /// 4. Hidden triplets
         /// 5. Naked pairs
         /// </summary>
         /// <returns></returns>
@@ -105,40 +104,30 @@ namespace OmegaSudoku.GameLogic
                 {
                     // invalid board after naked singles
                     metError = true;
-                    break;
                 }
                 if (_lastUpdatedCell != null)
                 {
+                    
                     int lastUpdatedRow = _lastUpdatedCell.Value.Item1;
                     int lastUpdatedCol = _lastUpdatedCell.Value.Item2;
-                    // attempt to apply hidden singles
-                    if(!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
+                    // attempt to apply hidden singles if no progress was made with naked singles
+                    if(!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
                     {
                         // invalid board
                         metError = true;
-                        break;
                     }
-                    // apply hidden pairs
-                    if(!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
+                    // apply hidden pairs if no progress was made with hidden singles and naked singles
+                    if (!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
                     {
                         // invalid board
                         metError = true;
-                        break;
                     }
                     // after applying hidden pairs apply naked pairs to remove the possiblites
-                    if(!NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
+                    if (!NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
                     {
                         // invalid board
                         metError = true;
-                        break;
                     }
-                    // apply hidden triplets only if no progress made
-                    if (!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 3))
-                    {
-                        metError = true;
-                        break;
-                    }
-
                 }
                 // check if the heuristics did anything
                 madeProgress = MadeProgress(previousValueChanges, previousPossibilityChanges, currentState);
@@ -175,7 +164,6 @@ namespace OmegaSudoku.GameLogic
         /// <returns></returns>
         public bool TrySolveCell(int potentialValue, int row, int col, StateChange currentState)
         {
-
             currentState.CellValueChanges.Add((row, col, 0));
             _board[row, col].CellValue = potentialValue;
             // save the affected cell positions incase the attempt is wrong
@@ -184,7 +172,6 @@ namespace OmegaSudoku.GameLogic
             SolverUtils.DecreaseGamePossibilites(affectedCells, row, col, potentialValue, _mrvDict, _logicHandler, _board);
             // save the current state
             _stateChangesStack.Push(currentState);
-
             // call hidden singles check here
             if (_logicHandler.IsInvalidUpdate(affectedCells))
             {

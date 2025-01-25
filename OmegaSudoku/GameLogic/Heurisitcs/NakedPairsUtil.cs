@@ -10,7 +10,8 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
     public class NakedPairsUtil
     {
         /// <summary>
-        /// This class is used as a utilitly class that applys the naked pairs heursitic
+        /// This class is used as a utilitly class that applys the naked pairs heursitic, a naked pair is a set of 2 cells that have 2 same possiblites between them
+        /// after finding a pair we can remove the rest of the possiblites from the unit cells
         /// </summary>
         public static bool ApplyNakedPairs(StateChange currentState, int row, int col, BoardCell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
@@ -104,7 +105,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                         }
                     }
                     // if a cell has no possiblites then the board is invalid
-                    if (cell.GetPossibilites().Count == 0)
+                    if (cell.NumberOfPossibilites() == 0)
                     {
                         return false;
                     }
@@ -144,7 +145,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 // skip the filled cells and the current cell
                 if (!(unitRow == row && unitCol == col) && currentCell.CellValue == 0)
                 {
-                    if (currentCell.GetPossibilites().Count == 2)
+                    if (currentCell.NumberOfPossibilites() == 2)
                     {
                         pairPossibilityCells.Add(currentCell);
                     }

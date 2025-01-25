@@ -9,7 +9,8 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
     public class NakedSingleUtil
     {
         /// <summary>
-        /// This class is used as a utilitly class that applys the naked singles heursitic
+        /// This class is used as a utilitly class that applys the naked singles heursitic a naked single is a cell that has only one possiblity
+        /// if we find a cell with 1 possibility this must be its value
         /// </summary>
        
         public static bool SolveSinglePossibilityCells(StateChange currentState, BoardCell[,] board, Mrvdict mrvInstance, ref (int, int)? lastUpdatedCell, SudokuLogicHandler logicHandler)

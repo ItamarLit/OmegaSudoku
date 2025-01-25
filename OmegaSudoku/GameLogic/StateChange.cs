@@ -9,7 +9,7 @@ namespace OmegaSudoku.GameLogic
     public class StateChange
     {
         /// <summary>
-        /// This struct is used to hold data of changes during backtracking, 
+        /// This class is used to hold data of changes during backtracking, 
         /// it has a hash set of cellValue changes and a hash set of cellPossibility changes
         /// </summary>
         public HashSet<(int row, int col, int oldValue)> CellValueChanges;

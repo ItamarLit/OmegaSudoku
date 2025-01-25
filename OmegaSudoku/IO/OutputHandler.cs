@@ -33,23 +33,31 @@ namespace OmegaSudoku.IO
 
         public static void PrintBoard(BoardCell[,] board)
         {
+            int boardSize = board.GetLength(0);
+            int blockSize = (int)Math.Sqrt((double)boardSize);
             Console.WriteLine("Here is your board:");
-            Console.WriteLine("-------------");
-            for (int i = 0; i < board.GetLength(0); i++)
+
+            string line = new string(' ', 1) + new string('-', (blockSize * 3 + 1) * (boardSize / blockSize) - 1);
+            Console.WriteLine(line);
+            for (int i = 0; i < boardSize; i++)
             {
-                for (int j = 0; j < board.GetLength(1); j++)
+                for (int j = 0; j < boardSize; j++)
                 {
-                    if (j % 3 == 0)
+                    if (j % blockSize == 0)
                     {
                         Console.Write("|");
                     }
-                    Console.Write(board[i, j].CellValue);
+
+                    char cellChar = (char)(board[i, j].CellValue + '0');
+                    string cellValue = cellChar.ToString();
+                    Console.Write($" {cellValue} ");
                 }
                 Console.Write("|");
                 Console.WriteLine();
-                if ((i + 1) % 3 == 0)
+
+                if ((i + 1) % blockSize == 0)
                 {
-                    Console.WriteLine("-------------");
+                    Console.WriteLine(line); 
                 }
             }
         }

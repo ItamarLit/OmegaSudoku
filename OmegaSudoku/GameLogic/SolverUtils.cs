@@ -9,6 +9,11 @@ namespace OmegaSudoku.GameLogic
     public class SolverUtils
     {
         /// <summary>
+        /// This class holds utils that are used to solve the sudoku
+        /// </summary>
+
+
+        /// <summary>
         /// This func sets the changed cells and there possiblities in the stack
         /// </summary>
         /// <param name="currentState"></param>

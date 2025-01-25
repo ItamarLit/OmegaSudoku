@@ -10,10 +10,9 @@ namespace OmegaSudoku.GameLogic
     public class BoardCell
     {
         /// <summary>
-        /// This is the class used to store data of a cell
+        /// This is the class used to store data of a cell, the possibilities are stored in bitwise
         /// </summary>
 
-        // create non setable properties for x,y and the possibiliets array in a cell
         public int CellRow { get; }
         public int CellCol { get; }
 

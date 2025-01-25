@@ -1,6 +1,7 @@
 ﻿using System;
 using OmegaSudoku;
 using OmegaSudoku.Exceptions;
+using OmegaSudoku.GameLogic.Heurisitcs;
 using OmegaSudoku.GameLogic;
 using OmegaSudoku.IO;
 
@@ -11,11 +12,11 @@ namespace OmegaSudoku
         public static void RunEngine()
         {
             bool endRunFlag = false;
-            Console.WriteLine("Hi welcome to the amazing sudoku engine, enter any 9x9 board, to exit the engine write: EXIT");
+            Console.WriteLine("Hi welcome to the amazing sudoku engine, N * N board, to exit the engine write: EXIT");
             while (!endRunFlag) 
             {
-                //try
-                //{
+                try
+                {
                     SudokuSolver.depth = 0;
                     OutputHandler.RequestBoard();
                     InputHandler.GetUserInput();
@@ -37,17 +38,18 @@ namespace OmegaSudoku
                         else
                         {
                             OutputHandler.ShowImpossibleBoardMsg();
+
                         }
                         stopwatch.Stop();
                         OutputHandler.ShowProgramRuntime(stopwatch.ElapsedMilliseconds);
                         Console.WriteLine($"Depth: {SudokuSolver.depth}");
                     }
-                //}
-                ////The only excptions that can occur are mine so i can catch Exception
-                //catch (Exception e)
-                //{
-                //    OutputHandler.OutputError(e.Message);
-                //}
+                }
+                catch (Exception e)
+                {
+                    //The only excptions that can occur are mine so i can catch Exception
+                    OutputHandler.OutputError(e.Message);
+                }
 
             }
         }
