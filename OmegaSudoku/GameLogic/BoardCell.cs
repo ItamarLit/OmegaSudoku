@@ -16,54 +16,60 @@ namespace OmegaSudoku.GameLogic
         // create non setable properties for x,y and the possibiliets array in a cell
         public int CellRow { get; }
         public int CellCol { get; }
-        public int[] Possibilites { get; set; }
+
+        private int _possibilites;
+
+        // amount of bits of possiblites 
+        private const int BITS_SIZE = 32;
+
+        private int _possibilitiesCount;
         public int CellValue { get; set; }
 
-        public BoardCell(int xPos, int yPos, int boardSize, int startingNumber, int cellVal)
+        public BoardCell(int xPos, int yPos, int boardSize, int cellVal)
         {
-            // set the cell x,y and possibilite array
             CellRow = xPos;
             CellCol = yPos;
             CellValue = cellVal;
-            Possibilites = new int[boardSize + 1];
             if (CellValue == 0)
             {
-                // create the count arr for the possibilites
-                // set the starting possibilites to a board cell
-                for (int i = startingNumber; i < Possibilites.Length; i++)
-                {
-                    Possibilites[i] = 1;
-                }
-                // set the counter of the elements
-                Possibilites[0] = boardSize;
+                // create the bit possiblities
+                _possibilites = (1 << (boardSize + 1)) - 1;
+                _possibilitiesCount = boardSize;
+            }
+            else
+            {
+                _possibilites = 0;
+                _possibilitiesCount = 0;
             }
         }
 
         public void DecreasePossibility(int possibiltiyValue)
         {
             // This func removes the possibility to the cell
-            if (Possibilites[possibiltiyValue] != 0) 
+            if ((_possibilites & (1 << possibiltiyValue)) != 0)
             {
-                Possibilites[possibiltiyValue] = 0;
+                // turn the bit off using a mask
+                _possibilites &= ~(1 << possibiltiyValue); ;
                 // dec the counter
-                Possibilites[0] -= 1;
+                _possibilitiesCount--;
             }
         }
 
         public void IncreasePossibility(int possibilityValue)
         {
             // This func adds the possibility to the cell
-            if (Possibilites[possibilityValue] == 0)
+            if ((_possibilites & (1 << possibilityValue)) == 0)
             {
-                Possibilites[possibilityValue] = 1;
-                // dec the counter
-                Possibilites[0] += 1;
+                // set the bit
+                _possibilites |= (1 << possibilityValue);
+                // inc the counter
+                _possibilitiesCount++;
             }
         }
 
         public int NumberOfPossibilites()
         {
-            return Possibilites[0];
+            return _possibilitiesCount;
         }
 
         public bool CellIsEmpty()
@@ -73,16 +79,16 @@ namespace OmegaSudoku.GameLogic
 
         public bool HasValue(int value)
         {
-            return Possibilites[value] != 0;
+            return (_possibilites & (1 << value)) != 0;
         }
 
         public HashSet<int> GetPossibilites()
         {
             // This func gets all the values the cell can be
             HashSet<int> potientialValues = new HashSet<int>();
-            for(int i = 1; i < Possibilites.Length; i++)
+            for(int i = 1; i < BITS_SIZE; i++)
             {
-                if (Possibilites[i] != 0)
+                if ((HasValue(i)))
                 {
                     potientialValues.Add(i);
                 }
