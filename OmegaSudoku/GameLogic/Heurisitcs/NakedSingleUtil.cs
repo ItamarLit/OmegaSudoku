@@ -19,7 +19,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             while (mrvInstance.HasSinglePossibiltyCell())
             {
                 // get the row, col of the cell
-                (int row, int col) = mrvInstance.GetLowestPossibilityCell();
+                (int row, int col) = mrvInstance.GetLowestPossibilityCell(logicHandler, board);
                 int potentialValue = board[row, col].GetPossibilites().First();
                 currentState.CellValueChanges.Add((row, col, board[row, col].CellValue));
                 board[row, col].CellValue = potentialValue;

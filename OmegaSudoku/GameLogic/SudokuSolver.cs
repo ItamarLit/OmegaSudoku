@@ -52,7 +52,7 @@ namespace OmegaSudoku.GameLogic
                 // invalid board 
                 return false;
             }
-            (int row, int col) = _mrvDict.GetLowestPossibilityCell();
+            (int row, int col) = _mrvDict.GetLowestPossibilityCell(_logicHandler, _board);
             if (_mrvDict.IsEmptyMap((row, col)))
             {
                 // if there are no more cells to fill the sudoku is solved
@@ -105,19 +105,19 @@ namespace OmegaSudoku.GameLogic
                     // invalid board after naked singles
                     metError = true;
                 }
-                if (_lastUpdatedCell != null)
+                if (_lastUpdatedCell != null && !metError)
                 {
                     
                     int lastUpdatedRow = _lastUpdatedCell.Value.Item1;
                     int lastUpdatedCol = _lastUpdatedCell.Value.Item2;
                     // attempt to apply hidden singles if no progress was made with naked singles
-                    if(!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
+                    if(!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
                     {
                         // invalid board
                         metError = true;
                     }
                     // apply hidden pairs if no progress was made with hidden singles and naked singles
-                    if (!MadeProgress(previousValueChanges, previousPossibilityChanges, currentState) && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
+                    if (!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
                     {
                         // invalid board
                         metError = true;

@@ -28,7 +28,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             for (int i = 0; i < affectedUnitCells.Length; i++)
             {
                 // create the possiblity dict
-                Dictionary<int, HashSet<(int, int)>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
+                Dictionary<int, List<(int, int)>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
                 List<int> candidates = possibilityDict.Keys.ToList();
                 // generate the different sets of the values
                 List<List<int>> sets = GetCombinationsInSet(candidates, setSize);
@@ -99,9 +99,9 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="board"></param>
         /// <param name="unitCells"></param>
         /// <returns></returns>
-        private static Dictionary<int, HashSet<(int, int)>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
+        private static Dictionary<int, List<(int, int)>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
         {
-            Dictionary<int, HashSet<(int, int)>> possibilityDict = new Dictionary<int, HashSet<(int, int)>>();
+            Dictionary<int, List<(int, int)>> possibilityDict = new Dictionary<int, List<(int, int)>>();
             foreach ((int unitRow, int unitCol) in unitCells)
             {
                 // skip filled cells and the current cell pos
@@ -113,7 +113,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     {
                         if (!possibilityDict.ContainsKey(value))
                         {
-                            possibilityDict[value] = new HashSet<(int, int)>();
+                            possibilityDict[value] = new List<(int, int)>();
                         }
                         // add the cell to the dict
                         possibilityDict[value].Add((unitRow, unitCol));

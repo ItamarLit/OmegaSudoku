@@ -273,6 +273,18 @@ namespace OmegaSudoku.GameLogic
             return cells;
         }
 
+        public int CountEmptyNeighbours(HashSet<(int, int)> unitCells)
+        {
+            int count = 0;
+            foreach(var cell in unitCells)
+            {
+                if (_gameBoard[cell.Item1, cell.Item2].CellIsEmpty())
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
 
     }
 }

@@ -47,21 +47,57 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func finds the lowest possibility cell
+        /// This func finds the lowest possibility cell in the most filled part of the board
         /// </summary>
         /// <returns>Returns the cells (row, col) pos or (-1, -1) if the array is empty</returns>
-        public (int, int) GetLowestPossibilityCell()
+        public (int, int) GetLowestPossibilityCell(SudokuLogicHandler logicHandler, BoardCell[,] board)
         {
             for (int index = 1; index <= MRVPossibilitiesDict.Count; index++)
             {
                 if (MRVPossibilitiesDict[index].Count != 0)
                 {
-                    // get the first cell in the first non empty dict in descending order
-                    return MRVPossibilitiesDict[index].First();
+                    // get the best cell between the lowest possiblites 
+                    return GetBestCell(MRVPossibilitiesDict[index], board, logicHandler);
                 }
             }
             // if the array is empty return (-1 , -1) = board solved
             return (-1, -1);
+        }
+
+        /// <summary>
+        /// This func gets the cell that is in the most filled area and has the lowes possiblity count
+        /// </summary>
+        /// <param name="cells"></param>
+        /// <param name="board"></param>
+        /// <param name="logicHandler"></param>
+        /// <returns></returns>
+        private (int, int) GetBestCell(HashSet<(int, int)> cells, BoardCell[,] board, SudokuLogicHandler logicHandler)
+        {
+            (int row, int col) bestCell = (-1, -1);
+            // set the counts to max value so every other count is smaller
+            int bestRowEmptyCount = int.MaxValue;
+            int bestColEmptyCount = int.MaxValue;
+            int bestBoxEmptyCount = int.MaxValue;
+
+            foreach (var cell in cells)
+            {
+                // get the count values
+                int rowCount = logicHandler.CountEmptyNeighbours(logicHandler.GetRowCells(cell.Item1));
+                int colCount = logicHandler.CountEmptyNeighbours(logicHandler.GetColumnCells(cell.Item2));
+                int cubeCount = logicHandler.CountEmptyNeighbours(logicHandler.GetCubeCells(cell.Item1, cell.Item2));
+                // check first by row, then by col then by cube
+                if (rowCount < bestRowEmptyCount ||
+                    (rowCount == bestRowEmptyCount && colCount < bestColEmptyCount) ||
+                    (rowCount == bestRowEmptyCount && colCount == bestColEmptyCount && cubeCount < bestBoxEmptyCount))
+                {
+                    bestCell = cell;
+                    bestRowEmptyCount = rowCount;
+                    bestColEmptyCount = colCount;
+                    bestBoxEmptyCount = cubeCount;
+                }
+            }
+
+            return bestCell;
         }
 
         public void UpdateMRVCells(IEnumerable<BoardCell> affectedCells, bool isInsert)
