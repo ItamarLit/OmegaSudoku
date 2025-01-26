@@ -15,7 +15,7 @@ namespace OmegaSudoku.GameLogic
         private readonly BoardCell[,] _gameBoard;
         // mrvArray instance
         private readonly Mrvdict _mrvDict;
-
+        
         public SudokuLogicHandler(BoardCell[,] board, Mrvdict mrvInstance)
         {
             _gameBoard = board;

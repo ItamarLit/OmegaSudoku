@@ -28,8 +28,8 @@ namespace OmegaSudoku
                     {
                         BoardCell[,] board = InputHandler.SetUpBoard();
                         OutputHandler.PrintBoard(board);
-                        Mrvdict mrvArray = new Mrvdict(board.GetLength(0));
-                        SudokuSolver solver = new SudokuSolver(board, mrvArray);
+                        Mrvdict mrvDict = new Mrvdict(board.GetLength(0));
+                        SudokuSolver solver = new SudokuSolver(board, mrvDict);
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         if (solver.Solve())
                         {

@@ -10,16 +10,16 @@ namespace OmegaSudoku.GameLogic
         /// This class holds the mrv dict that is used to get the cell with the minimum amount of possibilites in it
         /// </summary>
 
-        public Dictionary<int, HashSet<(int, int)>> MRVPossibilitiesDict { get; private set; }
+        private Dictionary<int, HashSet<(int, int)>> _MRVPossibilitiesDict { get;  }
 
         public Mrvdict(int boardSize)
         {
             // Create the dict where a possibility count is the key and a hashset of (x,y) tuples are the values
-            MRVPossibilitiesDict = new Dictionary<int, HashSet<(int, int)>>();
+            _MRVPossibilitiesDict = new Dictionary<int, HashSet<(int, int)>>();
             // Init the hashsets inside the array, cell 1 will represent cells with only one possibility and so on
             for (int i = 1; i < boardSize + 1; i++)
             {
-                MRVPossibilitiesDict[i] = new HashSet<(int, int)>();
+                _MRVPossibilitiesDict[i] = new HashSet<(int, int)>();
             }
         }
 
@@ -32,7 +32,7 @@ namespace OmegaSudoku.GameLogic
             int possibilitesNum = cell.NumberOfPossibilites();
             if(possibilitesNum > 0)
             {
-                MRVPossibilitiesDict[possibilitesNum].Remove((cell.CellRow, cell.CellCol));
+                _MRVPossibilitiesDict[possibilitesNum].Remove((cell.CellRow, cell.CellCol));
             }
         }
 
@@ -43,7 +43,7 @@ namespace OmegaSudoku.GameLogic
         public void InsertCell(BoardCell cell)
         {
             int possibilitesNum = cell.NumberOfPossibilites();
-            MRVPossibilitiesDict[possibilitesNum].Add((cell.CellRow, cell.CellCol));
+            _MRVPossibilitiesDict[possibilitesNum].Add((cell.CellRow, cell.CellCol));
         }
 
         /// <summary>
@@ -52,12 +52,12 @@ namespace OmegaSudoku.GameLogic
         /// <returns>Returns the cells (row, col) pos or (-1, -1) if the array is empty</returns>
         public (int, int) GetLowestPossibilityCell(SudokuLogicHandler logicHandler, BoardCell[,] board)
         {
-            for (int index = 1; index <= MRVPossibilitiesDict.Count; index++)
+            for (int index = 1; index <= _MRVPossibilitiesDict.Count; index++)
             {
-                if (MRVPossibilitiesDict[index].Count != 0)
+                if (_MRVPossibilitiesDict[index].Count != 0)
                 {
                     // get the best cell between the lowest possiblites 
-                    return GetBestCell(MRVPossibilitiesDict[index], board, logicHandler);
+                    return GetBestCell(_MRVPossibilitiesDict[index], board, logicHandler);
                 }
             }
             // if the array is empty return (-1 , -1) = board solved
@@ -133,9 +133,13 @@ namespace OmegaSudoku.GameLogic
 
         public bool HasSinglePossibiltyCell()
         {
-            return MRVPossibilitiesDict[1].Count > 0;
+            return _MRVPossibilitiesDict[1].Count > 0;
         }
 
+        public HashSet<(int, int)> GetCellsWithPossibilites(int numPossiblites)
+        {
+            return _MRVPossibilitiesDict[numPossiblites];
+        }
         
     }
 }

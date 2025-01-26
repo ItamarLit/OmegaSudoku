@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OmegaSudoku.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -132,7 +133,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <returns></returns>
         private static List<List<int>> GetCombinationsInSet(List<int> list, int length)
         {
-
+            
             List<List<int>> result = new List<List<int>>();
             // base case of the recursion
             if (length == 0)
@@ -152,7 +153,6 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     result.Add(combination);
                 }
             }
-
             return result;
         }
 

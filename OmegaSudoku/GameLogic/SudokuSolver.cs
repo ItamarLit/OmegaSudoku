@@ -128,6 +128,14 @@ namespace OmegaSudoku.GameLogic
                         // invalid board
                         metError = true;
                     }
+                    // apply naked trips
+                    if (!NakedSetsUtil.ApplyNakedSets(currentState, _board, _logicHandler, _mrvDict, 3))
+                    {
+                        // invalid board
+                        metError = true;
+                    }
+                  
+
                 }
                 // check if the heuristics did anything
                 madeProgress = MadeProgress(previousValueChanges, previousPossibilityChanges, currentState);
