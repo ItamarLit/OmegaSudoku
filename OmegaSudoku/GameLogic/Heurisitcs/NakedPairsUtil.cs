@@ -16,7 +16,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         public static bool ApplyNakedPairs(StateChange currentState, int row, int col, BoardCell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // get the affected cells from the last change
-            HashSet<(int, int)>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
+            HashSet<BoardCell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
             for (int i = 0; i < affectedUnitCells.Length; i++)
             {
                 // get all cells with 2 possiblites
@@ -74,15 +74,15 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             // get the correct unitcells
             if (SameCube(firstCell, secondCell, boardSize))
             {
-                unitCells = logicHandler.GetCellsByIndexes(logicHandler.GetCubeCells(firstCell.CellRow, firstCell.CellCol)).ToHashSet();
+                unitCells = logicHandler.GetCubeCells(firstCell.CellRow, firstCell.CellCol);
             }
             if (SameRow(firstCell, secondCell))
             {
-                unitCells.UnionWith(logicHandler.GetCellsByIndexes(logicHandler.GetRowCells(firstCell.CellRow)).ToHashSet());
+                unitCells.UnionWith(logicHandler.GetRowCells(firstCell.CellRow));
             }
             if (SameCol(firstCell, secondCell))
             {
-                unitCells.UnionWith(logicHandler.GetCellsByIndexes(logicHandler.GetColumnCells(firstCell.CellCol)).ToHashSet());
+                unitCells.UnionWith(logicHandler.GetColumnCells(firstCell.CellCol));
             }
             return unitCells;
         }
@@ -136,14 +136,13 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return firstCell.CellCol == secondCell.CellCol;
         }
 
-        private static HashSet<BoardCell> GetPairPossibilityCells(int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
+        private static HashSet<BoardCell> GetPairPossibilityCells(int row, int col, BoardCell[,] board, IEnumerable<BoardCell> unitCells)
         {
             HashSet<BoardCell> pairPossibilityCells = new HashSet<BoardCell>();
-            foreach ((int unitRow, int unitCol) in unitCells)
+            foreach (var currentCell in unitCells)
             {
-                BoardCell currentCell = board[unitRow, unitCol];
                 // skip the filled cells and the current cell
-                if (!(unitRow == row && unitCol == col) && currentCell.CellValue == 0)
+                if (!(currentCell.CellRow == row && currentCell.CellCol == col) && currentCell.CellValue == 0)
                 {
                     if (currentCell.NumberOfPossibilites() == 2)
                     {

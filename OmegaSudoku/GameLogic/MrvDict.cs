@@ -10,16 +10,16 @@ namespace OmegaSudoku.GameLogic
         /// This class holds the mrv dict that is used to get the cell with the minimum amount of possibilites in it
         /// </summary>
 
-        private Dictionary<int, HashSet<(int, int)>> _MRVPossibilitiesDict { get;  }
+        private Dictionary<int, HashSet<BoardCell>> _MRVPossibilitiesDict { get;  }
 
         public Mrvdict(int boardSize)
         {
             // Create the dict where a possibility count is the key and a hashset of (x,y) tuples are the values
-            _MRVPossibilitiesDict = new Dictionary<int, HashSet<(int, int)>>();
+            _MRVPossibilitiesDict = new Dictionary<int, HashSet<BoardCell>>();
             // Init the hashsets inside the array, cell 1 will represent cells with only one possibility and so on
             for (int i = 1; i < boardSize + 1; i++)
             {
-                _MRVPossibilitiesDict[i] = new HashSet<(int, int)>();
+                _MRVPossibilitiesDict[i] = new HashSet<BoardCell>();
             }
         }
 
@@ -32,7 +32,7 @@ namespace OmegaSudoku.GameLogic
             int possibilitesNum = cell.NumberOfPossibilites();
             if(possibilitesNum > 0)
             {
-                _MRVPossibilitiesDict[possibilitesNum].Remove((cell.CellRow, cell.CellCol));
+                _MRVPossibilitiesDict[possibilitesNum].Remove(cell);
             }
         }
 
@@ -43,14 +43,14 @@ namespace OmegaSudoku.GameLogic
         public void InsertCell(BoardCell cell)
         {
             int possibilitesNum = cell.NumberOfPossibilites();
-            _MRVPossibilitiesDict[possibilitesNum].Add((cell.CellRow, cell.CellCol));
+            _MRVPossibilitiesDict[possibilitesNum].Add(cell);
         }
 
         /// <summary>
         /// This func finds the lowest possibility cell in the most filled part of the board
         /// </summary>
         /// <returns>Returns the cells (row, col) pos or (-1, -1) if the array is empty</returns>
-        public (int, int) GetLowestPossibilityCell(SudokuLogicHandler logicHandler, BoardCell[,] board)
+        public BoardCell GetLowestPossibilityCell(SudokuLogicHandler logicHandler, BoardCell[,] board)
         {
             for (int index = 1; index <= _MRVPossibilitiesDict.Count; index++)
             {
@@ -61,7 +61,7 @@ namespace OmegaSudoku.GameLogic
                 }
             }
             // if the array is empty return (-1 , -1) = board solved
-            return (-1, -1);
+            return null;
         }
 
         /// <summary>
@@ -71,9 +71,9 @@ namespace OmegaSudoku.GameLogic
         /// <param name="board"></param>
         /// <param name="logicHandler"></param>
         /// <returns></returns>
-        private (int, int) GetBestCell(HashSet<(int, int)> cells, BoardCell[,] board, SudokuLogicHandler logicHandler)
+        private BoardCell GetBestCell(HashSet<BoardCell> cells, BoardCell[,] board, SudokuLogicHandler logicHandler)
         {
-            (int row, int col) bestCell = (-1, -1);
+            BoardCell bestCell = null;
             // set the counts to max value so every other count is smaller
             int bestRowEmptyCount = int.MaxValue;
             int bestColEmptyCount = int.MaxValue;
@@ -82,9 +82,9 @@ namespace OmegaSudoku.GameLogic
             foreach (var cell in cells)
             {
                 // get the count values
-                int rowCount = logicHandler.CountEmptyNeighbours(logicHandler.GetRowCells(cell.Item1));
-                int colCount = logicHandler.CountEmptyNeighbours(logicHandler.GetColumnCells(cell.Item2));
-                int cubeCount = logicHandler.CountEmptyNeighbours(logicHandler.GetCubeCells(cell.Item1, cell.Item2));
+                int rowCount = logicHandler.CountEmptyNeighbours(logicHandler.GetRowCells(cell.CellRow));
+                int colCount = logicHandler.CountEmptyNeighbours(logicHandler.GetColumnCells(cell.CellCol));
+                int cubeCount = logicHandler.CountEmptyNeighbours(logicHandler.GetCubeCells(cell.CellRow, cell.CellCol));
                 // check first by row, then by col then by cube
                 if (rowCount < bestRowEmptyCount ||
                     (rowCount == bestRowEmptyCount && colCount < bestColEmptyCount) ||
@@ -122,9 +122,9 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="rowColTuple"></param>
         /// <returns></returns>
-        public bool IsEmptyMap((int, int) rowColTuple)
+        public bool IsEmptyMap(BoardCell cell)
         {
-            if (rowColTuple.Item1 == -1 && rowColTuple.Item2 == -1)
+            if (cell == null)
             {
                 return true;
             }
@@ -136,7 +136,7 @@ namespace OmegaSudoku.GameLogic
             return _MRVPossibilitiesDict[1].Count > 0;
         }
 
-        public HashSet<(int, int)> GetCellsWithPossibilites(int numPossiblites)
+        public HashSet<BoardCell> GetCellsWithPossibilites(int numPossiblites)
         {
             return _MRVPossibilitiesDict[numPossiblites];
         }

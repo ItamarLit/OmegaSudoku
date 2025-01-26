@@ -29,10 +29,10 @@ namespace OmegaSudoku.GameLogic
         public void CheckInitalBoard()
         {
             // go over all the filled cells and check that they are valid
-            foreach ((int cellRow, int cellCol) in GetAllBoardCells())
+            foreach (BoardCell cell in GetAllBoardCells())
             {
                 // check if the cell in the cube has the same value of the checked cell
-                if (GetCellValue(cellRow, cellCol) != 0 && !IsValidMove(cellRow, cellCol))
+                if (cell.CellValue != 0 && !IsValidMove(cell.CellRow, cell.CellCol))
                 {
                     // Throw invalid initial board exception
                     throw new InvalidInitialBoardException();
@@ -46,36 +46,36 @@ namespace OmegaSudoku.GameLogic
         public void SetInitailBoardPossibilites()
         {
             // set the board possibilites
-            HashSet<(int, int)> boardCells = GetAllBoardCells();
-            foreach ((int cellX, int cellY) in boardCells)
+            HashSet<BoardCell> boardCells = GetAllBoardCells();
+            foreach (var cell in boardCells)
             {
                 // check if the cell in the cube has the same value of the checked cell
-                if (GetCellValue(cellX, cellY) != 0)
+                if (cell.CellValue != 0)
                 {
-                    HashSet<BoardCell> affectedUnitCells = GetFilteredUnitCells(cellX, cellY, GetCellValue(cellX, cellY));
-                    DecreasePossibilites(affectedUnitCells, GetCellValue(cellX, cellY));
+                    HashSet<BoardCell> affectedUnitCells = GetFilteredUnitCells(cell.CellRow, cell.CellCol, cell.CellValue);
+                    DecreasePossibilites(affectedUnitCells, GetCellValue(cell.CellRow, cell.CellCol));
                 }
             }
             // after setting the board up we can mrv array
-            foreach ((int cellX, int cellY) in boardCells)
+            foreach (var cell in boardCells)
             {
-                if (GetCellValue(cellX, cellY) == 0)
+                if (cell.CellValue == 0)
                 {
                     // insert the cell into the array
-                    _mrvDict.InsertCell(_gameBoard[cellX, cellY]);
+                    _mrvDict.InsertCell(cell);
                 }
             }
         }
 
-        private HashSet<(int, int)> GetAllBoardCells()
+        private HashSet<BoardCell> GetAllBoardCells()
         {
             // this func will return a list of tuples of row, col positions of all cells on the board
-            HashSet<(int, int)> boardCells = new HashSet<(int, int)>();
+            HashSet<BoardCell> boardCells = new HashSet<BoardCell>();
             for (int row = 0; row < _gameBoard.GetLength(0); row++)
             {
                 for (int col = 0; col < _gameBoard.GetLength(1); col++) 
                 {
-                    boardCells.Add((row, col));
+                    boardCells.Add(_gameBoard[row, col]);
                 }
             }
             return boardCells;
@@ -86,22 +86,22 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="rowLvl"></param>
         /// <returns>A list of tuples of row, col positions of a row</returns>
-        public HashSet<(int, int)> GetRowCells(int rowLvl)
+        public HashSet<BoardCell> GetRowCells(int rowLvl)
         {
-            HashSet<(int, int)> rowCells = new HashSet<(int, int)>();
+            HashSet<BoardCell> rowCells = new HashSet<BoardCell>();
             for (int i = 0; i < _gameBoard.GetLength(1); i++)
             {
-                rowCells.Add((rowLvl, i));
+                rowCells.Add(_gameBoard[rowLvl, i]);
             }
             return rowCells;
         }
 
-        public HashSet<(int, int)> GetColumnCells(int columnNum)
+        public HashSet<BoardCell> GetColumnCells(int columnNum)
         {
-            HashSet<(int, int)> columnCells = new HashSet<(int, int)>();
+            HashSet<BoardCell> columnCells = new HashSet<BoardCell>();
             for (int i = 0; i < _gameBoard.GetLength(0); i++)
             {
-                columnCells.Add((i , columnNum));
+                columnCells.Add(_gameBoard[i , columnNum]);
             }
             return columnCells; 
         }
@@ -112,7 +112,7 @@ namespace OmegaSudoku.GameLogic
         /// <param name="rowPos"></param>
         /// <param name="colPos"></param>
         /// <returns></returns>
-        public HashSet<(int, int)> GetCubeCells(int rowPos, int colPos)
+        public HashSet<BoardCell> GetCubeCells(int rowPos, int colPos)
         {
             // cube size is root of the board width / length
             // the top left cube is 0,0 the bottom right cube is 2,2
@@ -120,12 +120,12 @@ namespace OmegaSudoku.GameLogic
             int cubeCol = (colPos / cubeSize) * cubeSize;
             int cubeRow = (rowPos / cubeSize) * cubeSize;
 
-            HashSet<(int, int)> cubeCells = new HashSet<(int, int)>();
+            HashSet<BoardCell> cubeCells = new HashSet<BoardCell>();
             for (int rowAdd = 0; rowAdd < cubeSize; rowAdd++)
             {
                 for (int colAdd = 0; colAdd < cubeSize; colAdd++)
                 {
-                    cubeCells.Add((cubeRow + rowAdd, cubeCol + colAdd));
+                    cubeCells.Add(_gameBoard[cubeRow + rowAdd, cubeCol + colAdd]);
                 }
             }
             return cubeCells;
@@ -154,7 +154,7 @@ namespace OmegaSudoku.GameLogic
         private bool IsValidRow(int rowLvl, int cellValue)
         {
             // func that returns if a row is valid
-            HashSet<(int, int)> rowCells = GetRowCells(rowLvl);
+            HashSet<BoardCell> rowCells = GetRowCells(rowLvl);
             return CheckForDoubles(rowCells, cellValue);
 
         }
@@ -162,26 +162,24 @@ namespace OmegaSudoku.GameLogic
         private bool IsValidCol(int colNum, int cellValue)
         {
             // func that returns if a col is valid
-            HashSet<(int, int)> colCells = GetColumnCells(colNum);
+            HashSet<BoardCell> colCells = GetColumnCells(colNum);
             return CheckForDoubles(colCells, cellValue);
         }
 
         private bool IsValidCube(int rowPos, int colPos, int cellValue)
         {
             // func that returns if a cube is valid
-            HashSet<(int, int)> cubeCells = GetCubeCells(rowPos, colPos);
+            HashSet<BoardCell> cubeCells = GetCubeCells(rowPos, colPos);
             return CheckForDoubles(cubeCells, cellValue);
         }
 
-        private bool CheckForDoubles(IEnumerable<(int, int)> cells, int cellValue)
+        private bool CheckForDoubles(IEnumerable<BoardCell> cells, int cellValue)
         {
             // this func is used to check for illegal double cell values in a cell list
             int counter = 0;
-            foreach ((int, int) cell in cells)
+            foreach (BoardCell cell in cells)
             {
-                int cellRow = cell.Item1;
-                int cellCol = cell.Item2;
-                if (GetCellValue(cellRow, cellCol) == cellValue)
+                if (cell.CellValue == cellValue)
                 {
                     counter++;  
                 }
@@ -195,10 +193,10 @@ namespace OmegaSudoku.GameLogic
         /// <param name="rowPos"></param>
         /// <param name="colPos"></param>
         /// <returns>List of tuples of unit cells</returns>
-        public HashSet<(int, int)> GetUnitCellsPos(int rowPos, int colPos)
+        public HashSet<BoardCell> GetUnitCellsPos(int rowPos, int colPos)
         {
             // combine all the unit cells into one hashset
-            HashSet<(int, int)> unitCells = GetRowCells(rowPos);
+            HashSet<BoardCell> unitCells = GetRowCells(rowPos);
             unitCells.UnionWith(GetColumnCells(colPos));
             unitCells.UnionWith(GetCubeCells(rowPos, colPos));
             return unitCells;
@@ -226,12 +224,12 @@ namespace OmegaSudoku.GameLogic
         public HashSet<BoardCell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
             // the cell at row, col is not in the hash set
-            HashSet<(int, int)> unitCells = GetUnitCellsPos(rowPos, colPos);
+            HashSet<BoardCell> unitCells = GetUnitCellsPos(rowPos, colPos);
             HashSet<BoardCell> filteredCells = new HashSet<BoardCell>();
-            foreach ((int, int) unitCellTuple in unitCells) 
+            foreach (BoardCell unitCell in unitCells) 
             {
-                int cellRow = unitCellTuple.Item1;
-                int cellCol = unitCellTuple.Item2;
+                int cellRow = unitCell.CellRow;
+                int cellCol = unitCell.CellCol;
                 if (_gameBoard[cellRow, cellCol].HasValue(filterValue) && !(cellRow == rowPos && cellCol == colPos) && _gameBoard[cellRow, cellCol].CellIsEmpty()) 
                 {
                     filteredCells.Add(_gameBoard[cellRow, cellCol]);
@@ -258,27 +256,12 @@ namespace OmegaSudoku.GameLogic
             return false;
         }
 
-        /// <summary>
-        /// This func returns a hashset of Board cells based on an enumerable of indexes
-        /// </summary>
-        /// <param name="cellIndexes"></param>
-        /// <returns></returns>
-        public HashSet<BoardCell> GetCellsByIndexes(IEnumerable<(int, int)> cellIndexes)
-        {
-            HashSet<BoardCell> cells = new HashSet<BoardCell>();
-            foreach((int, int) cell in cellIndexes)
-            {
-                cells.Add(_gameBoard[cell.Item1, cell.Item2]);
-            }
-            return cells;
-        }
-
-        public int CountEmptyNeighbours(HashSet<(int, int)> unitCells)
+        public int CountEmptyNeighbours(HashSet<BoardCell> unitCells)
         {
             int count = 0;
             foreach(var cell in unitCells)
             {
-                if (_gameBoard[cell.Item1, cell.Item2].CellIsEmpty())
+                if (cell.CellIsEmpty())
                 {
                     count++;
                 }

@@ -25,18 +25,18 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         public static bool ApplyHiddenSet(StateChange currentState, int row, int col, BoardCell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance, int setSize)
         {
             // get the unit cells 
-            HashSet<(int, int)>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
+            HashSet<BoardCell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
             for (int i = 0; i < affectedUnitCells.Length; i++)
             {
                 // create the possiblity dict
-                Dictionary<int, List<(int, int)>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
+                Dictionary<int, List<BoardCell>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
                 List<int> candidates = possibilityDict.Keys.ToList();
                 // generate the different sets of the values
                 List<List<int>> sets = GetCombinationsInSet(candidates, setSize);
                 bool finishedSuccessfully = false;
                 foreach (var set in sets)
                 {
-                    HashSet<(int, int)> setCells = new HashSet<(int, int)>();
+                    HashSet<BoardCell> setCells = new HashSet<BoardCell>();
                     foreach (int value in set)
                     {
                         setCells.UnionWith(possibilityDict[value]);
@@ -62,10 +62,9 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return true;
         }
 
-        private static bool RemoveRedundantPossibilitiesFromSet(SudokuLogicHandler logicHandler, HashSet<(int, int)> setCells, List<int> setCandidates, Mrvdict mrvInstance, StateChange currentState)
+        private static bool RemoveRedundantPossibilitiesFromSet(SudokuLogicHandler logicHandler, HashSet<BoardCell> setCells, List<int> setCandidates, Mrvdict mrvInstance, StateChange currentState)
         {
-            HashSet<BoardCell> trippleCells = logicHandler.GetCellsByIndexes(setCells);
-            foreach (BoardCell cell in trippleCells)
+            foreach (BoardCell cell in setCells)
             {
                 // remove the cell from the dict
                 mrvInstance.RemoveCell(cell);
@@ -100,24 +99,24 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="board"></param>
         /// <param name="unitCells"></param>
         /// <returns></returns>
-        private static Dictionary<int, List<(int, int)>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, IEnumerable<(int, int)> unitCells)
+        private static Dictionary<int, List<BoardCell>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, IEnumerable<BoardCell> unitCells)
         {
-            Dictionary<int, List<(int, int)>> possibilityDict = new Dictionary<int, List<(int, int)>>();
-            foreach ((int unitRow, int unitCol) in unitCells)
+            Dictionary<int, List<BoardCell>> possibilityDict = new Dictionary<int, List<BoardCell>>();
+            foreach (var cell in unitCells)
             {
                 // skip filled cells and the current cell pos
-                if (!(unitRow == row && unitCol == col) && board[unitRow, unitCol].CellValue == 0)
+                if (!(cell.CellRow == row && cell.CellCol == col) && cell.CellValue == 0)
                 {
-                    HashSet<int> possibilities = board[unitRow, unitCol].GetPossibilites();
+                    HashSet<int> possibilities = cell.GetPossibilites();
 
                     foreach (int value in possibilities)
                     {
                         if (!possibilityDict.ContainsKey(value))
                         {
-                            possibilityDict[value] = new List<(int, int)>();
+                            possibilityDict[value] = new List<BoardCell>();
                         }
                         // add the cell to the dict
-                        possibilityDict[value].Add((unitRow, unitCol));
+                        possibilityDict[value].Add(cell);
                     }
                 }
 

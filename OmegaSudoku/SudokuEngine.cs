@@ -15,8 +15,8 @@ namespace OmegaSudoku
             Console.WriteLine("Hi welcome to the amazing sudoku engine, N * N board, to exit the engine write: EXIT");
             while (!endRunFlag) 
             {
-                try
-                {
+                //try
+                //{
                     SudokuSolver.depth = 0;
                     OutputHandler.RequestBoard();
                     InputHandler.GetUserInput();
@@ -44,12 +44,12 @@ namespace OmegaSudoku
                         OutputHandler.ShowProgramRuntime(stopwatch.ElapsedMilliseconds);
                         Console.WriteLine($"Depth: {SudokuSolver.depth}");
                     }
-                }
-                catch (Exception e)
-                {
-                    //The only excptions that can occur are mine so i can catch Exception
-                    OutputHandler.OutputError(e.Message);
-                }
+                //}
+                //catch (Exception e)
+                //{
+                //    //The only excptions that can occur are mine so i can catch Exception
+                //    OutputHandler.OutputError(e.Message);
+                //}
 
             }
         }

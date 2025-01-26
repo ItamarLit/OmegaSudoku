@@ -20,7 +20,7 @@ namespace OmegaSudoku.GameLogic
 
         private readonly Stack<StateChange> _stateChangesStack;
 
-        private (int , int)? _lastUpdatedCell;
+        private BoardCell? _lastUpdatedCell;
 
         public static int depth = 0;
 
@@ -52,20 +52,20 @@ namespace OmegaSudoku.GameLogic
                 // invalid board 
                 return false;
             }
-            (int row, int col) = _mrvDict.GetLowestPossibilityCell(_logicHandler, _board);
-            if (_mrvDict.IsEmptyMap((row, col)))
+            BoardCell cell = _mrvDict.GetLowestPossibilityCell(_logicHandler, _board);
+            if (_mrvDict.IsEmptyMap(cell))
             {
                 // if there are no more cells to fill the sudoku is solved
                 return true;
             }
-            HashSet<int> possibilites = _board[row, col].GetPossibilites();
+            HashSet<int> possibilites = cell.GetPossibilites();
             if (possibilites.Count > 0)
             {
                 foreach (int potentialValue in possibilites)
                 {
-                    _lastUpdatedCell = (row, col);
+                    _lastUpdatedCell = cell;
                     StateChange currentState = new StateChange();
-                    if (TrySolveCell(potentialValue, row, col, currentState))
+                    if (TrySolveCell(potentialValue, cell.CellRow, cell.CellCol, currentState))
                     {
                         return true;
                     }
@@ -108,8 +108,8 @@ namespace OmegaSudoku.GameLogic
                 if (_lastUpdatedCell != null && !metError)
                 {
                     
-                    int lastUpdatedRow = _lastUpdatedCell.Value.Item1;
-                    int lastUpdatedCol = _lastUpdatedCell.Value.Item2;
+                    int lastUpdatedRow = _lastUpdatedCell.CellRow;
+                    int lastUpdatedCol = _lastUpdatedCell.CellCol;
                     // attempt to apply hidden singles if no progress was made with naked singles
                     if(!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
                     {
@@ -128,14 +128,6 @@ namespace OmegaSudoku.GameLogic
                         // invalid board
                         metError = true;
                     }
-                    // apply naked trips
-                    if (!NakedSetsUtil.ApplyNakedSets(currentState, _board, _logicHandler, _mrvDict, 3))
-                    {
-                        // invalid board
-                        metError = true;
-                    }
-                  
-
                 }
                 // check if the heuristics did anything
                 madeProgress = MadeProgress(previousValueChanges, previousPossibilityChanges, currentState);
