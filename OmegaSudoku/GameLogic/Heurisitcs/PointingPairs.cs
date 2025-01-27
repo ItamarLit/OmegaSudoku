@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OmegaSudoku.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,14 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
-    public class PointingPairsUtil
+    public class PointingPairs : IHeuristic
     {
-
-        public static bool ApplyPointingPairs(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
+        /// <summary>
+        /// This class is used to apply the pointing pairs heuristic, if 2 cells have 2 possibilites that appear only in them in the block and 
+        /// the cells are in the same row / column we can remove all the same possiblity from the cells in the row / column outside the block
+        /// </summary>
+       
+        public bool ApplyHeuristic(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // create a possiblity dict for the cube cells
             IEnumerable<Icell> cubeCells = logicHandler.GetCubeCells(row, col);

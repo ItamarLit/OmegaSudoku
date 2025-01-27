@@ -1,17 +1,19 @@
-﻿using OmegaSudoku.GameLogic;
+﻿using OmegaSudoku.Exceptions;
+using OmegaSudoku.GameLogic;
+using OmegaSudoku.Interfaces;
 using System;
-using OmegaSudoku.Exceptions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace OmegaSudoku.IO
 {
-    class InputHandler
+    public class InputValidator
     {
         /// <summary>
-        /// This is the class used to handle all the input functions
-        /// the class will check to see that the board is valid and then the board can be attempted to solve
+        /// This class is used to validate the user input
         /// </summary>
-
-        private static string _input;
 
         // set the starting number for the sudoku to 1 
         private const int STARTING_SUDOKU_NUMBER = 1;
@@ -19,49 +21,32 @@ namespace OmegaSudoku.IO
         private const int MAX_BOARD_SIZE = 25;
 
         private static int _boardSize;
-
-        public static void GetUserInput()
-        {
-            // get the users input
-            _input = Console.ReadLine();
-        }
-
-        public static bool CheckInput()
+        public static bool CheckInput(string input)
         {
             // This func will check the basic input
-            if (_input == "EXIT") 
-            {
-                return false;
-            }
-            // check for only numeric values
-            if (!double.TryParse(_input, out double boardValue))
-            {
-                // Throw invalid board info exception
-                throw new BoardInfoException();
-            }
-            double boardSize = Math.Sqrt((double)_input.Length);
+            double boardSize = Math.Sqrt((double)input.Length);
             // check if the board size is N * N where N is able to be squared
             if (boardSize != Math.Floor(boardSize) || boardSize > MAX_BOARD_SIZE)
             {
                 // throw invalid board size exception
-                throw new BoardSizeException(_input.Length);
+                throw new BoardSizeException(input.Length);
             }
             // no exception so the size is valid
             _boardSize = (int)boardSize;
             return true;
         }
 
-        public static Icell[,] SetUpBoard()
+        public static Icell[,] SetUpBoard(string input)
         {
             // setup the board
             BoardCell[,] board = new BoardCell[_boardSize, _boardSize];
             int cellValue;
             int rowIndex;
             int columnIndex;
-            for (int index = 0; index < _input.Length; index++)
+            for (int index = 0; index < input.Length; index++)
             {
                 // convert char into int
-                cellValue = _input[index] - '0';
+                cellValue = input[index] - '0';
                 rowIndex = index / _boardSize;
                 columnIndex = index % _boardSize;
                 // check the cellValue
@@ -75,7 +60,5 @@ namespace OmegaSudoku.IO
             }
             return board;
         }
-
-
     }
 }

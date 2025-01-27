@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OmegaSudoku.GameLogic.Heurisitcs;
+using OmegaSudoku.Interfaces;
 using OmegaSudoku.IO;
 
 namespace OmegaSudoku.GameLogic
@@ -19,6 +20,17 @@ namespace OmegaSudoku.GameLogic
         private readonly SudokuLogicHandler _logicHandler;
 
         private readonly Stack<StateChange> _stateChangesStack;
+
+        private readonly List<IHeuristic> _heuristics = new List<IHeuristic>
+        {
+            // hidden single and hidden pair
+            new HiddenSets(1),
+            new HiddenSets(2),
+            // naked pair
+            new NakedPairs(),
+            // pointing pair
+            new PointingPairs()
+        };
 
         private Icell? _lastUpdatedCell;
 
@@ -58,8 +70,8 @@ namespace OmegaSudoku.GameLogic
                 // if there are no more cells to fill the sudoku is solved
                 return true;
             }
-            HashSet<int> possibilites = cell.GetPossibilites();
-            if (possibilites.Count > 0)
+            IEnumerable<int> possibilites = SortByLeastConstraining(cell.GetPossibilites(), cell.GetCellRow(), cell.GetCellCol());
+            if (possibilites.Count() > 0)
             {
                 foreach (int potentialValue in possibilites)
                 {
@@ -107,33 +119,16 @@ namespace OmegaSudoku.GameLogic
                 }
                 if (_lastUpdatedCell != null && !metError)
                 {
-                    
+                    // apply each heuristic not including naked singles as it changes cell values
                     int lastUpdatedRow = _lastUpdatedCell.GetCellRow();
                     int lastUpdatedCol = _lastUpdatedCell.GetCellCol();
-                    // attempt to apply hidden singles if no progress was made with naked singles
-                    if(!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
+                    for (int index = 0; index < _heuristics.Count && !metError; index++) 
                     {
-                        // invalid board
-                        metError = true;
+                        if (!_heuristics[index].ApplyHeuristic(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
+                        {
+                            metError = true;
+                        }
                     }
-                    //// apply hidden pairs if no progress was made with hidden singles and naked singles
-                    if (!metError && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
-                    {
-                        // invalid board
-                        metError = true;
-                    }
-                    // after applying hidden pairs apply naked pairs to remove the possiblites
-                    if (!metError && !NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
-                    {
-                        // invalid board
-                        metError = true;
-                    }
-                    if (!metError && !PointingPairsUtil.ApplyPointingPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
-                    {
-                        // invalid board
-                        metError = true;
-                    }
-
                 }
                 // check if the heuristics did anything
                 madeProgress = MadeProgress(previousValueChanges, previousPossibilityChanges, currentState);
@@ -235,6 +230,23 @@ namespace OmegaSudoku.GameLogic
                 cell.IncreasePossibility(removedValue);
             }
             return changedCells;
+        }
+
+        private IEnumerable<int> SortByLeastConstraining(IEnumerable<int> possiblites, int row, int col)
+        {
+            // only apply this if the board is larger than 9 * 9 as the overhead is not worth it in smaller boards
+            if(_board.GetLength(0) <= 9)
+            {
+                return possiblites;
+            }
+            Dictionary<int, int> sortDict = new Dictionary<int, int>();
+            foreach(int possiblity in possiblites)
+            {
+                HashSet<Icell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, possiblity);
+                sortDict[possiblity] = affectedCells.Count;
+            }
+            return sortDict.OrderBy(keyValue =>  keyValue.Value).Select(keyValue => keyValue.Key);
+
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OmegaSudoku.GameLogic
+namespace OmegaSudoku.Interfaces
 {
     public interface Icell
     {
@@ -28,7 +28,7 @@ namespace OmegaSudoku.GameLogic
 
         public int GetCellRow();
 
-        public int GetCellCol();    
+        public int GetCellCol();
 
         public int GetCellValue();
 

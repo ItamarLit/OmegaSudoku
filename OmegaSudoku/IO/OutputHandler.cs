@@ -1,4 +1,4 @@
-﻿using OmegaSudoku.GameLogic;
+﻿using OmegaSudoku.Interfaces;
 using System;
 
 
@@ -29,6 +29,21 @@ namespace OmegaSudoku.IO
         public static void OutputError(string msg)
         {
             Console.WriteLine(msg);
+        }
+
+        public static void ShowMenu()
+        {
+            Console.WriteLine("Here are your options:\n");
+            Console.WriteLine("*** To solve a board entered in the console enter: 'solve_c'");
+            Console.WriteLine("*** To solve a board entered in a file enter: 'solve_f'");
+            Console.WriteLine("*** To see the solver rules enter: 'rules'");
+            Console.WriteLine("*** To see this menu again enter: 'menu'");
+            Console.WriteLine("*** To exit the solver enter: 'exit'");
+        }
+
+        public static void ShowRules()
+        {
+            Console.WriteLine("A valid board for the solver is an N*N board where N can be squared and is smaller / equal to 25.");
         }
 
         public static void PrintBoard(Icell[,] board)

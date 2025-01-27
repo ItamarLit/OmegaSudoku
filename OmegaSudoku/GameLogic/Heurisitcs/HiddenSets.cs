@@ -1,4 +1,5 @@
-﻿using OmegaSudoku.IO;
+﻿using OmegaSudoku.Interfaces;
+using OmegaSudoku.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +9,20 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
-    public class HiddenSetsUtil
+    public class HiddenSets : IHeuristic
     {
         /// <summary>
         /// This class is used to apply the heuristic of hidden N sets in sudoku, a hidden set occurs when N cell have N unique possiblites between them
         /// After identifiying this i can remove the other possiblites from the cells turning them into Naked sets
         /// </summary>
-        /// <param name="currentState"></param>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <param name="board"></param>
-        /// <param name="logicHandler"></param>
-        /// <param name="mrvInstance"></param>
-        /// <param name="setSize"></param>
-        /// <returns></returns>
-        public static bool ApplyHiddenSet(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance, int setSize)
+        /// 
+        private int _setSize;
+        public HiddenSets(int setSize) 
+        {
+            _setSize = setSize;
+        }
+
+        public bool ApplyHeuristic(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // get the unit cells 
             IEnumerable<Icell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
@@ -32,7 +32,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 Dictionary<int, List<Icell>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
                 List<int> candidates = possibilityDict.Keys.ToList();
                 // generate the different sets of the values
-                List<List<int>> sets = GetCombinationsInSet(candidates, setSize);
+                List<List<int>> sets = GetCombinationsInSet(candidates, _setSize);
                 bool finishedSuccessfully = false;
                 foreach (var set in sets)
                 {
@@ -41,12 +41,12 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     {
                         setCells.UnionWith(possibilityDict[value]);
                     }
-                    if (setCells.Count < setSize)
+                    if (setCells.Count < _setSize)
                     {
                         // invalid board there cant be n cells with n + 1 possiblites
                         return false;
                     }
-                    else if (setCells.Count == setSize)
+                    else if (setCells.Count == _setSize)
                     {
                         // check if the board after removing possiblites is valid
                         finishedSuccessfully = RemoveRedundantPossibilitiesFromSet(logicHandler, setCells, set, mrvInstance, currentState);

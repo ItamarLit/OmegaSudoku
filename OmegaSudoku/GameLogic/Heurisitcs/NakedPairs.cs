@@ -1,5 +1,7 @@
-﻿using System;
+﻿using OmegaSudoku.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
-    public class NakedPairsUtil
+    public class NakedPairs : IHeuristic
     {
         /// <summary>
-        /// This class is used as a utilitly class that applys the naked pairs heursitic, a naked pair is a set of 2 cells that have 2 same possiblites between them
+        /// This class is used as a class that applys the naked pairs heursitic, a naked pair is a set of 2 cells that have 2 same possiblites between them
         /// after finding a pair we can remove the rest of the possiblites from the unit cells
         /// </summary>
-        public static bool ApplyNakedPairs(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
+        public bool ApplyHeuristic(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // get the affected cells from the last change
             IEnumerable<Icell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OmegaSudoku.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -62,6 +63,7 @@ namespace OmegaSudoku.GameLogic
             // if the array is empty return (-1 , -1) = board solved
             return null;
         }
+
 
         /// <summary>
         /// This func gets the cell that is in the most filled area and has the lowes possiblity count
