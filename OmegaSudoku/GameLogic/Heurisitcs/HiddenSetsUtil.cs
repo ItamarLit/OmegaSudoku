@@ -22,21 +22,21 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="mrvInstance"></param>
         /// <param name="setSize"></param>
         /// <returns></returns>
-        public static bool ApplyHiddenSet(StateChange currentState, int row, int col, BoardCell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance, int setSize)
+        public static bool ApplyHiddenSet(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance, int setSize)
         {
             // get the unit cells 
-            HashSet<BoardCell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
+            IEnumerable<Icell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
             for (int i = 0; i < affectedUnitCells.Length; i++)
             {
                 // create the possiblity dict
-                Dictionary<int, List<BoardCell>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
+                Dictionary<int, List<Icell>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
                 List<int> candidates = possibilityDict.Keys.ToList();
                 // generate the different sets of the values
                 List<List<int>> sets = GetCombinationsInSet(candidates, setSize);
                 bool finishedSuccessfully = false;
                 foreach (var set in sets)
                 {
-                    HashSet<BoardCell> setCells = new HashSet<BoardCell>();
+                    HashSet<Icell> setCells = new HashSet<Icell>();
                     foreach (int value in set)
                     {
                         setCells.UnionWith(possibilityDict[value]);
@@ -62,9 +62,9 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return true;
         }
 
-        private static bool RemoveRedundantPossibilitiesFromSet(SudokuLogicHandler logicHandler, HashSet<BoardCell> setCells, List<int> setCandidates, Mrvdict mrvInstance, StateChange currentState)
+        private static bool RemoveRedundantPossibilitiesFromSet(SudokuLogicHandler logicHandler, HashSet<Icell> setCells, List<int> setCandidates, Mrvdict mrvInstance, StateChange currentState)
         {
-            foreach (BoardCell cell in setCells)
+            foreach (Icell cell in setCells)
             {
                 // remove the cell from the dict
                 mrvInstance.RemoveCell(cell);
@@ -74,7 +74,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     if (!setCandidates.Contains(candidate))
                     {
                         cell.DecreasePossibility(candidate);
-                        currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, candidate));
+                        currentState.CellPossibilityChanges.Add((cell.GetCellRow(), cell.GetCellCol(), candidate));
                     }
                 }
                 // invalid board state
@@ -99,21 +99,20 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="board"></param>
         /// <param name="unitCells"></param>
         /// <returns></returns>
-        private static Dictionary<int, List<BoardCell>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, BoardCell[,] board, IEnumerable<BoardCell> unitCells)
+        private static Dictionary<int, List<Icell>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, Icell[,] board, IEnumerable<Icell> unitCells)
         {
-            Dictionary<int, List<BoardCell>> possibilityDict = new Dictionary<int, List<BoardCell>>();
+            Dictionary<int, List<Icell>> possibilityDict = new Dictionary<int, List<Icell>>();
             foreach (var cell in unitCells)
             {
                 // skip filled cells and the current cell pos
-                if (!(cell.CellRow == row && cell.CellCol == col) && cell.CellValue == 0)
+                if (!(cell.GetCellRow() == row && cell.GetCellCol() == col) && cell.IsCellEmpty())
                 {
-                    HashSet<int> possibilities = cell.GetPossibilites();
 
-                    foreach (int value in possibilities)
+                    foreach (int value in cell.GetPossibilites())
                     {
                         if (!possibilityDict.ContainsKey(value))
                         {
-                            possibilityDict[value] = new List<BoardCell>();
+                            possibilityDict[value] = new List<Icell>();
                         }
                         // add the cell to the dict
                         possibilityDict[value].Add(cell);
@@ -125,34 +124,31 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         }
 
         /// <summary>
-        /// Recursive function that generates sets of n len from a list
+        ///  Function that generates sets of n len from a list
         /// </summary>
         /// <param name="list"></param>
         /// <param name="length"></param>
         /// <returns></returns>
         private static List<List<int>> GetCombinationsInSet(List<int> list, int length)
         {
-            
             List<List<int>> result = new List<List<int>>();
-            // base case of the recursion
+            GenerateCombinations(list, length, 0, new List<int>(), result);
+            return result;
+        }
+
+        private static void GenerateCombinations(List<int> list, int length, int start, List<int> current, List<List<int>> result)
+        {
             if (length == 0)
             {
-                result.Add(new List<int>());
-                return result;
+                result.Add(new List<int>(current));
+                return;
             }
-
-            for (int i = 0; i < list.Count; i++)
+            for (int i = start; i < list.Count; i++)
             {
-                List<int> remaining = list.Skip(i + 1).ToList();
-                List<List<int>> combinations = GetCombinationsInSet(remaining, length - 1);
-
-                foreach (var combination in combinations)
-                {
-                    combination.Insert(0, list[i]);
-                    result.Add(combination);
-                }
+                current.Add(list[i]);
+                GenerateCombinations(list, length - 1, i + 1, current, result);
+                current.RemoveAt(current.Count - 1);
             }
-            return result;
         }
 
     }

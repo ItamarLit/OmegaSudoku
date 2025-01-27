@@ -31,7 +31,7 @@ namespace OmegaSudoku.IO
             Console.WriteLine(msg);
         }
 
-        public static void PrintBoard(BoardCell[,] board)
+        public static void PrintBoard(Icell[,] board)
         {
             int boardSize = board.GetLength(0);
             int blockSize = (int)Math.Sqrt((double)boardSize);
@@ -48,7 +48,7 @@ namespace OmegaSudoku.IO
                         Console.Write("|");
                     }
 
-                    char cellChar = (char)(board[i, j].CellValue + '0');
+                    char cellChar = (char)(board[i, j].GetCellValue() + '0');
                     string cellValue = cellChar.ToString();
                     Console.Write($" {cellValue} ");
                 }

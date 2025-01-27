@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.GameLogic
 {
-    public class BoardCell
+    public class BoardCell : Icell
     {
         /// <summary>
         /// This is the class used to store data of a cell, the possibilities are stored in bitwise
         /// </summary>
 
-        public int CellRow { get; }
-        public int CellCol { get; }
+        private readonly int _cellRow;
+        private readonly int _cellCol;
 
         private int _possibilites;
 
@@ -22,14 +22,14 @@ namespace OmegaSudoku.GameLogic
         private const int BITS_SIZE = 32;
 
         private int _possibilitiesCount;
-        public int CellValue { get; set; }
+        private int _cellValue;
 
         public BoardCell(int xPos, int yPos, int boardSize, int cellVal)
         {
-            CellRow = xPos;
-            CellCol = yPos;
-            CellValue = cellVal;
-            if (CellValue == 0)
+            _cellRow = xPos;
+            _cellCol = yPos;
+            _cellValue = cellVal;
+            if (_cellValue == 0)
             {
                 // create the bit possiblities
                 _possibilites = (1 << (boardSize + 1)) - 1;
@@ -71,9 +71,9 @@ namespace OmegaSudoku.GameLogic
             return _possibilitiesCount;
         }
 
-        public bool CellIsEmpty()
+        public bool IsCellEmpty()
         {
-            return CellValue == 0;
+            return _cellValue == 0;
         }
 
         public bool HasValue(int value)
@@ -93,6 +93,26 @@ namespace OmegaSudoku.GameLogic
                 }
             }
             return potientialValues;
+        }
+
+        public int GetCellRow()
+        {
+            return _cellRow;
+        }
+
+        public int GetCellCol()
+        {
+            return _cellCol;
+        }
+
+        public int GetCellValue()
+        {
+            return _cellValue;
+        }
+
+        public void SetCellValue(int value)
+        {
+            _cellValue = value;
         }
     }
 }

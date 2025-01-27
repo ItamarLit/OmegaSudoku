@@ -19,16 +19,16 @@ namespace OmegaSudoku.GameLogic
         /// <param name="currentState"></param>
         /// <param name="affectedCells"></param>
         /// <param name="removedPossibility"></param>
-        public static void SetAffectedCellsInStack(StateChange currentState, IEnumerable<BoardCell> affectedCells, int removedPossibility)
+        public static void SetAffectedCellsInStack(StateChange currentState, IEnumerable<Icell> affectedCells, int removedPossibility)
         {
-            foreach (BoardCell cell in affectedCells)
+            foreach (Icell cell in affectedCells)
             {
-                currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, removedPossibility));
+                currentState.CellPossibilityChanges.Add((cell.GetCellRow(), cell.GetCellCol(), removedPossibility));
             }
         }
 
-        public static void DecreaseGamePossibilites(IEnumerable<BoardCell> affectedCells, int row, int col,
-            int potentialValue, Mrvdict mrvInstance, SudokuLogicHandler logicHandler, BoardCell[,] board)
+        public static void DecreaseGamePossibilites(IEnumerable<Icell> affectedCells, int row, int col,
+            int potentialValue, Mrvdict mrvInstance, SudokuLogicHandler logicHandler, Icell[,] board)
         {
             // remove the possibilites
             mrvInstance.UpdateMRVCells(affectedCells, false);

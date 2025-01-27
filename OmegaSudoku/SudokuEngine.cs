@@ -26,7 +26,7 @@ namespace OmegaSudoku
                     }
                     else
                     {
-                        BoardCell[,] board = InputHandler.SetUpBoard();
+                        Icell[,] board = InputHandler.SetUpBoard();
                         OutputHandler.PrintBoard(board);
                         Mrvdict mrvDict = new Mrvdict(board.GetLength(0));
                         SudokuSolver solver = new SudokuSolver(board, mrvDict);

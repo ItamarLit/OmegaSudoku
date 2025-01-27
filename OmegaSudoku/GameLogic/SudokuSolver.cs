@@ -12,7 +12,7 @@ namespace OmegaSudoku.GameLogic
         /// This class holds the main solve func that is used to attempt to solve the board and other helper funcs
         /// </summary>
 
-        private readonly BoardCell[,] _board;
+        private readonly Icell[,] _board;
 
         private readonly Mrvdict _mrvDict;
 
@@ -20,11 +20,11 @@ namespace OmegaSudoku.GameLogic
 
         private readonly Stack<StateChange> _stateChangesStack;
 
-        private BoardCell? _lastUpdatedCell;
+        private Icell? _lastUpdatedCell;
 
         public static int depth = 0;
 
-        public SudokuSolver(BoardCell[,] gameBoard, Mrvdict mrvInstance)
+        public SudokuSolver(Icell[,] gameBoard, Mrvdict mrvInstance)
         {
             _board = gameBoard;
             _mrvDict = mrvInstance;
@@ -52,7 +52,7 @@ namespace OmegaSudoku.GameLogic
                 // invalid board 
                 return false;
             }
-            BoardCell cell = _mrvDict.GetLowestPossibilityCell(_logicHandler, _board);
+            Icell cell = _mrvDict.GetLowestPossibilityCell(_logicHandler, _board);
             if (_mrvDict.IsEmptyMap(cell))
             {
                 // if there are no more cells to fill the sudoku is solved
@@ -65,7 +65,7 @@ namespace OmegaSudoku.GameLogic
                 {
                     _lastUpdatedCell = cell;
                     StateChange currentState = new StateChange();
-                    if (TrySolveCell(potentialValue, cell.CellRow, cell.CellCol, currentState))
+                    if (TrySolveCell(potentialValue, cell.GetCellRow(), cell.GetCellCol(), currentState))
                     {
                         return true;
                     }
@@ -108,26 +108,32 @@ namespace OmegaSudoku.GameLogic
                 if (_lastUpdatedCell != null && !metError)
                 {
                     
-                    int lastUpdatedRow = _lastUpdatedCell.CellRow;
-                    int lastUpdatedCol = _lastUpdatedCell.CellCol;
+                    int lastUpdatedRow = _lastUpdatedCell.GetCellRow();
+                    int lastUpdatedCol = _lastUpdatedCell.GetCellCol();
                     // attempt to apply hidden singles if no progress was made with naked singles
                     if(!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 1))
                     {
                         // invalid board
                         metError = true;
                     }
-                    // apply hidden pairs if no progress was made with hidden singles and naked singles
-                    if (!HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
+                    //// apply hidden pairs if no progress was made with hidden singles and naked singles
+                    if (!metError && !HiddenSetsUtil.ApplyHiddenSet(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict, 2))
                     {
                         // invalid board
                         metError = true;
                     }
                     // after applying hidden pairs apply naked pairs to remove the possiblites
-                    if (!NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
+                    if (!metError && !NakedPairsUtil.ApplyNakedPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
                     {
                         // invalid board
                         metError = true;
                     }
+                    if (!metError && !PointingPairsUtil.ApplyPointingPairs(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
+                    {
+                        // invalid board
+                        metError = true;
+                    }
+
                 }
                 // check if the heuristics did anything
                 madeProgress = MadeProgress(previousValueChanges, previousPossibilityChanges, currentState);
@@ -165,9 +171,9 @@ namespace OmegaSudoku.GameLogic
         public bool TrySolveCell(int potentialValue, int row, int col, StateChange currentState)
         {
             currentState.CellValueChanges.Add((row, col, 0));
-            _board[row, col].CellValue = potentialValue;
+            _board[row, col].SetCellValue(potentialValue);
             // save the affected cell positions incase the attempt is wrong
-            HashSet<BoardCell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
+            HashSet<Icell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
             SolverUtils.SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
             SolverUtils.DecreaseGamePossibilites(affectedCells, row, col, potentialValue, _mrvDict, _logicHandler, _board);
             // save the current state
@@ -199,7 +205,7 @@ namespace OmegaSudoku.GameLogic
         /// <param name="potentialValue"></param>
         private void ResetState()
         {
-            HashSet<BoardCell> affectedCells = ResetCellsUsingStack();
+            IEnumerable<Icell> affectedCells = ResetCellsUsingStack();
             _mrvDict.UpdateMRVCells(affectedCells, true);
             _lastUpdatedCell = null;
         }
@@ -208,19 +214,19 @@ namespace OmegaSudoku.GameLogic
         /// This func will reset the state using the stack and the last state of the board
         /// </summary>
         /// <returns></returns>
-        private HashSet<BoardCell> ResetCellsUsingStack()
+        private IEnumerable<Icell> ResetCellsUsingStack()
         {
             StateChange oldState = _stateChangesStack.Pop();
-            HashSet<BoardCell> changedCells = new HashSet<BoardCell>();
+            List<Icell> changedCells = new List<Icell>();
             foreach ((int row, int col, int value) in oldState.CellValueChanges)
             {
-                BoardCell cell = _board[row, col];
-                cell.CellValue = value;
+                Icell cell = _board[row, col];
+                cell.SetCellValue(value);
                 changedCells.Add(cell);
             }
             foreach ((int row, int col, int removedValue) in oldState.CellPossibilityChanges)
             {
-                BoardCell cell = _board[row, col];
+                Icell cell = _board[row, col];
                 if (!changedCells.Contains(cell))
                 {
                     _mrvDict.RemoveCell(cell);

@@ -13,20 +13,20 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// if we find a cell with 1 possibility this must be its value
         /// </summary>
        
-        public static bool SolveSinglePossibilityCells(StateChange currentState, BoardCell[,] board, Mrvdict mrvInstance, ref BoardCell? lastUpdatedCell, SudokuLogicHandler logicHandler)
+        public static bool SolveSinglePossibilityCells(StateChange currentState, Icell[,] board, Mrvdict mrvInstance, ref Icell? lastUpdatedCell, SudokuLogicHandler logicHandler)
         {
             // run while there are naked singles on the board
             while (mrvInstance.HasSinglePossibiltyCell())
             {
                 // get the row, col of the cell
-                BoardCell cell = mrvInstance.GetLowestPossibilityCell(logicHandler, board);
+                Icell cell = mrvInstance.GetLowestPossibilityCell(logicHandler, board);
                 int potentialValue = cell.GetPossibilites().First();
-                currentState.CellValueChanges.Add((cell.CellRow, cell.CellCol, cell.CellValue));
-                cell.CellValue = potentialValue;
+                currentState.CellValueChanges.Add((cell.GetCellRow(), cell.GetCellCol(), cell.GetCellValue()));
+                cell.SetCellValue(potentialValue);
                 // remove the possibility
-                HashSet<BoardCell> affectedCells = logicHandler.GetFilteredUnitCells(cell.CellRow, cell.CellCol, potentialValue);
+                HashSet<Icell> affectedCells = logicHandler.GetFilteredUnitCells(cell.GetCellRow(), cell.GetCellCol(), potentialValue);
                 SolverUtils.SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
-                SolverUtils.DecreaseGamePossibilites(affectedCells, cell.CellRow, cell.CellCol, potentialValue, mrvInstance, logicHandler, board);
+                SolverUtils.DecreaseGamePossibilites(affectedCells, cell.GetCellRow(), cell.GetCellCol(), potentialValue, mrvInstance, logicHandler, board);
                 // check if the update was valid
                 if (logicHandler.IsInvalidUpdate(affectedCells))
                 {
