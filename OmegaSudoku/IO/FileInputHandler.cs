@@ -30,5 +30,10 @@ namespace OmegaSudoku.IO
             }
             Input = File.ReadAllText(_filepath);
         }
+
+        public string GetPath()
+        {
+            return _filepath;
+        }
     }
 }

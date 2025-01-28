@@ -59,7 +59,7 @@ namespace OmegaSudoku
                 Console.WriteLine("Enter the Sudoku board:");
                 consoleInputHandler.GetUserInput();
                 string input = consoleInputHandler.Input.Trim();
-                SolveBoard(input);
+                SolveBoard(input, false, consoleInputHandler);
             }
             catch (Exception e)
             {
@@ -79,7 +79,7 @@ namespace OmegaSudoku
                 FileInputHandler fileInputHandler = new FileInputHandler(path);
                 fileInputHandler.GetUserInput();
                 string input = fileInputHandler.Input.Trim();
-                SolveBoard(input);
+                SolveBoard(input, true, fileInputHandler);
             }
             catch (Exception e)
             {
@@ -87,7 +87,7 @@ namespace OmegaSudoku
             }
         }
 
-        private static void SolveBoard(string input)
+        private static void SolveBoard(string input, bool is_file, IinputReader inputHandler)
         {
             SudokuSolver.depth = 0;
             // check the input
@@ -99,6 +99,7 @@ namespace OmegaSudoku
             // set up solver
             SudokuSolver solver = new SudokuSolver(board, mrvDict);
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            bool invalidBoard = false;
             if (solver.Solve())
             {
                 OutputHandler.PrintBoard(board);
@@ -106,6 +107,17 @@ namespace OmegaSudoku
             else
             {
                 OutputHandler.ShowImpossibleBoardMsg();
+                invalidBoard = true;
+
+            }
+            if (is_file)
+            {
+                string filePath = ((FileInputHandler)inputHandler).GetPath();
+                OutputHandler.WriteIntoFile(filePath, OutputHandler.GetBoardStr(board));
+                if (invalidBoard)
+                {
+                    OutputHandler.WriteIntoFile(filePath, "The board is unsolvable");
+                }
             }
             stopwatch.Stop();
             OutputHandler.ShowProgramRuntime(stopwatch.ElapsedMilliseconds);

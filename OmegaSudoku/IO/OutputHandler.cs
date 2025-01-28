@@ -77,5 +77,23 @@ namespace OmegaSudoku.IO
             }
         }
 
+        public static string GetBoardStr(Icell[,] board)
+        {
+            string boardStr = "";
+            for(int i = 0; i < board.GetLength(0); i++)
+            {
+                for(int j = 0; j < board.GetLength(1); j++)
+                {
+                    boardStr += (char)(board[i, j].GetCellValue() + '0');
+                }
+            }
+            return boardStr;
+        }
+
+        public static void WriteIntoFile(string filePath, string outputStr)
+        {
+            File.AppendAllText(filePath, "\n\nHere is the output:\n\n");
+            File.AppendAllText(filePath, outputStr);
+        }
     }
 }
