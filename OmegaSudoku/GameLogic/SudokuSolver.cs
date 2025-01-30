@@ -27,9 +27,7 @@ namespace OmegaSudoku.GameLogic
             new HiddenSets(1),
             new HiddenSets(2),
             // naked pair
-            new NakedPairs(),
-            // pointing pair
-            new PointingPairs()
+            new NakedSetsUtil(2),
         };
 
         private Icell? _lastUpdatedCell;
@@ -169,7 +167,7 @@ namespace OmegaSudoku.GameLogic
             _board[row, col].SetCellValue(potentialValue);
             // save the affected cell positions incase the attempt is wrong
             HashSet<Icell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
-            SolverUtils.SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
+            SolverUtils.SetAffectedCellsInStack(currentState, affectedCells);
             SolverUtils.DecreaseGamePossibilites(affectedCells, row, col, potentialValue, _mrvDict, _logicHandler, _board);
             // save the current state
             _stateChangesStack.Push(currentState);
@@ -227,7 +225,7 @@ namespace OmegaSudoku.GameLogic
                     _mrvDict.RemoveCell(cell);
                     changedCells.Add(cell);
                 }
-                cell.IncreasePossibility(removedValue);
+                cell.SetCellMask(cell.GetCellMask() |removedValue);
             }
             return changedCells;
         }

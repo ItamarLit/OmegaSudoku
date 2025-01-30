@@ -62,6 +62,8 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return true;
         }
 
+ 
+
         /// <summary>
         /// This func sums the possiblites in a unit
         /// </summary>
@@ -79,15 +81,25 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 // skip filled cells and the current cell pos
                 if (!(cell.GetCellRow() == row && cell.GetCellCol() == col) && cell.IsCellEmpty())
                 {
-
-                    foreach (int value in cell.GetPossibilites())
+                    int cellMask = cell.GetCellMask();
+                    // skip the first bit as it is never set
+                    cellMask >>= 1;
+                    int value = 1;
+                    // go over the mask and add the possibilites
+                    while (value <= board.GetLength(0) && cellMask != 0)
                     {
-                        if (!possibilityDict.ContainsKey(value))
+                        if ((cellMask & 1) != 0)
                         {
-                            possibilityDict[value] = new List<Icell>();
+                            if (!possibilityDict.TryGetValue(value, out var list))
+                            {
+                                list = new List<Icell>();
+                                possibilityDict[value] = list;
+                            }
+                            list.Add(cell);
+
                         }
-                        // add the cell to the dict
-                        possibilityDict[value].Add(cell);
+                        cellMask >>= 1;
+                        value++;
                     }
                 }
 
