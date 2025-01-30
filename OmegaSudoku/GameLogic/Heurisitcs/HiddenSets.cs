@@ -48,8 +48,8 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     }
                     else if (setCells.Count == _setSize)
                     {
+                        finishedSuccessfully = HeuristicUtils.RemoveRedundantPossibilities(setCells, null, CreateFullSetBit(board.GetLength(0)), CreateSetMask(set), mrvInstance, currentState);
                         // check if the board after removing possiblites is valid
-                        finishedSuccessfully = RemoveRedundantPossibilitiesFromSet(logicHandler, setCells, set, mrvInstance, currentState);
                         if (!finishedSuccessfully)
                         {
                             return finishedSuccessfully;
@@ -59,34 +59,6 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 }
 
             }
-            return true;
-        }
-
-        private static bool RemoveRedundantPossibilitiesFromSet(SudokuLogicHandler logicHandler, HashSet<Icell> setCells, List<int> setCandidates, Mrvdict mrvInstance, StateChange currentState)
-        {
-            foreach (Icell cell in setCells)
-            {
-                // remove the cell from the dict
-                mrvInstance.RemoveCell(cell);
-                foreach (int candidate in cell.GetPossibilites().ToList())
-                {
-                    // remove all the other candidates from the set that dont appear in the combo
-                    if (!setCandidates.Contains(candidate))
-                    {
-                        cell.DecreasePossibility(candidate);
-                        currentState.CellPossibilityChanges.Add((cell.GetCellRow(), cell.GetCellCol(), candidate));
-                    }
-                }
-                // invalid board state
-                if (cell.NumberOfPossibilites() == 0)
-                {
-                    return false;
-                }
-                // re add the cell after updating its possiblites
-                mrvInstance.InsertCell(cell);
-
-            }
-
             return true;
         }
 
@@ -149,6 +121,21 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 GenerateCombinations(list, length - 1, i + 1, current, result);
                 current.RemoveAt(current.Count - 1);
             }
+        }
+
+        private static int CreateSetMask(List<int> set)
+        {
+            int mask = 0;
+            foreach (int val in set)
+            {
+                mask |= 1 << val;
+            }
+            return mask;
+        }
+
+        public static int CreateFullSetBit(int boardSize)
+        {
+            return (1 << boardSize + 1) - 2;
         }
 
     }

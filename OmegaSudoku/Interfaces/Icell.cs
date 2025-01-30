@@ -33,5 +33,9 @@ namespace OmegaSudoku.Interfaces
         public int GetCellValue();
 
         public void SetCellValue(int value);
+
+        public void SetCellMask(int value);
+
+        public int GetCellMask();
     }
 }

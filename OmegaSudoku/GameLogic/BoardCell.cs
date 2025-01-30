@@ -22,7 +22,6 @@ namespace OmegaSudoku.GameLogic
         // amount of bits of possiblites 
         private const int BITS_SIZE = 32;
 
-        private int _possibilitiesCount;
         private int _cellValue;
 
         public BoardCell(int xPos, int yPos, int boardSize, int cellVal)
@@ -33,13 +32,11 @@ namespace OmegaSudoku.GameLogic
             if (_cellValue == 0)
             {
                 // create the bit possiblities
-                _possibilites = (1 << (boardSize + 1)) - 1;
-                _possibilitiesCount = boardSize;
+                _possibilites = (1 << (boardSize + 1)) - 2;
             }
             else
             {
                 _possibilites = 0;
-                _possibilitiesCount = 0;
             }
         }
 
@@ -51,7 +48,6 @@ namespace OmegaSudoku.GameLogic
                 // turn the bit off using a mask
                 _possibilites &= ~(1 << possibiltiyValue); ;
                 // dec the counter
-                _possibilitiesCount--;
             }
         }
 
@@ -63,13 +59,20 @@ namespace OmegaSudoku.GameLogic
                 // set the bit
                 _possibilites |= (1 << possibilityValue);
                 // inc the counter
-                _possibilitiesCount++;
             }
         }
 
         public int NumberOfPossibilites()
         {
-            return _possibilitiesCount;
+            int count = 0;
+            int bits = _possibilites;
+            while (bits > 0)
+            {
+                // clear lowest bit
+                bits &= (bits - 1);
+                count++;
+            }
+            return count;
         }
 
         public bool IsCellEmpty()
@@ -114,6 +117,16 @@ namespace OmegaSudoku.GameLogic
         public void SetCellValue(int value)
         {
             _cellValue = value;
+        }
+
+        public void SetCellMask(int value)
+        {
+            _possibilites = value;
+        }
+
+        public int GetCellMask()
+        {
+            return _possibilites;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 cell.SetCellValue(potentialValue);
                 // remove the possibility
                 HashSet<Icell> affectedCells = logicHandler.GetFilteredUnitCells(cell.GetCellRow(), cell.GetCellCol(), potentialValue);
-                SolverUtils.SetAffectedCellsInStack(currentState, affectedCells, potentialValue);
+                SolverUtils.SetAffectedCellsInStack(currentState, affectedCells);
                 SolverUtils.DecreaseGamePossibilites(affectedCells, cell.GetCellRow(), cell.GetCellCol(), potentialValue, mrvInstance, logicHandler, board);
                 // check if the update was valid
                 if (logicHandler.IsInvalidUpdate(affectedCells))

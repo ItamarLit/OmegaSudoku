@@ -20,11 +20,11 @@ namespace OmegaSudoku.GameLogic
         /// <param name="currentState"></param>
         /// <param name="affectedCells"></param>
         /// <param name="removedPossibility"></param>
-        public static void SetAffectedCellsInStack(StateChange currentState, IEnumerable<Icell> affectedCells, int removedPossibility)
+        public static void SetAffectedCellsInStack(StateChange currentState, IEnumerable<Icell> affectedCells)
         {
             foreach (Icell cell in affectedCells)
             {
-                currentState.CellPossibilityChanges.Add((cell.GetCellRow(), cell.GetCellCol(), removedPossibility));
+                currentState.CellPossibilityChanges.Add((cell.GetCellRow(), cell.GetCellCol(), cell.GetCellMask()));
             }
         }
 
