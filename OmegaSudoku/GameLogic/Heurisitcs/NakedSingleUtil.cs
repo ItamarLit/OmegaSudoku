@@ -21,13 +21,13 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             {
                 // get the row, col of the cell
                 Icell cell = mrvInstance.GetLowestPossibilityCell(logicHandler, board);
-                int potentialValue = cell.GetPossibilites().First();
-                currentState.CellValueChanges.Add((cell.GetCellRow(), cell.GetCellCol(), cell.GetCellValue()));
+                int potentialValue = cell.GetFinalCellValue();
+                currentState.CellValueChanges.Add((cell.CellRow, cell.CellCol, cell.CellValue));
                 cell.SetCellValue(potentialValue);
                 // remove the possibility
-                HashSet<Icell> affectedCells = logicHandler.GetFilteredUnitCells(cell.GetCellRow(), cell.GetCellCol(), potentialValue);
+                HashSet<Icell> affectedCells = logicHandler.GetFilteredUnitCells(cell.CellRow, cell.CellCol, potentialValue);
                 SolverUtils.SetAffectedCellsInStack(currentState, affectedCells);
-                SolverUtils.DecreaseGamePossibilites(affectedCells, cell.GetCellRow(), cell.GetCellCol(), potentialValue, mrvInstance, logicHandler, board);
+                SolverUtils.DecreaseGamePossibilites(affectedCells, cell.CellRow, cell.CellCol, potentialValue, mrvInstance, logicHandler, board);
                 // check if the update was valid
                 if (logicHandler.IsInvalidUpdate(affectedCells))
                 {

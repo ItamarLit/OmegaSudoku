@@ -63,7 +63,7 @@ namespace OmegaSudoku.IO
                         Console.Write("|");
                     }
 
-                    char cellChar = (char)(board[i, j].GetCellValue() + '0');
+                    char cellChar = (char)(board[i, j].CellValue + '0');
                     string cellValue = cellChar.ToString();
                     Console.Write($" {cellValue} ");
                 }
@@ -84,7 +84,7 @@ namespace OmegaSudoku.IO
             {
                 for(int j = 0; j < board.GetLength(1); j++)
                 {
-                    boardStr += (char)(board[i, j].GetCellValue() + '0');
+                    boardStr += (char)(board[i, j].CellValue + '0');
                 }
             }
             return boardStr;

@@ -8,6 +8,10 @@ namespace OmegaSudoku.Interfaces
 {
     public interface Icell
     {
+        public int CellCol { get; set; }
+        public int CellRow { get; set; }
+        public int CellValue { get; set; }
+
         // func that removes possiblites from a cell
         public void DecreasePossibility(int possibiltiyValue);
 
@@ -26,16 +30,12 @@ namespace OmegaSudoku.Interfaces
 
         // functions to get cell info
 
-        public int GetCellRow();
-
-        public int GetCellCol();
-
-        public int GetCellValue();
-
         public void SetCellValue(int value);
 
         public void SetCellMask(int value);
 
         public int GetCellMask();
+
+        public int GetFinalCellValue();
     }
 }

@@ -68,14 +68,14 @@ namespace OmegaSudoku.GameLogic
                 // if there are no more cells to fill the sudoku is solved
                 return true;
             }
-            IEnumerable<int> possibilites = SortByLeastConstraining(cell.GetPossibilites(), cell.GetCellRow(), cell.GetCellCol());
+            IEnumerable<int> possibilites = SortByLeastConstraining(cell.GetPossibilites(), cell.CellRow, cell.CellCol);
             if (possibilites.Count() > 0)
             {
                 foreach (int potentialValue in possibilites)
                 {
                     _lastUpdatedCell = cell;
                     StateChange currentState = new StateChange();
-                    if (TrySolveCell(potentialValue, cell.GetCellRow(), cell.GetCellCol(), currentState))
+                    if (TrySolveCell(potentialValue, cell.CellRow, cell.CellCol, currentState))
                     {
                         return true;
                     }
@@ -118,8 +118,8 @@ namespace OmegaSudoku.GameLogic
                 if (_lastUpdatedCell != null && !metError)
                 {
                     // apply each heuristic not including naked singles as it changes cell values
-                    int lastUpdatedRow = _lastUpdatedCell.GetCellRow();
-                    int lastUpdatedCol = _lastUpdatedCell.GetCellCol();
+                    int lastUpdatedRow = _lastUpdatedCell.CellRow;
+                    int lastUpdatedCol = _lastUpdatedCell.CellCol;
                     for (int index = 0; index < _heuristics.Count && !metError; index++) 
                     {
                         if (!_heuristics[index].ApplyHeuristic(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))

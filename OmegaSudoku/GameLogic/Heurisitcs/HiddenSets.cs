@@ -79,7 +79,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             foreach (var cell in unitCells)
             {
                 // skip filled cells and the current cell pos
-                if (!(cell.GetCellRow() == row && cell.GetCellCol() == col) && cell.IsCellEmpty())
+                if (!(cell.CellRow == row && cell.CellCol == col) && cell.IsCellEmpty())
                 {
                     int cellMask = cell.GetCellMask();
                     // skip the first bit as it is never set

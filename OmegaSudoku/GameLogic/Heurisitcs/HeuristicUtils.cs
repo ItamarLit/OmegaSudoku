@@ -27,7 +27,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                         // set the new mask in the cell
                         cell.SetCellMask(newMask);
                         // save the old mask in the changes
-                        currentState.CellPossibilityChanges.Add((cell.GetCellRow(), cell.GetCellCol(), oldMask));
+                        currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, oldMask));
                     }
                     // check if a cell has 0 possibilites left (invalid board)
                     if (cell.NumberOfPossibilites() == 0)

@@ -24,7 +24,7 @@ namespace OmegaSudoku.GameLogic
         {
             foreach (Icell cell in affectedCells)
             {
-                currentState.CellPossibilityChanges.Add((cell.GetCellRow(), cell.GetCellCol(), cell.GetCellMask()));
+                currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, cell.GetCellMask()));
             }
         }
 

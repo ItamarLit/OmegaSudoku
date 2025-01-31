@@ -83,9 +83,9 @@ namespace OmegaSudoku.GameLogic
             foreach (var cell in cells)
             {
                 // get the count values
-                int rowCount = logicHandler.CountEmptyNeighbours(logicHandler.GetRowCells(cell.GetCellRow()));
-                int colCount = logicHandler.CountEmptyNeighbours(logicHandler.GetColumnCells(cell.GetCellCol()));
-                int cubeCount = logicHandler.CountEmptyNeighbours(logicHandler.GetCubeCells(cell.GetCellRow(), cell.GetCellCol()));
+                int rowCount = logicHandler.CountEmptyNeighbours(logicHandler.GetRowCells(cell.CellRow));
+                int colCount = logicHandler.CountEmptyNeighbours(logicHandler.GetColumnCells(cell.CellCol));
+                int cubeCount = logicHandler.CountEmptyNeighbours(logicHandler.GetCubeCells(cell.CellRow, cell.CellCol));
                 // check first by row, then by col then by cube
                 if (rowCount < bestRowEmptyCount ||
                     (rowCount == bestRowEmptyCount && colCount < bestColEmptyCount) ||

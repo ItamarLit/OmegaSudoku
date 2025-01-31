@@ -13,9 +13,7 @@ namespace OmegaSudoku.GameLogic
         /// <summary>
         /// This is the class used to store data of a cell, the possibilities are stored in bitwise
         /// </summary>
-
-        private readonly int _cellRow;
-        private readonly int _cellCol;
+       
 
         private int _possibilites;
 
@@ -24,12 +22,16 @@ namespace OmegaSudoku.GameLogic
 
         private int _cellValue;
 
+        public int CellCol { get; set; }
+        public int CellRow { get; set; }
+        public int CellValue { get ; set ; }
+
         public BoardCell(int xPos, int yPos, int boardSize, int cellVal)
         {
-            _cellRow = xPos;
-            _cellCol = yPos;
-            _cellValue = cellVal;
-            if (_cellValue == 0)
+            CellRow = xPos;
+            CellCol = yPos;
+            CellValue = cellVal;
+            if (CellValue == 0)
             {
                 // create the bit possiblities
                 _possibilites = (1 << (boardSize + 1)) - 2;
@@ -46,7 +48,7 @@ namespace OmegaSudoku.GameLogic
             if ((_possibilites & (1 << possibiltiyValue)) != 0)
             {
                 // turn the bit off using a mask
-                _possibilites &= ~(1 << possibiltiyValue); ;
+                _possibilites &= ~(1 << possibiltiyValue); 
                 // dec the counter
             }
         }
@@ -77,7 +79,7 @@ namespace OmegaSudoku.GameLogic
 
         public bool IsCellEmpty()
         {
-            return _cellValue == 0;
+            return CellValue == 0;
         }
 
         public bool HasValue(int value)
@@ -99,24 +101,10 @@ namespace OmegaSudoku.GameLogic
             return potientialValues;
         }
 
-        public int GetCellRow()
-        {
-            return _cellRow;
-        }
-
-        public int GetCellCol()
-        {
-            return _cellCol;
-        }
-
-        public int GetCellValue()
-        {
-            return _cellValue;
-        }
-
+       
         public void SetCellValue(int value)
         {
-            _cellValue = value;
+            CellValue = value;
         }
 
         public void SetCellMask(int value)
@@ -127,6 +115,11 @@ namespace OmegaSudoku.GameLogic
         public int GetCellMask()
         {
             return _possibilites;
+        }
+
+        public int GetFinalCellValue()
+        {
+            return (int)Math.Log2(_possibilites);
         }
     }
 }

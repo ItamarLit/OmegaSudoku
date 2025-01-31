@@ -74,9 +74,9 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             foreach (var cell in setCells)
             {
                 // filter the cells into there units
-                rows[cell.GetCellRow()].Add(cell);
-                cols[cell.GetCellCol()].Add(cell);
-                int cubeIndex = (cell.GetCellRow() / cubeSize) * cubeSize + (cell.GetCellCol() / cubeSize);
+                rows[cell.CellRow].Add(cell);
+                cols[cell.CellCol].Add(cell);
+                int cubeIndex = (cell.CellRow / cubeSize) * cubeSize + (cell.CellCol / cubeSize);
                 cubes[cubeIndex].Add(cell);
             }
             // list to hold all unit lists
@@ -115,20 +115,20 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 
             if (AllInSameRow(cells))
             {
-                int row = cells.First().GetCellRow();
+                int row = cells.First().CellRow;
                 result.UnionWith(logicHandler.GetRowCells(row));
             }
 
             if (AllInSameColumn(cells))
             {
-                int col = cells.First().GetCellCol();
+                int col = cells.First().CellCol;
                 result.UnionWith(logicHandler.GetColumnCells(col));
             }
 
             if (AllInSameCube(cells, boardSize))
             {
-                int row = cells.First().GetCellRow();
-                int col = cells.First().GetCellCol();
+                int row = cells.First().CellRow;
+                int col = cells.First().CellCol;
                 result.UnionWith(logicHandler.GetCubeCells(row, col));
             }
 
@@ -138,15 +138,15 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         private static bool AllInSameRow(IEnumerable<Icell> cells)
         {
             // check if all the cells are in the same row
-            int firstRow = cells.First().GetCellRow();
-            return cells.All(c => c.GetCellRow() == firstRow);
+            int firstRow = cells.First().CellRow;
+            return cells.All(c => c.CellRow == firstRow);
         }
 
         private static bool AllInSameColumn(IEnumerable<Icell> cells)
         {
             // check if all the cells are in the same col
-            int firstCol = cells.First().GetCellCol();
-            return cells.All(c => c.GetCellCol() == firstCol);
+            int firstCol = cells.First().CellCol;
+            return cells.All(c => c.CellCol == firstCol);
         }
 
         private static bool AllInSameCube(IEnumerable<Icell> cells, int boardSize)
@@ -154,12 +154,12 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             // check if all the cells are in the same cubr
             int boxSize = (int)Math.Sqrt(boardSize);
             Icell first = cells.First();
-            int firstBoxRow = first.GetCellRow() / boxSize;
-            int firstBoxCol = first.GetCellCol() / boxSize;
+            int firstBoxRow = first.CellRow / boxSize;
+            int firstBoxCol = first.CellCol / boxSize;
 
             return cells.All(c =>
-                (c.GetCellRow() / boxSize == firstBoxRow) &&
-                (c.GetCellCol() / boxSize == firstBoxCol)
+                (c.CellRow / boxSize == firstBoxRow) &&
+                (c.CellCol / boxSize == firstBoxCol)
             );
         }
 
