@@ -8,22 +8,37 @@ using System.Threading.Tasks;
 
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
-    public class NakedSetsUtil : IHeuristic
+    public class NakedSets : IHeuristic
     {
-        private int _setSize;
+        /// <summary>
+        /// This class is used to apply the naked set heuristic to the board, a naked set occurs when n cells have exactly the same n values
+        /// you can then remove the cells values from the other cells in the unit as the values have to go into those cells
+        /// </summary>
+        /// 
+        private readonly int _setSize;
 
-        public NakedSetsUtil(int setSize)
+        public NakedSets(int setSize)
         {
             _setSize = setSize;
         }
 
+        /// <summary>
+        /// This func is used to apply the naked sets heuristic to the board using the mrvDict to get cells with exactly n possibilities
+        /// </summary>
+        /// <param name="currentState"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="board"></param>
+        /// <param name="logicHandler"></param>
+        /// <param name="mrvInstance"></param>
+        /// <returns>The func returns false if the board ends up in an invalid state, else it returns true.</returns>
         public bool ApplyHeuristic(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // get the cells with n possiblites
             HashSet<Icell> setCells = mrvInstance.GetCellsWithPossibilites(_setSize);
             if (setCells == null || setCells.Count < _setSize)
             {
-                // no cells on board with n possibilites
+                // not enough cells on board with n possibilites
                 return true;
             }
             // filter the n set of cells into there units
@@ -41,7 +56,9 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                         {
                             // found naked set
                             Icell cell = filterDict[keyVal.Key][0];
+                            // get the unit cells for the set
                             HashSet<Icell> unitCells = GetCorrectUnitCells(filterDict[keyVal.Key], logicHandler, board.GetLength(0));
+                            // remove the possibilities from the rest of the unit
                             if (!HeuristicUtils.RemoveRedundantPossibilities(unitCells, filterDict[keyVal.Key], cell.GetCellMask(), 0, mrvInstance, currentState))
                             {
                                 return false;
@@ -57,9 +74,14 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         }
 
 
+        /// <summary>
+        /// This func is used to filter the cells of n possibilities into there units
+        /// </summary>
+        /// <param name="setCells"></param>
+        /// <param name="boardSize"></param>
+        /// <returns>Returns a list of rows, cols and cubes lists that hold the cells that are in their unit</returns>
         private static List<List<Icell>[]> FilterIntoUnits(HashSet<Icell> setCells, int boardSize)
         {
-            // this func will filter each cell into its correct unit
             List<Icell>[] rows = new List<Icell>[boardSize];
             List<Icell>[] cols = new List<Icell>[boardSize];
             List<Icell>[] cubes = new List<Icell>[boardSize];
@@ -87,15 +109,21 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return units;
         }
 
+        /// <summary>
+        /// This func filters the cells in a unit by there bitmask
+        /// </summary>
+        /// <param name="unitSet"></param>
+        /// <param name="board"></param>
+        /// <returns>Dict of bitmask and cells </returns>
         private static Dictionary<int, List<Icell>> FilterByPossiblites(List<Icell> unitSet, Icell[,] board)
         {
-            // this func filters the cells in a unit with n possiblites into a dict by there different possiblites
             Dictionary<int, List<Icell>> filterDict = new Dictionary<int, List<Icell>>();
             foreach (var cell in unitSet)
             {
-                // get the cell from the board
+                // get the bitmask
                 int possibilites = cell.GetCellMask();
                 bool foundKey = false;
+                // add the bitmask to the dict
                 if(filterDict.TryGetValue(possibilites, out var cellList))
                 {
                     cellList.Add(cell);
@@ -108,30 +136,37 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return filterDict;
         }
 
+        /// <summary>
+        /// This func is used to get the correct unit cells for a set of cells, if 2 cells are in the same row and cube then the func returns
+        /// The cells in the row and the cells in the cube with no duplicates (using hashsets)
+        /// </summary>
+        /// <param name="cells"></param>
+        /// <param name="logicHandler"></param>
+        /// <param name="boardSize"></param>
+        /// <returns>Hashset of cells that are the correct cells that are in the unit of the setcells</returns>
         private static HashSet<Icell> GetCorrectUnitCells(IEnumerable<Icell> cells, SudokuLogicHandler logicHandler, int boardSize)
         {
-            // this func will get the unit cells for the naked cells
             HashSet<Icell> result = new HashSet<Icell>();
-
+            // check if they are all in the same row
             if (AllInSameRow(cells))
             {
                 int row = cells.First().CellRow;
                 result.UnionWith(logicHandler.GetRowCells(row));
             }
-
+            // check if they are all in the same col
             if (AllInSameColumn(cells))
             {
                 int col = cells.First().CellCol;
                 result.UnionWith(logicHandler.GetColumnCells(col));
             }
-
+            // check if they are all in the same cube
             if (AllInSameCube(cells, boardSize))
             {
                 int row = cells.First().CellRow;
                 int col = cells.First().CellCol;
                 result.UnionWith(logicHandler.GetCubeCells(row, col));
             }
-
+            // return the unit cells
             return result;
         }
 

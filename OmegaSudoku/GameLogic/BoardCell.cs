@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,17 +12,16 @@ namespace OmegaSudoku.GameLogic
     public class BoardCell : Icell
     {
         /// <summary>
-        /// This is the class used to store data of a cell, the possibilities are stored in bitwise
+        /// This is the class used to store data of a cell, the possibilities are stored in a bitmask
         /// </summary>
        
-
         private int _possibilites;
 
         // amount of bits of possiblites 
         private const int BITS_SIZE = 32;
 
-        private int _cellValue;
-
+        private bool _changedMask;
+        // properties from the interface
         public int CellCol { get; set; }
         public int CellRow { get; set; }
         public int CellValue { get ; set ; }
@@ -40,6 +40,7 @@ namespace OmegaSudoku.GameLogic
             {
                 _possibilites = 0;
             }
+            _changedMask = false;
         }
 
         public void DecreasePossibility(int possibiltiyValue)
@@ -49,7 +50,6 @@ namespace OmegaSudoku.GameLogic
             {
                 // turn the bit off using a mask
                 _possibilites &= ~(1 << possibiltiyValue); 
-                // dec the counter
             }
         }
 
@@ -60,12 +60,12 @@ namespace OmegaSudoku.GameLogic
             {
                 // set the bit
                 _possibilites |= (1 << possibilityValue);
-                // inc the counter
             }
         }
 
         public int NumberOfPossibilites()
         {
+            // this func gets the number of possibilities a cell has
             int count = 0;
             int bits = _possibilites;
             while (bits > 0)
@@ -87,24 +87,23 @@ namespace OmegaSudoku.GameLogic
             return (_possibilites & (1 << value)) != 0;
         }
 
-        public HashSet<int> GetPossibilites()
+        public List<int> GetPossibilites()
         {
-            // This func gets all the values the cell can be
-            HashSet<int> potientialValues = new HashSet<int>();
-            for(int i = 1; i < BITS_SIZE; i++)
+            // This func gets all the values the cell can be in int and not bitmask
+            List<int> potientialValues = new List<int>();
+            int value = 1;
+            int tempMask = _possibilites;
+            tempMask >>= 1;
+            while (tempMask > 0)
             {
-                if ((HasValue(i)))
+                if((tempMask & 1) == 1)
                 {
-                    potientialValues.Add(i);
+                    potientialValues.Add(value);
                 }
+                tempMask >>= 1;
+                value++;
             }
             return potientialValues;
-        }
-
-       
-        public void SetCellValue(int value)
-        {
-            CellValue = value;
         }
 
         public void SetCellMask(int value)
@@ -121,6 +120,8 @@ namespace OmegaSudoku.GameLogic
         {
             return (int)Math.Log2(_possibilites);
         }
+
+
     }
 }
 

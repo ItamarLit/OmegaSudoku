@@ -9,15 +9,15 @@ namespace OmegaSudoku.GameLogic
     public class Mrvdict
     {
         /// <summary>
-        /// This class holds the mrv dict that is used to get the cell with the minimum amount of possibilites in it
+        /// This class holds the mrv dict that is used to track cells and the amount of possibilities they have.
         /// </summary>
 
         private Dictionary<int, HashSet<Icell>> _MRVPossibilitiesDict { get;  }
-
+        // flag for small boards
         private bool _isSmallBoard;
         public Mrvdict(int boardSize)
         {
-            // Create the dict where a possibility count is the key and a hashset of (x,y) tuples are the values
+            // Create the dict where a possibility count is the key and a hashset of cells are the values
             _MRVPossibilitiesDict = new Dictionary<int, HashSet<Icell>>();
             // Init the hashsets inside the array, cell 1 will represent cells with only one possibility and so on
             for (int i = 1; i < boardSize + 1; i++)
@@ -59,13 +59,14 @@ namespace OmegaSudoku.GameLogic
         /// <summary>
         /// This func finds the lowest possibility cell in the most filled part of the board
         /// </summary>
-        /// <returns>Returns the cells (row, col) pos or (-1, -1) if the array is empty</returns>
+        /// <returns>Returns the cell or null if the dict is empty</returns>
         public Icell GetLowestPossibilityCell(SudokuLogicHandler logicHandler, Icell[,] board)
         {
             for (int index = 1; index <= _MRVPossibilitiesDict.Count; index++)
             {
                 if (_MRVPossibilitiesDict[index].Count != 0)
                 {
+                        // check if the board is big, if it is its not worth running the GetBestCell on (it doesnt help but rathers makes the runtime worse)
                     if (_isSmallBoard)
                     {
                         // get the best cell between the lowest possiblites 
@@ -73,6 +74,7 @@ namespace OmegaSudoku.GameLogic
                     }
                     else
                     {
+                        // get the first cell from the cells with the least values
                         return _MRVPossibilitiesDict[index].First();
                     }    
                 }
@@ -83,12 +85,12 @@ namespace OmegaSudoku.GameLogic
 
 
         /// <summary>
-        /// This func gets the cell that is in the most filled area and has the lowes possiblity count
+        /// This func gets the cell that is in the most filled area and has the lowest possiblity count
         /// </summary>
         /// <param name="cells"></param>
         /// <param name="board"></param>
         /// <param name="logicHandler"></param>
-        /// <returns></returns>
+        /// <returns>This func returns the cell in the most filled area with the lowest possibility count</returns>
         private Icell GetBestCell(HashSet<Icell> cells, Icell[,] board, SudokuLogicHandler logicHandler)
         {
             Icell bestCell = null;
@@ -135,7 +137,7 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// Func that checks if the dict is empty, this is signed by (-1, -1) tuple
+        /// Func that checks if the dict is empty, this is signed by null
         /// </summary>
         /// <param name="rowColTuple"></param>
         /// <returns></returns>

@@ -9,12 +9,26 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 {
     public class HeuristicUtils
     {
+        // This class is used as a util class, it holds important functions that all heuristics need.
+
+
+        /// <summary>
+        /// This func is used to remove possibilities from the board efficiantly using bitmasks
+        /// </summary>
+        /// <param name="unitCells"></param>
+        /// <param name="excludedCells"></param>
+        /// <param name="setCandidates"></param>
+        /// <param name="excludedCandidates"></param>
+        /// <param name="mrvInstance"></param>
+        /// <param name="currentState"></param>
+        /// <returns>The func returns true if the changes it made to the board didnt make it invalid, else it returns false</returns>
         public static bool RemoveRedundantPossibilities(IEnumerable<Icell> unitCells, IEnumerable<Icell> excludedCells, int setCandidates, int excludedCandidates, Mrvdict mrvInstance, StateChange currentState)
         {
             // create the mask for the candidates that need to be removed from the unitcells
             int candidatesToRemove = (setCandidates & ~excludedCandidates) + 1;
             foreach (Icell cell in unitCells)
             {
+                // go over each empty cell in the unit cells that shouldn't be excluded
                 if (cell.IsCellEmpty() && (excludedCells == null || !excludedCells.Contains(cell)))
                 {
                     // remove the cell from the mrv dict
@@ -38,7 +52,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     mrvInstance.InsertCell(cell);
                 }
             }
-
+            // the board is valid after the changes
             return true;
         }
 

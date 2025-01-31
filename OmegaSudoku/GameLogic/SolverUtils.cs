@@ -15,7 +15,7 @@ namespace OmegaSudoku.GameLogic
 
 
         /// <summary>
-        /// This func sets the changed cells and there possiblities in the stack
+        /// This func sets the changed cells and there possibilities bitmask in the stack
         /// </summary>
         /// <param name="currentState"></param>
         /// <param name="affectedCells"></param>
@@ -28,6 +28,16 @@ namespace OmegaSudoku.GameLogic
             }
         }
 
+        /// <summary>
+        /// This func is used to decrease the possibilities on the board based on a specific value that was used
+        /// </summary>
+        /// <param name="affectedCells"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="potentialValue"></param>
+        /// <param name="mrvInstance"></param>
+        /// <param name="logicHandler"></param>
+        /// <param name="board"></param>
         public static void DecreaseGamePossibilites(IEnumerable<Icell> affectedCells, int row, int col,
             int potentialValue, Mrvdict mrvInstance, SudokuLogicHandler logicHandler, Icell[,] board)
         {

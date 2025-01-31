@@ -22,6 +22,16 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             _setSize = setSize;
         }
 
+        /// <summary>
+        /// Because searching for a hidden set is costly, i only search for them in the units that the row, col cell is in.
+        /// </summary>
+        /// <param name="currentState"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <param name="board"></param>
+        /// <param name="logicHandler"></param>
+        /// <param name="mrvInstance"></param>
+        /// <returns>The func returns false if the board is in an invalid state after running else it returns true</returns>
         public bool ApplyHeuristic(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // get the unit cells 
@@ -65,14 +75,14 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
  
 
         /// <summary>
-        /// This func sums the possiblites in a unit
+        /// This func sums the possiblites in a unit and sets them in a dict
         /// </summary>
         /// <param name="logicHandler"></param>
         /// <param name="row"></param>
         /// <param name="col"></param>
         /// <param name="board"></param>
         /// <param name="unitCells"></param>
-        /// <returns></returns>
+        /// <returns>A dict of possibility - cells pairs where each possibility is linked to the cells that have it</returns>
         private static Dictionary<int, List<Icell>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, Icell[,] board, IEnumerable<Icell> unitCells)
         {
             Dictionary<int, List<Icell>> possibilityDict = new Dictionary<int, List<Icell>>();
@@ -135,6 +145,11 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             }
         }
 
+        /// <summary>
+        /// Thi func creates a bit mask for a set of numbers in a list
+        /// </summary>
+        /// <param name="set"></param>
+        /// <returns>Bitmask for the numbers</returns>
         private static int CreateSetMask(List<int> set)
         {
             int mask = 0;
@@ -145,6 +160,12 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return mask;
         }
 
+        /// <summary>
+        /// This func creates a fully set bitmask for a given board size
+        /// A board of size 9 -> 1111111110, each bit symbols a valid possibility, bit 0 is always off
+        /// </summary>
+        /// <param name="boardSize"></param>
+        /// <returns></returns>
         public static int CreateFullSetBit(int boardSize)
         {
             return (1 << boardSize + 1) - 2;

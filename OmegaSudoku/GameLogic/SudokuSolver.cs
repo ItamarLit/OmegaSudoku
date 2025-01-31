@@ -20,19 +20,17 @@ namespace OmegaSudoku.GameLogic
         private readonly SudokuLogicHandler _logicHandler;
 
         private readonly Stack<StateChange> _stateChangesStack;
-
+        // set the heuristics used to solve the board
         private readonly List<IHeuristic> _heuristics = new List<IHeuristic>
         {
             // hidden single and hidden pair
             new HiddenSets(1),
             new HiddenSets(2),
             // naked pair
-            new NakedSetsUtil(2),
+            new NakedSets(2),
         };
-
+ 
         private Icell? _lastUpdatedCell;
-
-        public static int depth = 0;
 
         public SudokuSolver(Icell[,] gameBoard, Mrvdict mrvInstance)
         {
@@ -43,6 +41,7 @@ namespace OmegaSudoku.GameLogic
             // set up the board
             _logicHandler.CheckInitalBoard();
             _logicHandler.SetInitailBoardPossibilites();
+            // set up stack to track changes
             _stateChangesStack = new Stack<StateChange>();
         }
 
@@ -55,7 +54,7 @@ namespace OmegaSudoku.GameLogic
         /// 
         public bool Solve()
         {
-            depth++;
+            // apply the heuristics to the board
             HeuristicResult heuristicRes = ApplyHeuristics();
             if(heuristicRes == HeuristicResult.InvalidState)
             {
@@ -68,14 +67,16 @@ namespace OmegaSudoku.GameLogic
                 // if there are no more cells to fill the sudoku is solved
                 return true;
             }
-            IEnumerable<int> possibilites = SortByLeastConstraining(cell.GetPossibilites(), cell.CellRow, cell.CellCol);
+            // go over all the possibilities of a chosen cell 
+            IEnumerable<int> possibilites = cell.GetPossibilites();
             if (possibilites.Count() > 0)
             {
+                // attempt to solve the board
                 foreach (int potentialValue in possibilites)
                 {
                     _lastUpdatedCell = cell;
                     StateChange currentState = new StateChange();
-                    if (TrySolveCell(potentialValue, cell.CellRow, cell.CellCol, currentState))
+                    if (TrySolveCell(potentialValue, cell, currentState))
                     {
                         return true;
                     }
@@ -161,24 +162,24 @@ namespace OmegaSudoku.GameLogic
         /// <param name="col"></param>
         /// <param name="currentState"></param>
         /// <returns></returns>
-        public bool TrySolveCell(int potentialValue, int row, int col, StateChange currentState)
+        public bool TrySolveCell(int potentialValue, Icell cell, StateChange currentState)
         {
-            currentState.CellValueChanges.Add((row, col, 0));
-            _board[row, col].SetCellValue(potentialValue);
+            currentState.CellValueChanges.Add((cell.CellRow, cell.CellCol, 0));
+            cell.CellValue = potentialValue;
             // save the affected cell positions incase the attempt is wrong
-            HashSet<Icell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, potentialValue);
+            HashSet<Icell> affectedCells = _logicHandler.GetFilteredUnitCells(cell.CellRow, cell.CellCol, potentialValue);
             SolverUtils.SetAffectedCellsInStack(currentState, affectedCells);
-            SolverUtils.DecreaseGamePossibilites(affectedCells, row, col, potentialValue, _mrvDict, _logicHandler, _board);
+            SolverUtils.DecreaseGamePossibilites(affectedCells, cell.CellRow, cell.CellCol, potentialValue, _mrvDict, _logicHandler, _board);
             // save the current state
             _stateChangesStack.Push(currentState);
             // call hidden singles check here
             if (_logicHandler.IsInvalidUpdate(affectedCells))
             {
-                // reset the array and add back possibilites
+                // reset the state and add back possibilites
                 ResetState();
                 return false;
             }
-            // Insert the affected cells back into the mrv array
+            // Insert the affected cells back into the mrv dict
             _mrvDict.UpdateMRVCells(affectedCells, true);
             if (Solve())
             {
@@ -190,7 +191,7 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func resets the game board after a failed backtracking attempt
+        /// This func resets the game board after a failed guess attempt
         /// </summary>
         /// <param name="affectedCells"></param>
         /// <param name="row"></param>
@@ -214,7 +215,7 @@ namespace OmegaSudoku.GameLogic
             foreach ((int row, int col, int value) in oldState.CellValueChanges)
             {
                 Icell cell = _board[row, col];
-                cell.SetCellValue(value);
+                cell.CellValue = value;
                 changedCells.Add(cell);
             }
             foreach ((int row, int col, int removedValue) in oldState.CellPossibilityChanges)
@@ -228,23 +229,6 @@ namespace OmegaSudoku.GameLogic
                 cell.SetCellMask(cell.GetCellMask() |removedValue);
             }
             return changedCells;
-        }
-
-        private IEnumerable<int> SortByLeastConstraining(IEnumerable<int> possiblites, int row, int col)
-        {
-            // only apply this if the board is larger than 9 * 9 as the overhead is not worth it in smaller boards
-            if(_board.GetLength(0) <= 9)
-            {
-                return possiblites;
-            }
-            Dictionary<int, int> sortDict = new Dictionary<int, int>();
-            foreach(int possiblity in possiblites)
-            {
-                HashSet<Icell> affectedCells = _logicHandler.GetFilteredUnitCells(row, col, possiblity);
-                sortDict[possiblity] = affectedCells.Count;
-            }
-            return sortDict.OrderBy(keyValue =>  keyValue.Value).Select(keyValue => keyValue.Key);
-
         }
     }
 }

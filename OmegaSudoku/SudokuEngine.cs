@@ -54,17 +54,17 @@ namespace OmegaSudoku
         private static void SolveBoardFromConsole(ConsoleInputHandler consoleInputHandler)
         {
             // func to solve boards from console
-            try
-            {
+            //try
+            //{
                 Console.WriteLine("Enter the Sudoku board:");
                 consoleInputHandler.GetUserInput();
                 string input = consoleInputHandler.Input.Trim();
                 SolveBoard(input, false, consoleInputHandler);
-            }
-            catch (Exception e)
-            {
-                OutputHandler.OutputError(e.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    OutputHandler.OutputError(e.Message);
+            //}
         }
 
         private static void SolveBoardFromFile(ConsoleInputHandler consoleInputHandler)
@@ -89,7 +89,6 @@ namespace OmegaSudoku
 
         private static void SolveBoard(string input, bool is_file, IinputReader inputHandler)
         {
-            SudokuSolver.depth = 0;
             // check the input
             InputValidator.CheckInput(input);
             Icell[,] board = InputValidator.SetUpBoard(input);
@@ -121,7 +120,6 @@ namespace OmegaSudoku
             }
             stopwatch.Stop();
             OutputHandler.ShowProgramRuntime(stopwatch.ElapsedMilliseconds);
-            Console.WriteLine($"Depth: {SudokuSolver.depth}");
         }
     }
 }
