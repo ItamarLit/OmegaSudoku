@@ -1,6 +1,7 @@
 ﻿using OmegaSudoku.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace OmegaSudoku.GameLogic
@@ -13,6 +14,7 @@ namespace OmegaSudoku.GameLogic
 
         private Dictionary<int, HashSet<Icell>> _MRVPossibilitiesDict { get;  }
 
+        private bool _isSmallBoard;
         public Mrvdict(int boardSize)
         {
             // Create the dict where a possibility count is the key and a hashset of (x,y) tuples are the values
@@ -21,6 +23,14 @@ namespace OmegaSudoku.GameLogic
             for (int i = 1; i < boardSize + 1; i++)
             {
                 _MRVPossibilitiesDict[i] = new HashSet<Icell>();
+            }
+            if(boardSize <= 9)
+            {
+                _isSmallBoard = true;
+            }
+            else
+            {
+                _isSmallBoard = false;
             }
         }
 
@@ -56,11 +66,18 @@ namespace OmegaSudoku.GameLogic
             {
                 if (_MRVPossibilitiesDict[index].Count != 0)
                 {
-                    // get the best cell between the lowest possiblites 
-                    return GetBestCell(_MRVPossibilitiesDict[index], board, logicHandler);
+                    if (_isSmallBoard)
+                    {
+                        // get the best cell between the lowest possiblites 
+                        return GetBestCell(_MRVPossibilitiesDict[index], board, logicHandler);
+                    }
+                    else
+                    {
+                        return _MRVPossibilitiesDict[index].First();
+                    }    
                 }
             }
-            // if the array is empty return (-1 , -1) = board solved
+            // if the array is empty return null = board solved
             return null;
         }
 
@@ -97,7 +114,6 @@ namespace OmegaSudoku.GameLogic
                     bestBoxEmptyCount = cubeCount;
                 }
             }
-
             return bestCell;
         }
 

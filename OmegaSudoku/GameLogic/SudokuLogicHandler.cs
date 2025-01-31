@@ -16,10 +16,11 @@ namespace OmegaSudoku.GameLogic
         private readonly Icell[,] _gameBoard;
         // mrvArray instance
         private readonly Mrvdict _mrvDict;
-
+        // caches for the cells in the different units
         private List<Icell>[] _rowsCache;
         private List<Icell>[] _columnsCache;
         private List<Icell>[] _cubesCache;
+        
 
         public SudokuLogicHandler(Icell[,] board, Mrvdict mrvInstance)
         {
@@ -27,9 +28,7 @@ namespace OmegaSudoku.GameLogic
             _mrvDict = mrvInstance;
             int boardSize = board.GetLength(0);
             InitCaches(boardSize);
-            FillCaches(boardSize);
         }
-
 
         private void InitCaches(int boardSize)
         {
@@ -42,6 +41,7 @@ namespace OmegaSudoku.GameLogic
                 _columnsCache[i] = new List<Icell>();
                 _cubesCache[i] = new List<Icell>();
             }
+            FillCaches(boardSize);
         }
 
         private void FillCaches(int boardSize)
@@ -267,6 +267,8 @@ namespace OmegaSudoku.GameLogic
             }
             return false;
         }
+
+       
 
         public int CountEmptyNeighbours(IEnumerable<Icell> unitCells)
         {
