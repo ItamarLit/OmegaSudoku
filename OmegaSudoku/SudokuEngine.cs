@@ -45,7 +45,7 @@ namespace OmegaSudoku
                         endRunFlag = true;
                         break;
                     default:
-                        Console.WriteLine($"Invalid choice: {choice} entered.");
+                        Console.WriteLine("Invalid choice entered.");
                         break;
                 }
             }
@@ -54,17 +54,17 @@ namespace OmegaSudoku
         private static void SolveBoardFromConsole(ConsoleInputHandler consoleInputHandler)
         {
             // func to solve boards from console
-            //try
-            //{
+            try
+            {
                 Console.WriteLine("Enter the Sudoku board:");
                 consoleInputHandler.GetUserInput();
                 string input = consoleInputHandler.Input.Trim();
                 SolveBoard(input, false, consoleInputHandler);
-            //}
-            //catch (Exception e)
-            //{
-            //    OutputHandler.OutputError(e.Message);
-            //}
+            }
+            catch (Exception e)
+            {
+                OutputHandler.OutputError(e.Message);
+            }
         }
 
         private static void SolveBoardFromFile(ConsoleInputHandler consoleInputHandler)

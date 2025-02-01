@@ -1,9 +1,7 @@
 ﻿using OmegaSudoku.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OmegaSudoku.GameLogic
 {
@@ -24,7 +22,7 @@ namespace OmegaSudoku.GameLogic
         {
             foreach (Icell cell in affectedCells)
             {
-                currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, cell.GetCellMask()));
+                currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, cell.GetCellPossibilities()));
             }
         }
 
@@ -46,6 +44,12 @@ namespace OmegaSudoku.GameLogic
             // remove the current cell
             mrvInstance.RemoveCell(board[row, col]);
             logicHandler.DecreasePossibilites(affectedCells, potentialValue);
+        }
+
+        public static int GetCubeIndex(int row, int col, int boardSize)
+        {
+            int cubeSize = (int)Math.Sqrt(boardSize);
+            return (row / cubeSize) * cubeSize + (col / cubeSize);
         }
     }
 }

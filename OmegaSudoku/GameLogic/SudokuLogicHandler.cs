@@ -51,6 +51,7 @@ namespace OmegaSudoku.GameLogic
 
         private void FillCaches(int boardSize)
         {
+            // this func is used to fill the caches with the correct cells
             int cubeSize = (int)Math.Sqrt(boardSize);
             for (int row = 0; row < boardSize; row++) 
             {
@@ -59,7 +60,7 @@ namespace OmegaSudoku.GameLogic
                     Icell cell = _gameBoard[row, col];
                     _rowsCache[row].Add(cell);
                     _columnsCache[col].Add(cell);
-                    int cubeIndex = (row / cubeSize) * cubeSize + (col / cubeSize);
+                    int cubeIndex = SolverUtils.GetCubeIndex(row, col, boardSize);
                     _cubesCache[cubeIndex].Add(cell);
                 }
             }
@@ -137,8 +138,7 @@ namespace OmegaSudoku.GameLogic
 
         public IEnumerable<Icell> GetCubeCells(int rowPos, int colPos)
         {
-            int cubeSize = (int)Math.Sqrt(_gameBoard.GetLength(0));
-            int cubeIndex = (rowPos / cubeSize) * cubeSize + (colPos / cubeSize);
+            int cubeIndex = SolverUtils.GetCubeIndex(rowPos, colPos, _gameBoard.GetLength(0));
             return _cubesCache[cubeIndex];
         }
 

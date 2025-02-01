@@ -1,5 +1,6 @@
 ﻿using OmegaSudoku.Interfaces;
 using System;
+using System.Text;
 
 
 namespace OmegaSudoku.IO
@@ -46,37 +47,39 @@ namespace OmegaSudoku.IO
             Console.WriteLine("A valid board for the solver is an N*N board where N can be squared and is smaller / equal to 25.");
         }
 
-        public static void PrintBoard(Icell[,] board)
+        public static string BuildStringForBoard(Icell[,] board)
         {
             int boardSize = board.GetLength(0);
             int blockSize = (int)Math.Sqrt((double)boardSize);
-            Console.WriteLine("Here is your board:");
-
             string line = new string(' ', 1) + new string('-', (blockSize * 3 + 1) * (boardSize / blockSize) - 1);
-            Console.WriteLine(line);
-            for (int i = 0; i < boardSize; i++)
-            {
-                for (int j = 0; j < boardSize; j++)
+            StringBuilder str = new StringBuilder();
+            str.AppendLine(line);
+            for (int row = 0; row < board.GetLength(0); row++) 
+            { 
+                for(int col = 0; col < board.GetLength(1); col++)
                 {
-                    if (j % blockSize == 0)
+                    if (col % blockSize == 0)
                     {
-                        Console.Write("|");
+                        str.Append("|");
                     }
-
-                    char cellChar = (char)(board[i, j].CellValue + '0');
-                    string cellValue = cellChar.ToString();
-                    Console.Write($" {cellValue} ");
+                    char cellChar = (char)(board[row, col].CellValue + '0');
+                    str.Append(" " + cellChar + " ");
                 }
-                Console.Write("|");
-                Console.WriteLine();
-
-                if ((i + 1) % blockSize == 0)
+                str.Append("|");
+                str.AppendLine();
+                if ((row + 1) % blockSize == 0)
                 {
-                    Console.WriteLine(line); 
+                    str.AppendLine(line);
                 }
             }
+            return str.ToString();
         }
-
+        public static void PrintBoard(Icell[,] board)
+        {
+            Console.WriteLine("Here is your board:");
+            string boardStr = BuildStringForBoard(board);
+            Console.WriteLine(boardStr);
+        }
         public static string GetBoardStr(Icell[,] board)
         {
             string boardStr = "";

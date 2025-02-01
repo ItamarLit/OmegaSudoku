@@ -1,10 +1,6 @@
 ﻿using OmegaSudoku.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
@@ -59,7 +55,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                             // get the unit cells for the set
                             HashSet<Icell> unitCells = GetCorrectUnitCells(filterDict[keyVal.Key], logicHandler, board.GetLength(0));
                             // remove the possibilities from the rest of the unit
-                            if (!HeuristicUtils.RemoveRedundantPossibilities(unitCells, filterDict[keyVal.Key], cell.GetCellMask(), 0, mrvInstance, currentState))
+                            if (!HeuristicUtils.RemoveRedundantPossibilities(unitCells, filterDict[keyVal.Key], cell.GetCellPossibilities(), 0, mrvInstance, currentState))
                             {
                                 return false;
 
@@ -121,7 +117,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             foreach (var cell in unitSet)
             {
                 // get the bitmask
-                int possibilites = cell.GetCellMask();
+                int possibilites = cell.GetCellPossibilities();
                 bool foundKey = false;
                 // add the bitmask to the dict
                 if(filterDict.TryGetValue(possibilites, out var cellList))

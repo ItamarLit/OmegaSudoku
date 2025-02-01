@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace OmegaSudoku.Interfaces
 {
     public interface Icell
     {
+        // properties that every cell has no matter the object type
         public int CellCol { get; }
         public int CellRow { get; }
         public int CellValue { get; set; }
@@ -29,10 +25,11 @@ namespace OmegaSudoku.Interfaces
         public List<int> GetPossibilites();
 
         // functions to get cell info
-        public void SetCellMask(int value);
+        public void SetCellPossibilities(int value);
 
-        public int GetCellMask();
+        public int GetCellPossibilities();
 
+        // get the final value of a cell ( the value it has to be out of the possibilities)
         public int GetFinalCellValue();
     }
 }

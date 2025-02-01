@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OmegaSudoku.GameLogic.Heurisitcs;
 using OmegaSudoku.Interfaces;
-using OmegaSudoku.IO;
+
 
 namespace OmegaSudoku.GameLogic
 {
@@ -226,7 +226,7 @@ namespace OmegaSudoku.GameLogic
                     _mrvDict.RemoveCell(cell);
                     changedCells.Add(cell);
                 }
-                cell.SetCellMask(cell.GetCellMask() |removedValue);
+                cell.SetCellPossibilities(cell.GetCellPossibilities() |removedValue);
             }
             return changedCells;
         }

@@ -1,11 +1,7 @@
 ﻿using OmegaSudoku.Interfaces;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OmegaSudoku.GameLogic
 {
@@ -17,10 +13,6 @@ namespace OmegaSudoku.GameLogic
        
         private int _possibilites;
 
-        // amount of bits of possiblites 
-        private const int BITS_SIZE = 32;
-
-        private bool _changedMask;
         // properties from the interface
         public int CellCol { get; set; }
         public int CellRow { get; set; }
@@ -40,7 +32,6 @@ namespace OmegaSudoku.GameLogic
             {
                 _possibilites = 0;
             }
-            _changedMask = false;
         }
 
         public void DecreasePossibility(int possibiltiyValue)
@@ -106,12 +97,12 @@ namespace OmegaSudoku.GameLogic
             return potientialValues;
         }
 
-        public void SetCellMask(int value)
+        public void SetCellPossibilities(int value)
         {
             _possibilites = value;
         }
 
-        public int GetCellMask()
+        public int GetCellPossibilities()
         {
             return _possibilites;
         }

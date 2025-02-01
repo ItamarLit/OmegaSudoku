@@ -1,11 +1,7 @@
 ﻿using OmegaSudoku.Interfaces;
-using OmegaSudoku.IO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
@@ -91,7 +87,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 // skip filled cells and the current cell pos
                 if (!(cell.CellRow == row && cell.CellCol == col) && cell.IsCellEmpty())
                 {
-                    int cellMask = cell.GetCellMask();
+                    int cellMask = cell.GetCellPossibilities();
                     // skip the first bit as it is never set
                     cellMask >>= 1;
                     int value = 1;

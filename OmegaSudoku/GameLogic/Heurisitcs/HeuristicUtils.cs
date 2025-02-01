@@ -1,9 +1,5 @@
 ﻿using OmegaSudoku.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
@@ -33,13 +29,13 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                 {
                     // remove the cell from the mrv dict
                     mrvInstance.RemoveCell(cell);
-                    int oldMask = cell.GetCellMask();
+                    int oldMask = cell.GetCellPossibilities();
                     // create the newMask for the cell by removing the candidates
                     int newMask = oldMask & ~candidatesToRemove;
                     if (newMask != oldMask)
                     {
                         // set the new mask in the cell
-                        cell.SetCellMask(newMask);
+                        cell.SetCellPossibilities(newMask);
                         // save the old mask in the changes
                         currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, oldMask));
                     }

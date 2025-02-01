@@ -1,11 +1,7 @@
 ﻿using OmegaSudoku.Exceptions;
 using OmegaSudoku.GameLogic;
 using OmegaSudoku.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OmegaSudoku.IO
 {
@@ -23,6 +19,10 @@ namespace OmegaSudoku.IO
         private static int _boardSize;
         public static bool CheckInput(string input)
         {
+            if(input == "")
+            {
+                throw new EmptyInputException(); 
+            }
             // This func will check the basic input
             double boardSize = Math.Sqrt((double)input.Length);
             // check if the board size is N * N where N is able to be squared
@@ -53,7 +53,7 @@ namespace OmegaSudoku.IO
                 if (cellValue > _boardSize || cellValue < STARTING_SUDOKU_NUMBER - 1)
                 {
                     // Throw cell info exception
-                    throw new CellInfoExeption(cellValue);
+                    throw new CellInfoExeption(cellValue + '0');
                 }
                 // the ValidSudokuSize and StartingSudokuNumber are for setting the number range on the board ( setting the possible values in a cell)
                 board[rowIndex, columnIndex] = new BoardCell(rowIndex, columnIndex, _boardSize, cellValue);

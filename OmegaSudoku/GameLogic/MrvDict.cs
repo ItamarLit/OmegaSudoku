@@ -1,8 +1,7 @@
 ﻿using OmegaSudoku.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+
 
 namespace OmegaSudoku.GameLogic
 {
@@ -66,7 +65,7 @@ namespace OmegaSudoku.GameLogic
             {
                 if (_MRVPossibilitiesDict[index].Count != 0)
                 {
-                        // check if the board is big, if it is its not worth running the GetBestCell on (it doesnt help but rathers makes the runtime worse)
+                    // check if the board is big, if it is its not worth running the GetBestCell on (it doesnt help but rathers makes the runtime worse)
                     if (_isSmallBoard)
                     {
                         // get the best cell between the lowest possiblites 
