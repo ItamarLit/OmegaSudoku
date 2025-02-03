@@ -7,10 +7,10 @@
         public int CellRow { get; }
         public int CellValue { get; set; }
 
-        // func that removes possiblites from a cell
+        // func that removes a possibility from a cell
         public void DecreasePossibility(int possibiltiyValue);
 
-        // func that adds possiblites from a cell
+        // func that adds a possibility to a cell
         public void IncreasePossibility(int possibilityValue);
 
         // func that returns num possiblites in a cell

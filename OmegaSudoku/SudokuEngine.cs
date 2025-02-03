@@ -1,8 +1,4 @@
-﻿using System;
-using OmegaSudoku;
-using OmegaSudoku.Exceptions;
-using OmegaSudoku.GameLogic.Heurisitcs;
-using OmegaSudoku.GameLogic;
+﻿using OmegaSudoku.GameLogic;
 using OmegaSudoku.IO;
 using OmegaSudoku.Interfaces;
 
@@ -58,6 +54,10 @@ namespace OmegaSudoku
             {
                 Console.WriteLine("Enter the Sudoku board:");
                 consoleInputHandler.GetUserInput();
+                if(consoleInputHandler.Input == null)
+                {
+                    throw new ArgumentException("Board input cannot be null, please try again.");
+                }
                 string input = consoleInputHandler.Input.Trim();
                 SolveBoard(input, false, consoleInputHandler);
             }
@@ -75,7 +75,7 @@ namespace OmegaSudoku
                 Console.Write("Enter the file path of the Sudoku board: ");
                 consoleInputHandler.GetUserInput();
                 // get the file path
-                string path = consoleInputHandler.Input.Trim();
+                string path = consoleInputHandler.Input;
                 FileInputHandler fileInputHandler = new FileInputHandler(path);
                 fileInputHandler.GetUserInput();
                 string input = fileInputHandler.Input.Trim();
@@ -87,6 +87,13 @@ namespace OmegaSudoku
             }
         }
 
+        /// <summary>
+        /// This is the main func in the engine, it is used to attempt to solve the board and 
+        /// also calls funcs that show the output of the attempt
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="is_file"></param>
+        /// <param name="inputHandler"></param>
         private static void SolveBoard(string input, bool is_file, IinputReader inputHandler)
         {
             // check the input
@@ -94,10 +101,8 @@ namespace OmegaSudoku
             // setup the board
             Icell[,] board = InputValidator.SetUpBoard(input);
             Console.WriteLine("Attempting to solve your board:");
-            // set up the data structs
-            Mrvdict mrvDict = new Mrvdict(board.GetLength(0));
             // set up solver
-            SudokuSolver solver = new SudokuSolver(board, mrvDict);
+            SudokuSolver solver = new SudokuSolver(board);
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             bool invalidBoard = false;
             bool solved = solver.Solve();

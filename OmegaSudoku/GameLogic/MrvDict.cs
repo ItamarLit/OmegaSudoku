@@ -56,7 +56,9 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func finds the lowest possibility cell in the most filled part of the board
+        /// This func finds the lowest possibility cell, if the board is smaller / equal to 9 * 9 then
+        /// it is also the cell in the most filled part of the board, if the board is larger than 9 * 9 it doesn't help to get the cell
+        /// in the most filled part (the board is to big)
         /// </summary>
         /// <returns>Returns the cell or null if the dict is empty</returns>
         public Icell GetLowestPossibilityCell(SudokuLogicHandler logicHandler, Icell[,] board)

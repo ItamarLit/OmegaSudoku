@@ -15,9 +15,9 @@ namespace OmegaSudoku.IO
             {
                 throw new ArgumentException("File path cannot be null or empty.");
             }
+            filePathInput = filePathInput.Trim();
             // clean the file path from " "
-            filePathInput = filePathInput.TrimStart('"');
-            filePathInput = filePathInput.TrimEnd('"');
+            filePathInput = filePathInput.Trim('"');
             _filepath = filePathInput;
         }
 
@@ -27,6 +27,7 @@ namespace OmegaSudoku.IO
             {
                 throw new FileNotFoundException($"The file at: {_filepath} was not found.");
             }
+            // read all data
             Input = File.ReadAllText(_filepath);
         }
 

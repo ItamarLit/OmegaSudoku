@@ -16,7 +16,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="excludedCandidates"></param>
         /// <param name="mrvInstance"></param>
         /// <param name="currentState"></param>
-        /// <returns>The func returns true if the changes it made to the board didnt make it invalid, else it returns false</returns>
+        /// <returns>The func returns true if the changes it made to the board didn't make it invalid, else it returns false</returns>
         public static bool RemoveRedundantPossibilities(IEnumerable<Icell> unitCells, IEnumerable<Icell> excludedCells, int setCandidates, int excludedCandidates, Mrvdict mrvInstance, StateChange currentState)
         {
             // create the mask for the candidates that need to be removed from the unitcells

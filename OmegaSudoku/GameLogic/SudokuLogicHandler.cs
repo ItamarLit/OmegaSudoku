@@ -94,7 +94,7 @@ namespace OmegaSudoku.GameLogic
             IEnumerable<Icell> boardCells = GetAllBoardCells();
             foreach (var cell in boardCells)
             {
-                // check if the cell in the cube has the same value of the checked cell
+                // decrease the possibilites based on filled values
                 if (!cell.IsCellEmpty())
                 {
                     HashSet<Icell> affectedUnitCells = GetFilteredUnitCells(cell.CellRow, cell.CellCol, cell.CellValue);
@@ -195,7 +195,7 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="rowPos"></param>
         /// <param name="colPos"></param>
-        /// <returns>List of tuples of unit cells</returns>
+        /// <returns>HashSet of unit cells</returns>
         public HashSet<Icell> GetUnitCellsPos(int rowPos, int colPos)
         {
             Icell cell = _gameBoard[rowPos, colPos];
@@ -221,7 +221,6 @@ namespace OmegaSudoku.GameLogic
 
         /// <summary>
         /// This func returns a list of BoardCells neighbours that doesnt include row, col BoardCell and filled cells
-        /// The cells must 
         /// </summary>
         /// <param name="rowPos"></param>
         /// <param name="colPos"></param>
@@ -252,7 +251,6 @@ namespace OmegaSudoku.GameLogic
         /// <returns>true if the update is invalid else false</returns>
         public bool IsInvalidUpdate(IEnumerable<Icell> affectedCells)
         {
-            // This func is used to check the board after every update to look for illegal cells ( no possibilites and no value)
             foreach (Icell cell in affectedCells)
             {
                 if (cell.NumberOfPossibilites() == 0 && cell.IsCellEmpty())
@@ -265,6 +263,7 @@ namespace OmegaSudoku.GameLogic
 
         public int CountEmptyNeighbours(IEnumerable<Icell> unitCells)
         {
+            // this func counts all empty cells in unitCells
             int count = 0;
             foreach(var cell in unitCells)
             {

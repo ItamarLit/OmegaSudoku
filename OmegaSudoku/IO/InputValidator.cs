@@ -53,9 +53,9 @@ namespace OmegaSudoku.IO
                 if (cellValue > _boardSize || cellValue < STARTING_SUDOKU_NUMBER - 1)
                 {
                     // Throw cell info exception
-                    throw new CellInfoExeption(cellValue + '0');
+                    throw new CellInfoExeption((char)(cellValue + '0'));
                 }
-                // the ValidSudokuSize and StartingSudokuNumber are for setting the number range on the board ( setting the possible values in a cell)
+                // create the board cell
                 board[rowIndex, columnIndex] = new BoardCell(rowIndex, columnIndex, _boardSize, cellValue);
             }
             return board;

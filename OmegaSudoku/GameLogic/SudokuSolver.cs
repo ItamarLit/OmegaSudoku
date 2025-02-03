@@ -31,10 +31,11 @@ namespace OmegaSudoku.GameLogic
  
         private Icell? _lastUpdatedCell;
 
-        public SudokuSolver(Icell[,] gameBoard, Mrvdict mrvInstance)
+        public SudokuSolver(Icell[,] gameBoard)
         {
             _board = gameBoard;
-            _mrvDict = mrvInstance;
+            // create mrv dict
+            _mrvDict = new Mrvdict(_board.GetLength(0)); ;
             // create the game logic handler
             _logicHandler = new SudokuLogicHandler(_board, _mrvDict);
             // set up the board
@@ -50,7 +51,6 @@ namespace OmegaSudoku.GameLogic
         /// <returns>
         /// The func returns true if it solved the board and false if not
         /// </returns>
-        /// 
         public bool Solve()
         {
             // apply the heuristics to the board
@@ -100,6 +100,11 @@ namespace OmegaSudoku.GameLogic
         /// <returns></returns>
         public HeuristicResult ApplyHeuristics()
         {
+            if (_board.GetLength(0) == 1)
+            {
+                // dont run heuristics for boards of one cell (no naked sets or hidden sets)
+                return HeuristicResult.NoChange;
+            }
             StateChange currentState = new StateChange();
             bool metError = false;
             bool madeProgress = true;
@@ -122,6 +127,7 @@ namespace OmegaSudoku.GameLogic
                     int lastUpdatedCol = _lastUpdatedCell.CellCol;
                     for (int index = 0; index < _heuristics.Count && !metError; index++) 
                     {
+                        // apply all heuristics in the list
                         if (!_heuristics[index].ApplyHeuristic(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
                         {
                             metError = true;
@@ -154,7 +160,7 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func attepts to solve the board by placing a value in a cell and recursivly calling the solve
+        /// This func attepts to solve the board by placing a value in a cell and recursivly calling the solve func
         /// </summary>
         /// <param name="potentialValue"></param>
         /// <param name="row"></param>
@@ -171,7 +177,6 @@ namespace OmegaSudoku.GameLogic
             SolverUtils.DecreaseGamePossibilites(affectedCells, cell.CellRow, cell.CellCol, potentialValue, _mrvDict, _logicHandler, _board);
             // save the current state
             _stateChangesStack.Push(currentState);
-            // call hidden singles check here
             if (_logicHandler.IsInvalidUpdate(affectedCells))
             {
                 // reset the state and add back possibilites
@@ -225,7 +230,7 @@ namespace OmegaSudoku.GameLogic
                     _mrvDict.RemoveCell(cell);
                     changedCells.Add(cell);
                 }
-                cell.SetCellPossibilities(cell.GetCellPossibilities() |removedValue);
+                cell.SetCellPossibilities(cell.GetCellPossibilities() | removedValue);
             }
             return changedCells;
         }

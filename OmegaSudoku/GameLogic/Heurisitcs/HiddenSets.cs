@@ -114,7 +114,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         }
 
         /// <summary>
-        ///  Function that generates sets of n len from a list
+        /// Wrraper func for GenerateCombinations
         /// </summary>
         /// <param name="list"></param>
         /// <param name="length"></param>
@@ -126,6 +126,14 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             return result;
         }
 
+        /// <summary>
+        /// Function that generates sets of n len from a list
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="length"></param>
+        /// <param name="start"></param>
+        /// <param name="current"></param>
+        /// <param name="result"></param>
         private static void GenerateCombinations(List<int> list, int length, int start, List<int> current, List<List<int>> result)
         {
             if (length == 0)
@@ -142,7 +150,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         }
 
         /// <summary>
-        /// Thi func creates a bit mask for a set of numbers in a list
+        /// This func creates a bit mask for a set of numbers in a list
         /// </summary>
         /// <param name="set"></param>
         /// <returns>Bitmask for the numbers</returns>
