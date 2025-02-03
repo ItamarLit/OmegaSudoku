@@ -1,5 +1,4 @@
-﻿
-namespace OmegaSudoku.Exceptions
+﻿namespace OmegaSudoku.Exceptions
 {
     class BoardInfoException : Exception
     {

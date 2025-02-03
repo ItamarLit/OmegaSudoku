@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+
 namespace OmegaSudoku.GameLogic
 {
     public class StateChange

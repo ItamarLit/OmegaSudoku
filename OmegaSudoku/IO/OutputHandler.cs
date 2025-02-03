@@ -74,14 +74,37 @@ namespace OmegaSudoku.IO
             }
             return str.ToString();
         }
-        public static void PrintBoard(Icell[,] board)
+
+        public static string CreateOutput(bool solved, Icell[,] board, long elapsedTime)
         {
-            Console.WriteLine("Here is your board:");
+            // func to create output string for file and console
+            StringBuilder str = new StringBuilder();
+            // get the board as a board ie in columns and rows form
             string boardStr = BuildStringForBoard(board);
-            Console.WriteLine(boardStr);
+            // get the board in str form ( a string of signs)
+            string boardInStr = GetBoardStr(board);
+            // create the full output str
+            str.AppendLine("\nHere is your board:");
+            str.AppendLine(boardStr);
+            str.AppendLine("Here is the board in string form:");
+            str.AppendLine(boardInStr);
+            if (!solved)
+            {
+                str.AppendLine("----------------------------");
+                str.AppendLine("Sorry, this board isn't solvable");
+            }
+            str.AppendLine("----------------------------");
+            str.AppendLine($"The program ran for: {elapsedTime} milliseconds");
+            return str.ToString();
+        }
+        public static void ShowOutput(Icell[,] board, bool solved, long time)
+        {
+            string outputStr = CreateOutput(solved, board, time);
+            Console.WriteLine(outputStr);
         }
         public static string GetBoardStr(Icell[,] board)
         {
+            // func that gets the board in a string format
             string boardStr = "";
             for(int i = 0; i < board.GetLength(0); i++)
             {
@@ -93,9 +116,10 @@ namespace OmegaSudoku.IO
             return boardStr;
         }
 
-        public static void WriteIntoFile(string filePath, string outputStr)
+        public static void WriteIntoFile(string filePath, Icell[,] board, bool solved, long time)
         {
-            File.AppendAllText(filePath, "\n\nHere is the output:\n\n");
+            // func that writes to a file
+            string outputStr = CreateOutput(solved, board, time);
             File.AppendAllText(filePath, outputStr);
         }
     }

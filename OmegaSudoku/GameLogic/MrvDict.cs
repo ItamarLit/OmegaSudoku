@@ -93,10 +93,11 @@ namespace OmegaSudoku.GameLogic
         private Icell GetBestCell(HashSet<Icell> cells, Icell[,] board, SudokuLogicHandler logicHandler)
         {
             Icell bestCell = null;
+            int maxSize = board.GetLength(0) + 1;
             // set the counts to max value so every other count is smaller
-            int bestRowEmptyCount = int.MaxValue;
-            int bestColEmptyCount = int.MaxValue;
-            int bestBoxEmptyCount = int.MaxValue;
+            int bestRowEmptyCount = maxSize;
+            int bestColEmptyCount = maxSize;
+            int bestBoxEmptyCount = maxSize;
 
             foreach (var cell in cells)
             {

@@ -1,5 +1,4 @@
-﻿
-namespace OmegaSudoku.Interfaces
+﻿namespace OmegaSudoku.Interfaces
 {
     public interface Icell
     {

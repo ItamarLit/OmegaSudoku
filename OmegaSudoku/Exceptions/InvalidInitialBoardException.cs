@@ -1,6 +1,4 @@
-﻿
-
-namespace OmegaSudoku.Exceptions
+﻿namespace OmegaSudoku.Exceptions
 {
     class InvalidInitialBoardException : Exception
     {

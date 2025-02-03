@@ -91,35 +91,24 @@ namespace OmegaSudoku
         {
             // check the input
             InputValidator.CheckInput(input);
+            // setup the board
             Icell[,] board = InputValidator.SetUpBoard(input);
-            OutputHandler.PrintBoard(board);
+            Console.WriteLine("Attempting to solve your board:");
             // set up the data structs
             Mrvdict mrvDict = new Mrvdict(board.GetLength(0));
             // set up solver
             SudokuSolver solver = new SudokuSolver(board, mrvDict);
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             bool invalidBoard = false;
-            if (solver.Solve())
-            {
-                OutputHandler.PrintBoard(board);
-            }
-            else
-            {
-                OutputHandler.ShowImpossibleBoardMsg();
-                invalidBoard = true;
-
-            }
+            bool solved = solver.Solve();
+            stopwatch.Stop();
+            OutputHandler.ShowOutput(board, solved, stopwatch.ElapsedMilliseconds);
             if (is_file)
             {
                 string filePath = ((FileInputHandler)inputHandler).GetPath();
-                OutputHandler.WriteIntoFile(filePath, OutputHandler.GetBoardStr(board));
-                if (invalidBoard)
-                {
-                    OutputHandler.WriteIntoFile(filePath, "The board is unsolvable");
-                }
+                OutputHandler.WriteIntoFile(filePath, board, solved, stopwatch.ElapsedMilliseconds);
+                
             }
-            stopwatch.Stop();
-            OutputHandler.ShowProgramRuntime(stopwatch.ElapsedMilliseconds);
         }
     }
 }

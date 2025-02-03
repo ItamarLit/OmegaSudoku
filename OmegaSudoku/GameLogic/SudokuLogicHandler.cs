@@ -4,6 +4,7 @@ using System.Linq;
 using OmegaSudoku.Exceptions;
 using OmegaSudoku.Interfaces;
 
+
 namespace OmegaSudoku.GameLogic
 {
     public class SudokuLogicHandler

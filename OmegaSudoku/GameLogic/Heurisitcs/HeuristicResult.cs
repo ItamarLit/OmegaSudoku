@@ -1,5 +1,4 @@
-﻿
-namespace OmegaSudoku.GameLogic.Heurisitcs
+﻿namespace OmegaSudoku.GameLogic.Heurisitcs
 {
     public enum HeuristicResult
     {

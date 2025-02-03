@@ -1,5 +1,6 @@
 ﻿using OmegaSudoku.Interfaces;
 using System.Collections.Generic;
+using System;
 
 
 namespace OmegaSudoku.GameLogic.Heurisitcs

@@ -1,6 +1,5 @@
 ﻿using OmegaSudoku.Interfaces;
 
-
 namespace OmegaSudoku.GameLogic.Heurisitcs
 {
     public class HeuristicUtils

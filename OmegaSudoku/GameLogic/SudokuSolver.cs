@@ -4,7 +4,6 @@ using System.Linq;
 using OmegaSudoku.GameLogic.Heurisitcs;
 using OmegaSudoku.Interfaces;
 
-
 namespace OmegaSudoku.GameLogic
 {
     public class SudokuSolver
