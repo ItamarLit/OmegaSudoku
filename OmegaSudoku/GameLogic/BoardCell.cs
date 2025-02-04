@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace OmegaSudoku.GameLogic
 {
-    public class BoardCell : Icell
+    public class BoardCell : ICell
     {
         /// <summary>
         /// This is the class used to store data of a cell, the possibilities are stored in a bitmask

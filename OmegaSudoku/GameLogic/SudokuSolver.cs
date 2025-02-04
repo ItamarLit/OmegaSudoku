@@ -6,13 +6,13 @@ using OmegaSudoku.Interfaces;
 
 namespace OmegaSudoku.GameLogic
 {
-    public class SudokuSolver
+    public class SudokuSolver : ISolver
     {
         /// <summary>
         /// This class holds the main solve func that is used to attempt to solve the board and other helper funcs
         /// </summary>
 
-        private readonly Icell[,] _board;
+        private readonly ICell[,] _board;
 
         private readonly Mrvdict _mrvDict;
 
@@ -29,9 +29,9 @@ namespace OmegaSudoku.GameLogic
             new NakedSets(2),
         };
  
-        private Icell? _lastUpdatedCell;
+        private ICell? _lastUpdatedCell;
 
-        public SudokuSolver(Icell[,] gameBoard)
+        public SudokuSolver(ICell[,] gameBoard)
         {
             _board = gameBoard;
             // create mrv dict
@@ -60,7 +60,7 @@ namespace OmegaSudoku.GameLogic
                 // invalid board 
                 return false;
             }
-            Icell cell = _mrvDict.GetLowestPossibilityCell(_logicHandler, _board);
+            ICell cell = _mrvDict.GetLowestPossibilityCell(_logicHandler, _board);
             if (_mrvDict.IsEmptyMap(cell))
             {
                 // if there are no more cells to fill the sudoku is solved
@@ -137,6 +137,20 @@ namespace OmegaSudoku.GameLogic
                 // check if the heuristics did anything
                 madeProgress = MadeProgress(previousValueChanges, previousPossibilityChanges, currentState);
             }
+            return HandleHeuristicsRes(metError, currentState);
+        }
+
+        /// <summary>
+        /// This func handles the state after applying the heuristics, if needed it resets it.
+        /// </summary>
+        /// <param name="metError"></param>
+        /// <param name="currentState"></param>
+        /// <returns>
+        /// Returns an enum based on state, invalidState if state was reset, progressMade if the state is valid and there was progress
+        /// and noChange if no changes were made
+        /// </returns>
+        private HeuristicResult HandleHeuristicsRes(bool metError, StateChange currentState)
+        {
             if (metError)
             {
                 // push the current state object and reset the board
@@ -167,12 +181,12 @@ namespace OmegaSudoku.GameLogic
         /// <param name="col"></param>
         /// <param name="currentState"></param>
         /// <returns></returns>
-        public bool TrySolveCell(int potentialValue, Icell cell, StateChange currentState)
+        public bool TrySolveCell(int potentialValue, ICell cell, StateChange currentState)
         {
             currentState.CellValueChanges.Add((cell.CellRow, cell.CellCol, 0));
             cell.CellValue = potentialValue;
             // save the affected cell positions incase the attempt is wrong
-            HashSet<Icell> affectedCells = _logicHandler.GetFilteredUnitCells(cell.CellRow, cell.CellCol, potentialValue);
+            HashSet<ICell> affectedCells = _logicHandler.GetFilteredUnitCells(cell.CellRow, cell.CellCol, potentialValue);
             SolverUtils.SetAffectedCellsInStack(currentState, affectedCells);
             SolverUtils.DecreaseGamePossibilites(affectedCells, cell.CellRow, cell.CellCol, potentialValue, _mrvDict, _logicHandler, _board);
             // save the current state
@@ -203,7 +217,7 @@ namespace OmegaSudoku.GameLogic
         /// <param name="potentialValue"></param>
         private void ResetState()
         {
-            IEnumerable<Icell> affectedCells = ResetCellsUsingStack();
+            IEnumerable<ICell> affectedCells = ResetCellsUsingStack();
             _mrvDict.UpdateMRVCells(affectedCells, true);
             _lastUpdatedCell = null;
         }
@@ -212,19 +226,19 @@ namespace OmegaSudoku.GameLogic
         /// This func will reset the state using the stack and the last state of the board
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<Icell> ResetCellsUsingStack()
+        private IEnumerable<ICell> ResetCellsUsingStack()
         {
             StateChange oldState = _stateChangesStack.Pop();
-            List<Icell> changedCells = new List<Icell>();
+            List<ICell> changedCells = new List<ICell>();
             foreach ((int row, int col, int value) in oldState.CellValueChanges)
             {
-                Icell cell = _board[row, col];
+                ICell cell = _board[row, col];
                 cell.CellValue = value;
                 changedCells.Add(cell);
             }
             foreach ((int row, int col, int removedValue) in oldState.CellPossibilityChanges)
             {
-                Icell cell = _board[row, col];
+                ICell cell = _board[row, col];
                 if (!changedCells.Contains(cell))
                 {
                     _mrvDict.RemoveCell(cell);

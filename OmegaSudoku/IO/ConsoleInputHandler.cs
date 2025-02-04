@@ -2,7 +2,7 @@
 
 namespace OmegaSudoku.IO
 {
-    class ConsoleInputHandler : IinputReader
+    class ConsoleInputHandler : IInputReader
     {
         /// <summary>
         /// This is the class used to handle all the input functions

@@ -1,6 +1,6 @@
 ﻿namespace OmegaSudoku.Interfaces
 {
-    public interface Icell
+    public interface ICell
     {
         // properties that every cell has no matter the object type
         public int CellCol { get; }

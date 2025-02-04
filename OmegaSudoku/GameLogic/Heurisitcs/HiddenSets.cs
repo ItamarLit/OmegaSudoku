@@ -28,21 +28,21 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="logicHandler"></param>
         /// <param name="mrvInstance"></param>
         /// <returns>The func returns false if the board is in an invalid state after running else it returns true</returns>
-        public bool ApplyHeuristic(StateChange currentState, int row, int col, Icell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
+        public bool ApplyHeuristic(StateChange currentState, int row, int col, ICell[,] board, SudokuLogicHandler logicHandler, Mrvdict mrvInstance)
         {
             // get the unit cells 
-            IEnumerable<Icell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
+            IEnumerable<ICell>[] affectedUnitCells = { logicHandler.GetRowCells(row), logicHandler.GetColumnCells(col), logicHandler.GetCubeCells(row, col) };
             for (int i = 0; i < affectedUnitCells.Length; i++)
             {
                 // create the possiblity dict
-                Dictionary<int, List<Icell>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
+                Dictionary<int, List<ICell>> possibilityDict = GetPossibilityDict(logicHandler, row, col, board, affectedUnitCells[i]);
                 List<int> candidates = possibilityDict.Keys.ToList();
                 // generate the different sets of the values
                 List<List<int>> sets = GetCombinationsInSet(candidates, _setSize);
                 bool finishedSuccessfully = false;
                 foreach (var set in sets)
                 {
-                    HashSet<Icell> setCells = new HashSet<Icell>();
+                    HashSet<ICell> setCells = new HashSet<ICell>();
                     foreach (int value in set)
                     {
                         setCells.UnionWith(possibilityDict[value]);
@@ -79,9 +79,9 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="board"></param>
         /// <param name="unitCells"></param>
         /// <returns>A dict of possibility - cells pairs where each possibility is linked to the cells that have it</returns>
-        private static Dictionary<int, List<Icell>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, Icell[,] board, IEnumerable<Icell> unitCells)
+        private static Dictionary<int, List<ICell>> GetPossibilityDict(SudokuLogicHandler logicHandler, int row, int col, ICell[,] board, IEnumerable<ICell> unitCells)
         {
-            Dictionary<int, List<Icell>> possibilityDict = new Dictionary<int, List<Icell>>();
+            Dictionary<int, List<ICell>> possibilityDict = new Dictionary<int, List<ICell>>();
             foreach (var cell in unitCells)
             {
                 // skip filled cells and the current cell pos
@@ -98,7 +98,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                         {
                             if (!possibilityDict.TryGetValue(value, out var list))
                             {
-                                list = new List<Icell>();
+                                list = new List<ICell>();
                                 possibilityDict[value] = list;
                             }
                             list.Add(cell);

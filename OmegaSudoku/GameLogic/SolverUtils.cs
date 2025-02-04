@@ -18,9 +18,9 @@ namespace OmegaSudoku.GameLogic
         /// <param name="currentState"></param>
         /// <param name="affectedCells"></param>
         /// <param name="removedPossibility"></param>
-        public static void SetAffectedCellsInStack(StateChange currentState, IEnumerable<Icell> affectedCells)
+        public static void SetAffectedCellsInStack(StateChange currentState, IEnumerable<ICell> affectedCells)
         {
-            foreach (Icell cell in affectedCells)
+            foreach (ICell cell in affectedCells)
             {
                 currentState.CellPossibilityChanges.Add((cell.CellRow, cell.CellCol, cell.GetCellPossibilities()));
             }
@@ -36,8 +36,8 @@ namespace OmegaSudoku.GameLogic
         /// <param name="mrvInstance"></param>
         /// <param name="logicHandler"></param>
         /// <param name="board"></param>
-        public static void DecreaseGamePossibilites(IEnumerable<Icell> affectedCells, int row, int col,
-            int potentialValue, Mrvdict mrvInstance, SudokuLogicHandler logicHandler, Icell[,] board)
+        public static void DecreaseGamePossibilites(IEnumerable<ICell> affectedCells, int row, int col,
+            int potentialValue, Mrvdict mrvInstance, SudokuLogicHandler logicHandler, ICell[,] board)
         {
             // remove the possibilites
             mrvInstance.UpdateMRVCells(affectedCells, false);

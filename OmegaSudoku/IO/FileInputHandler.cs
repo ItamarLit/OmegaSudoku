@@ -3,7 +3,7 @@
 
 namespace OmegaSudoku.IO
 {
-    public class FileInputHandler : IinputReader
+    public class FileInputHandler : IInputReader
     {
         public string Input { get; set; }
 

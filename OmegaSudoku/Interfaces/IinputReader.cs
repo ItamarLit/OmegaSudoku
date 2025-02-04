@@ -1,6 +1,6 @@
 ﻿namespace OmegaSudoku.Interfaces
 {
-    public interface IinputReader
+    public interface IInputReader
     {
         // Interface for input readers, (file / console)
         public string Input { get; set; }

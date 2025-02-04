@@ -22,20 +22,20 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="lastUpdatedCell"></param>
         /// <param name="logicHandler"></param>
         /// <returns>The func returns false if the board is left in an invalid state after running else, it returns true</returns>
-        public static bool SolveSinglePossibilityCells(StateChange currentState, Icell[,] board, Mrvdict mrvInstance, ref Icell? lastUpdatedCell, SudokuLogicHandler logicHandler)
+        public static bool SolveSinglePossibilityCells(StateChange currentState, ICell[,] board, Mrvdict mrvInstance, ref ICell? lastUpdatedCell, SudokuLogicHandler logicHandler)
         {
             // run while there are naked singles on the board
             while (mrvInstance.HasSinglePossibiltyCell())
             {
                 // get the row, col of the cell
-                Icell cell = mrvInstance.GetLowestPossibilityCell(logicHandler, board);
+                ICell cell = mrvInstance.GetLowestPossibilityCell(logicHandler, board);
                 // get the cells value
                 int potentialValue = cell.GetFinalCellValue();
                 // change the value and save the change
                 currentState.CellValueChanges.Add((cell.CellRow, cell.CellCol, cell.CellValue));
                 cell.CellValue = potentialValue;
                 // remove the possibility
-                HashSet<Icell> affectedCells = logicHandler.GetFilteredUnitCells(cell.CellRow, cell.CellCol, potentialValue);
+                HashSet<ICell> affectedCells = logicHandler.GetFilteredUnitCells(cell.CellRow, cell.CellCol, potentialValue);
                 SolverUtils.SetAffectedCellsInStack(currentState, affectedCells);
                 SolverUtils.DecreaseGamePossibilites(affectedCells, cell.CellRow, cell.CellCol, potentialValue, mrvInstance, logicHandler, board);
                 // check if the update was valid

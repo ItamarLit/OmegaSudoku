@@ -36,7 +36,7 @@ namespace OmegaSudoku.IO
             return true;
         }
 
-        public static Icell[,] SetUpBoard(string input)
+        public static ICell[,] SetUpBoard(string input)
         {
             // setup the board
             BoardCell[,] board = new BoardCell[_boardSize, _boardSize];

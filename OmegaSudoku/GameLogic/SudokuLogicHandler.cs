@@ -14,22 +14,22 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         
         // hold the board as private
-        private readonly Icell[,] _gameBoard;
+        private readonly ICell[,] _gameBoard;
         // mrvDict instance
         private readonly Mrvdict _mrvDict;
         // caches for the cells in the different units
-        private List<Icell>[] _rowsCache;
-        private List<Icell>[] _columnsCache;
-        private List<Icell>[] _cubesCache;
-        private Dictionary<Icell, HashSet<Icell>> _neighboursCache;
+        private List<ICell>[] _rowsCache;
+        private List<ICell>[] _columnsCache;
+        private List<ICell>[] _cubesCache;
+        private Dictionary<ICell, HashSet<ICell>> _neighboursCache;
         
-        public SudokuLogicHandler(Icell[,] board, Mrvdict mrvInstance)
+        public SudokuLogicHandler(ICell[,] board, Mrvdict mrvInstance)
         {
             _gameBoard = board;
             _mrvDict = mrvInstance;
             int boardSize = board.GetLength(0);
             InitCaches(boardSize);
-            _neighboursCache = new Dictionary<Icell, HashSet<Icell>>();
+            _neighboursCache = new Dictionary<ICell, HashSet<ICell>>();
         }
 
         /// <summary>
@@ -38,14 +38,14 @@ namespace OmegaSudoku.GameLogic
         /// <param name="boardSize"></param>
         private void InitCaches(int boardSize)
         {
-            _rowsCache = new List<Icell>[boardSize];
-            _columnsCache = new List<Icell>[boardSize];
-            _cubesCache = new List<Icell>[boardSize];
+            _rowsCache = new List<ICell>[boardSize];
+            _columnsCache = new List<ICell>[boardSize];
+            _cubesCache = new List<ICell>[boardSize];
             for (int i = 0; i < boardSize; i++)
             {
-                _rowsCache[i] = new List<Icell>();
-                _columnsCache[i] = new List<Icell>();
-                _cubesCache[i] = new List<Icell>();
+                _rowsCache[i] = new List<ICell>();
+                _columnsCache[i] = new List<ICell>();
+                _cubesCache[i] = new List<ICell>();
             }
             FillCaches(boardSize);
         }
@@ -58,7 +58,7 @@ namespace OmegaSudoku.GameLogic
             {
                 for(int col = 0; col < boardSize; col++)
                 {
-                    Icell cell = _gameBoard[row, col];
+                    ICell cell = _gameBoard[row, col];
                     _rowsCache[row].Add(cell);
                     _columnsCache[col].Add(cell);
                     int cubeIndex = SolverUtils.GetCubeIndex(row, col, boardSize);
@@ -74,7 +74,7 @@ namespace OmegaSudoku.GameLogic
         public void CheckInitalBoard()
         {
             // go over all the filled cells and check that they are valid
-            foreach (Icell cell in GetAllBoardCells())
+            foreach (ICell cell in GetAllBoardCells())
             {
                 // check if the cell in the cube has the same value of the checked cell
                 if (cell.CellValue != 0 && !IsValidMove(cell.CellRow, cell.CellCol))
@@ -91,13 +91,13 @@ namespace OmegaSudoku.GameLogic
         public void SetInitailBoardPossibilites()
         {
             // set the board possibilites
-            IEnumerable<Icell> boardCells = GetAllBoardCells();
+            IEnumerable<ICell> boardCells = GetAllBoardCells();
             foreach (var cell in boardCells)
             {
                 // decrease the possibilites based on filled values
                 if (!cell.IsCellEmpty())
                 {
-                    HashSet<Icell> affectedUnitCells = GetFilteredUnitCells(cell.CellRow, cell.CellCol, cell.CellValue);
+                    HashSet<ICell> affectedUnitCells = GetFilteredUnitCells(cell.CellRow, cell.CellCol, cell.CellValue);
                     DecreasePossibilites(affectedUnitCells, cell.CellValue);
                 }
             }
@@ -113,10 +113,10 @@ namespace OmegaSudoku.GameLogic
         }
 
 
-        private IEnumerable<Icell> GetAllBoardCells()
+        private IEnumerable<ICell> GetAllBoardCells()
         {
             // this func will return a list of all cells on the board
-            List<Icell> boardCells = new List<Icell>();
+            List<ICell> boardCells = new List<ICell>();
             for (int row = 0; row < _gameBoard.GetLength(0); row++)
             {
                 for (int col = 0; col < _gameBoard.GetLength(1); col++) 
@@ -127,17 +127,17 @@ namespace OmegaSudoku.GameLogic
             return boardCells;
         }
 
-        public IEnumerable<Icell> GetRowCells(int rowLvl)
+        public IEnumerable<ICell> GetRowCells(int rowLvl)
         {
             return _rowsCache[rowLvl];
         }
 
-        public IEnumerable<Icell> GetColumnCells(int columnNum)
+        public IEnumerable<ICell> GetColumnCells(int columnNum)
         {
             return _columnsCache[columnNum];
         }
 
-        public IEnumerable<Icell> GetCubeCells(int rowPos, int colPos)
+        public IEnumerable<ICell> GetCubeCells(int rowPos, int colPos)
         {
             int cubeIndex = SolverUtils.GetCubeIndex(rowPos, colPos, _gameBoard.GetLength(0));
             return _cubesCache[cubeIndex];
@@ -175,11 +175,11 @@ namespace OmegaSudoku.GameLogic
             return CheckForDoubles(GetCubeCells(rowPos, colPos), cellValue);
         }
 
-        private bool CheckForDoubles(IEnumerable<Icell> cells, int cellValue)
+        private bool CheckForDoubles(IEnumerable<ICell> cells, int cellValue)
         {
             // this func is used to check for illegal double cell values in a cell list
             bool foundAlready = false;
-            foreach (Icell cell in cells)
+            foreach (ICell cell in cells)
             {
                 if (cell.CellValue == cellValue)
                 {
@@ -196,9 +196,9 @@ namespace OmegaSudoku.GameLogic
         /// <param name="rowPos"></param>
         /// <param name="colPos"></param>
         /// <returns>HashSet of unit cells</returns>
-        public HashSet<Icell> GetUnitCellsPos(int rowPos, int colPos)
+        public HashSet<ICell> GetUnitCellsPos(int rowPos, int colPos)
         {
-            Icell cell = _gameBoard[rowPos, colPos];
+            ICell cell = _gameBoard[rowPos, colPos];
             if(!_neighboursCache.TryGetValue(cell, out var set))
             {
                 set = GetRowCells(rowPos).ToHashSet();
@@ -209,10 +209,10 @@ namespace OmegaSudoku.GameLogic
             return set;
         }
 
-        public void DecreasePossibilites(IEnumerable<Icell> affectedUnitCells, int valueToRemove)
+        public void DecreasePossibilites(IEnumerable<ICell> affectedUnitCells, int valueToRemove)
         {
             // This func is used to reduce the board possibilites based on the current change
-            foreach(Icell cell in affectedUnitCells)
+            foreach(ICell cell in affectedUnitCells)
             {
                 // attempt to remove the value
                 cell.DecreasePossibility(valueToRemove);
@@ -226,12 +226,12 @@ namespace OmegaSudoku.GameLogic
         /// <param name="colPos"></param>
         /// <param name="filterValue"></param>
         /// <returns>List of boardCells</returns>
-        public HashSet<Icell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
+        public HashSet<ICell> GetFilteredUnitCells(int rowPos, int colPos, int filterValue) 
         {
             // the cell at row, col is not in the hash set
-            HashSet<Icell> unitCells = GetUnitCellsPos(rowPos, colPos);
-            HashSet<Icell> filteredCells = new HashSet<Icell>();
-            foreach (Icell unitCell in unitCells) 
+            HashSet<ICell> unitCells = GetUnitCellsPos(rowPos, colPos);
+            HashSet<ICell> filteredCells = new HashSet<ICell>();
+            foreach (ICell unitCell in unitCells) 
             {
                 int cellRow = unitCell.CellRow;
                 int cellCol = unitCell.CellCol;
@@ -249,9 +249,9 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="affectedCells"></param>
         /// <returns>true if the update is invalid else false</returns>
-        public bool IsInvalidUpdate(IEnumerable<Icell> affectedCells)
+        public bool IsInvalidUpdate(IEnumerable<ICell> affectedCells)
         {
-            foreach (Icell cell in affectedCells)
+            foreach (ICell cell in affectedCells)
             {
                 if (cell.NumberOfPossibilites() == 0 && cell.IsCellEmpty())
                 {
@@ -261,7 +261,7 @@ namespace OmegaSudoku.GameLogic
             return false;
         }
 
-        public int CountEmptyNeighbours(IEnumerable<Icell> unitCells)
+        public int CountEmptyNeighbours(IEnumerable<ICell> unitCells)
         {
             // this func counts all empty cells in unitCells
             int count = 0;

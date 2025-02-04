@@ -94,26 +94,26 @@ namespace OmegaSudoku
         /// <param name="input"></param>
         /// <param name="is_file"></param>
         /// <param name="inputHandler"></param>
-        private static void SolveBoard(string input, bool is_file, IinputReader inputHandler)
+        private static void SolveBoard(string input, bool is_file, IInputReader inputHandler)
         {
             // check the input
             InputValidator.CheckInput(input);
             // setup the board
-            Icell[,] board = InputValidator.SetUpBoard(input);
+            ICell[,] board = InputValidator.SetUpBoard(input);
             Console.WriteLine("Attempting to solve your board:");
             // set up solver
-            SudokuSolver solver = new SudokuSolver(board);
+            ISolver solver = new SudokuSolver(board);
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            bool invalidBoard = false;
             bool solved = solver.Solve();
             stopwatch.Stop();
-            OutputHandler.ShowOutput(board, solved, stopwatch.ElapsedMilliseconds);
+            OutputHandler.ShowOutput(board, solved);
             if (is_file)
             {
                 string filePath = ((FileInputHandler)inputHandler).GetPath();
-                OutputHandler.WriteIntoFile(filePath, board, solved, stopwatch.ElapsedMilliseconds);
-                
+                OutputHandler.WriteIntoFile(filePath, board, solved);
             }
+            Console.WriteLine($"The program ran for: {stopwatch.ElapsedMilliseconds} milliseconds");
+
         }
     }
 }

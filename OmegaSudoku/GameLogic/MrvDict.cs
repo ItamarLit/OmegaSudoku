@@ -11,17 +11,17 @@ namespace OmegaSudoku.GameLogic
         /// This class holds the mrv dict that is used to track cells and the amount of possibilities they have.
         /// </summary>
 
-        private Dictionary<int, HashSet<Icell>> _MRVPossibilitiesDict { get;  }
+        private Dictionary<int, HashSet<ICell>> _MRVPossibilitiesDict { get;  }
         // flag for small boards
         private bool _isSmallBoard;
         public Mrvdict(int boardSize)
         {
             // Create the dict where a possibility count is the key and a hashset of cells are the values
-            _MRVPossibilitiesDict = new Dictionary<int, HashSet<Icell>>();
+            _MRVPossibilitiesDict = new Dictionary<int, HashSet<ICell>>();
             // Init the hashsets inside the array, cell 1 will represent cells with only one possibility and so on
             for (int i = 1; i < boardSize + 1; i++)
             {
-                _MRVPossibilitiesDict[i] = new HashSet<Icell>();
+                _MRVPossibilitiesDict[i] = new HashSet<ICell>();
             }
             if(boardSize <= 9)
             {
@@ -37,7 +37,7 @@ namespace OmegaSudoku.GameLogic
         /// This func removes a cell from the dict based on the cells possibilites
         /// </summary>
         /// <param name="cell"></param>
-        public void RemoveCell(Icell cell)
+        public void RemoveCell(ICell cell)
         {
             int possibilitesNum = cell.NumberOfPossibilites();
             if(possibilitesNum > 0)
@@ -50,7 +50,7 @@ namespace OmegaSudoku.GameLogic
         /// This func inserts a cell into the dict based on the cells possibilites
         /// </summary>
         /// <param name="cell"></param>
-        public void InsertCell(Icell cell)
+        public void InsertCell(ICell cell)
         {
             _MRVPossibilitiesDict[cell.NumberOfPossibilites()].Add(cell);
         }
@@ -61,7 +61,7 @@ namespace OmegaSudoku.GameLogic
         /// in the most filled part (the board is to big)
         /// </summary>
         /// <returns>Returns the cell or null if the dict is empty</returns>
-        public Icell GetLowestPossibilityCell(SudokuLogicHandler logicHandler, Icell[,] board)
+        public ICell GetLowestPossibilityCell(SudokuLogicHandler logicHandler, ICell[,] board)
         {
             for (int index = 1; index <= _MRVPossibilitiesDict.Count; index++)
             {
@@ -92,9 +92,9 @@ namespace OmegaSudoku.GameLogic
         /// <param name="board"></param>
         /// <param name="logicHandler"></param>
         /// <returns>This func returns the cell in the most filled area with the lowest possibility count</returns>
-        private Icell GetBestCell(HashSet<Icell> cells, Icell[,] board, SudokuLogicHandler logicHandler)
+        private ICell GetBestCell(HashSet<ICell> cells, ICell[,] board, SudokuLogicHandler logicHandler)
         {
-            Icell bestCell = null;
+            ICell bestCell = null;
             int maxSize = board.GetLength(0) + 1;
             // set the counts to max value so every other count is smaller
             int bestRowEmptyCount = maxSize;
@@ -121,9 +121,9 @@ namespace OmegaSudoku.GameLogic
             return bestCell;
         }
 
-        public void UpdateMRVCells(IEnumerable<Icell> affectedCells, bool isInsert)
+        public void UpdateMRVCells(IEnumerable<ICell> affectedCells, bool isInsert)
         {
-            foreach (Icell cell in affectedCells)
+            foreach (ICell cell in affectedCells)
             {
                 if (isInsert)
                 {
@@ -143,7 +143,7 @@ namespace OmegaSudoku.GameLogic
         /// </summary>
         /// <param name="rowColTuple"></param>
         /// <returns></returns>
-        public bool IsEmptyMap(Icell cell)
+        public bool IsEmptyMap(ICell cell)
         {
             if (cell == null)
             {
@@ -157,7 +157,7 @@ namespace OmegaSudoku.GameLogic
             return _MRVPossibilitiesDict[1].Count > 0;
         }
 
-        public HashSet<Icell> GetCellsWithPossibilites(int numPossiblites)
+        public HashSet<ICell> GetCellsWithPossibilites(int numPossiblites)
         {
             return _MRVPossibilitiesDict[numPossiblites];
         }
