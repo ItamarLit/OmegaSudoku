@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaSudoku", "OmegaSudoku\OmegaSudoku.csproj", "{38F76F89-5FDA-4B11-B2D8-E2B5D11264F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuTests", "SudokuTests\SudokuTests.csproj", "{683E2A37-3203-4BE2-A5F6-4D2FE9BDCC7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{38F76F89-5FDA-4B11-B2D8-E2B5D11264F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38F76F89-5FDA-4B11-B2D8-E2B5D11264F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38F76F89-5FDA-4B11-B2D8-E2B5D11264F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{683E2A37-3203-4BE2-A5F6-4D2FE9BDCC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{683E2A37-3203-4BE2-A5F6-4D2FE9BDCC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{683E2A37-3203-4BE2-A5F6-4D2FE9BDCC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{683E2A37-3203-4BE2-A5F6-4D2FE9BDCC7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

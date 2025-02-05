@@ -79,7 +79,7 @@ namespace OmegaSudoku.GameLogic
                 // check if the cell in the cube has the same value of the checked cell
                 if (cell.CellValue != 0 && !IsValidMove(cell.CellRow, cell.CellCol))
                 {
-                    // Throw invalid initial board exception
+                    // throw invalid initial board exception
                     throw new InvalidInitialBoardException();
                 }
             }

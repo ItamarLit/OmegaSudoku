@@ -21,28 +21,35 @@ namespace OmegaSudoku
             {
                 Console.Write("\n\nEnter your choice: ");
                 consoleInputHandler.GetUserInput();
-                string choice = consoleInputHandler.Input.Trim().ToLower();
-                switch (choice)
+                if(consoleInputHandler.Input == null)
                 {
-                    case "solve_c":
-                        SolveBoardFromConsole(consoleInputHandler);
-                        break;
-                    case "solve_f":
-                        SolveBoardFromFile(consoleInputHandler);
-                        break;
-                    case "menu":
-                        OutputHandler.ShowMenu();
-                        break;
-                    case "rules":
-                        OutputHandler.ShowRules();
-                        break;
-                    case "exit":
-                        Console.WriteLine("Exiting the solver!");
-                        endRunFlag = true;
-                        break;
-                    default:
-                        Console.WriteLine("Invalid choice entered.");
-                        break;
+                    Console.WriteLine("Invalid choice entered.");
+                }
+                else
+                {
+                    string choice = consoleInputHandler.Input.Trim().ToLower();
+                    switch (choice)
+                    {
+                        case "solve_c":
+                            SolveBoardFromConsole(consoleInputHandler);
+                            break;
+                        case "solve_f":
+                            SolveBoardFromFile(consoleInputHandler);
+                            break;
+                        case "menu":
+                            OutputHandler.ShowMenu();
+                            break;
+                        case "rules":
+                            OutputHandler.ShowRules();
+                            break;
+                        case "exit":
+                            Console.WriteLine("Exiting the solver!");
+                            endRunFlag = true;
+                            break;
+                        default:
+                            Console.WriteLine("Invalid choice entered.");
+                            break;
+                    }
                 }
             }
         }

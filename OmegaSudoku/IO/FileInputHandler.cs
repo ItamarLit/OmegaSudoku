@@ -5,6 +5,9 @@ namespace OmegaSudoku.IO
 {
     public class FileInputHandler : IInputReader
     {
+        /// <summary>
+        /// This class is used to handle file input from the user
+        /// </summary>
         public string Input { get; set; }
 
         private readonly string _filepath;

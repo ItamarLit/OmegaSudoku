@@ -19,7 +19,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         }
 
         /// <summary>
-        /// Because searching for a hidden set is costly, i only search for them in the units that the row, col cell is in.
+        /// Func that applys hidden sets heuristic, because searching for a hidden set is costly, i only search for them in the units that the row, col cell is in.
         /// </summary>
         /// <param name="currentState"></param>
         /// <param name="row"></param>

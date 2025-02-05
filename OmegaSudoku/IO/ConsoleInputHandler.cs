@@ -5,8 +5,7 @@ namespace OmegaSudoku.IO
     class ConsoleInputHandler : IInputReader
     {
         /// <summary>
-        /// This is the class used to handle all the input functions
-        /// the class will check to see that the board is valid and then the board can be attempted to solve
+        /// This is the class used to handle all console input 
         /// </summary>
 
         public string Input { get; set; }

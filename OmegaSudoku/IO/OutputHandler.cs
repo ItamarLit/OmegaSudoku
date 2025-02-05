@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OmegaSudoku.IO
 {
-    class OutputHandler
+    public class OutputHandler
     {
         /// <summary>
         /// This is the class used to handle all the output functions to the user, including output to files

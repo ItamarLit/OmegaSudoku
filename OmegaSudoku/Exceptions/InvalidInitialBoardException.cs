@@ -1,6 +1,6 @@
 ﻿namespace OmegaSudoku.Exceptions
 {
-    class InvalidInitialBoardException : Exception
+    public class InvalidInitialBoardException : Exception
     {
         // This exception is thrown when a given inital board is invalid (has duplicates)
         public InvalidInitialBoardException() 

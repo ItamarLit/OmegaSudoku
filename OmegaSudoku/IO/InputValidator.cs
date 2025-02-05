@@ -16,7 +16,6 @@ namespace OmegaSudoku.IO
 
         private const int MAX_BOARD_SIZE = 25;
 
-        private static int _boardSize;
         public static bool CheckInput(string input)
         {
             if(input == "")
@@ -32,14 +31,14 @@ namespace OmegaSudoku.IO
                 throw new BoardSizeException(input.Length);
             }
             // no exception so the size is valid
-            _boardSize = (int)boardSize;
             return true;
         }
 
         public static ICell[,] SetUpBoard(string input)
         {
+            int boardSize = (int)Math.Sqrt((double)input.Length);
             // setup the board
-            BoardCell[,] board = new BoardCell[_boardSize, _boardSize];
+            BoardCell[,] board = new BoardCell[boardSize, boardSize];
             int cellValue;
             int rowIndex;
             int columnIndex;
@@ -47,16 +46,17 @@ namespace OmegaSudoku.IO
             {
                 // convert char into int
                 cellValue = input[index] - '0';
-                rowIndex = index / _boardSize;
-                columnIndex = index % _boardSize;
+                rowIndex = index / boardSize;
+                columnIndex = index % boardSize;
                 // check the cellValue
-                if (cellValue > _boardSize || cellValue < STARTING_SUDOKU_NUMBER - 1)
+                int num = boardSize;
+                if (cellValue > boardSize || cellValue < STARTING_SUDOKU_NUMBER - 1)
                 {
                     // Throw cell info exception
                     throw new CellInfoExeption((char)(cellValue + '0'));
                 }
                 // create the board cell
-                board[rowIndex, columnIndex] = new BoardCell(rowIndex, columnIndex, _boardSize, cellValue);
+                board[rowIndex, columnIndex] = new BoardCell(rowIndex, columnIndex, boardSize, cellValue);
             }
             return board;
         }

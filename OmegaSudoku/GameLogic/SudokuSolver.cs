@@ -225,7 +225,7 @@ namespace OmegaSudoku.GameLogic
         /// <summary>
         /// This func will reset the state using the stack and the last state of the board
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Retruns a list of all the changed cells in the last state</returns>
         private IEnumerable<ICell> ResetCellsUsingStack()
         {
             StateChange oldState = _stateChangesStack.Pop();
