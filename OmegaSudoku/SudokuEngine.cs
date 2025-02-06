@@ -114,6 +114,7 @@ namespace OmegaSudoku
             bool solved = solver.Solve();
             stopwatch.Stop();
             OutputHandler.ShowOutput(board, solved);
+            // if the input is from a file write the output
             if (is_file)
             {
                 string filePath = ((FileInputHandler)inputHandler).GetPath();

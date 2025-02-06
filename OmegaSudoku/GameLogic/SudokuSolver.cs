@@ -95,7 +95,7 @@ namespace OmegaSudoku.GameLogic
         /// 1. Naked singles
         /// 2. Hidden singles
         /// 3. Hidden pairs
-        /// 5. Naked pairs
+        /// 4. Naked pairs
         /// </summary>
         /// <returns></returns>
         public HeuristicResult ApplyHeuristics()
@@ -127,7 +127,6 @@ namespace OmegaSudoku.GameLogic
                     int lastUpdatedCol = _lastUpdatedCell.CellCol;
                     for (int index = 0; index < _heuristics.Count && !metError; index++) 
                     {
-                        // apply all heuristics in the list
                         if (!_heuristics[index].ApplyHeuristic(currentState, lastUpdatedRow, lastUpdatedCol, _board, _logicHandler, _mrvDict))
                         {
                             metError = true;
@@ -180,7 +179,7 @@ namespace OmegaSudoku.GameLogic
         /// <param name="row"></param>
         /// <param name="col"></param>
         /// <param name="currentState"></param>
-        /// <returns></returns>
+        /// <returns>Returns true if the board is solved, else false</returns>
         public bool TrySolveCell(int potentialValue, ICell cell, StateChange currentState)
         {
             currentState.CellValueChanges.Add((cell.CellRow, cell.CellCol, 0));
@@ -197,7 +196,7 @@ namespace OmegaSudoku.GameLogic
                 ResetState();
                 return false;
             }
-            // Insert the affected cells back into the mrv dict
+            // insert the affected cells back into the mrv dict
             _mrvDict.UpdateMRVCells(affectedCells, true);
             if (Solve())
             {

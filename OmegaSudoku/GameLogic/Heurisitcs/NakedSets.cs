@@ -182,7 +182,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
 
         private static bool AllInSameCube(IEnumerable<ICell> cells, int boardSize)
         {
-            // check if all the cells are in the same cubr
+            // check if all the cells are in the same cube
             int boxSize = (int)Math.Sqrt(boardSize);
             ICell first = cells.First();
             int firstBoxRow = first.CellRow / boxSize;

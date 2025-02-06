@@ -39,7 +39,7 @@ namespace OmegaSudoku.GameLogic
             // This func removes the possibility to the cell
             if ((_possibilites & (1 << possibiltiyValue)) != 0)
             {
-                // turn the bit off using a mask
+                // turn the bit off 
                 _possibilites &= ~(1 << possibiltiyValue); 
             }
         }

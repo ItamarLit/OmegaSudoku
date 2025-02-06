@@ -71,7 +71,7 @@ namespace OmegaSudoku.IO
         /// <param name="solved"></param>
         /// <param name="board"></param>
         /// <param name="elapsedTime"></param>
-        /// <returns></returns>
+        /// <returns>Returns the output string</returns>
         public static string CreateOutput(bool solved, ICell[,] board, bool forFile)
         {
             StringBuilder str = new StringBuilder();

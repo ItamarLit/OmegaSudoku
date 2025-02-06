@@ -105,6 +105,7 @@ namespace SudokuTests
             {
                 exc = e;
             }
+            //Assert
             Assert.IsInstanceOfType(exc, typeof(BoardSizeException));
         }
 
@@ -123,6 +124,7 @@ namespace SudokuTests
             {
                 exc = e;
             }
+            //Assert
             Assert.IsInstanceOfType(exc, typeof(CellInfoExeption));
         }
     }

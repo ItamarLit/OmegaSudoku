@@ -2,7 +2,9 @@
 {
     public interface ICell
     {
-        // properties that every cell has no matter the object type
+        // This interface is for a cell on the board
+
+        // properties that every cell has
         public int CellCol { get; }
         public int CellRow { get; }
         public int CellValue { get; set; }

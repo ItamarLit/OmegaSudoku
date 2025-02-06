@@ -10,7 +10,7 @@ namespace OmegaSudoku.GameLogic
     public class SudokuLogicHandler
     {
         /// <summary>
-        /// This class will control all the game logic, including checks of the board and setting up the board
+        /// This class controls all the game logic, including checks of the board and setting up the board
         /// </summary>
         
         // hold the board as private
@@ -76,7 +76,7 @@ namespace OmegaSudoku.GameLogic
             // go over all the filled cells and check that they are valid
             foreach (ICell cell in GetAllBoardCells())
             {
-                // check if the cell in the cube has the same value of the checked cell
+                // check the value
                 if (cell.CellValue != 0 && !IsValidMove(cell.CellRow, cell.CellCol))
                 {
                     // throw invalid initial board exception

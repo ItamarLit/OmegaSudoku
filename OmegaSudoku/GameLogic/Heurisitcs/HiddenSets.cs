@@ -8,7 +8,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
     public class HiddenSets : IHeuristic
     {
         /// <summary>
-        /// This class is used to apply the heuristic of hidden N sets in sudoku, a hidden set occurs when N cell have N unique possiblites between them
+        /// This class is used to apply the heuristic of hidden N sets in sudoku, a hidden set occurs when N cells have N unique possiblites between them
         /// After identifiying this i can remove the other possiblites from the cells turning them into Naked sets
         /// </summary>
         /// 

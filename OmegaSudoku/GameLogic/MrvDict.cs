@@ -18,7 +18,7 @@ namespace OmegaSudoku.GameLogic
         {
             // Create the dict where a possibility count is the key and a hashset of cells are the values
             _MRVPossibilitiesDict = new Dictionary<int, HashSet<ICell>>();
-            // Init the hashsets inside the array, cell 1 will represent cells with only one possibility and so on
+            // Init the hashsets inside the dict, cell 1 will represent cells with only one possibility and so on
             for (int i = 1; i < boardSize + 1; i++)
             {
                 _MRVPossibilitiesDict[i] = new HashSet<ICell>();
@@ -96,7 +96,7 @@ namespace OmegaSudoku.GameLogic
         {
             ICell bestCell = null;
             int maxSize = board.GetLength(0) + 1;
-            // set the counts to max value so every other count is smaller
+            // set the counts to max size so every other count is smaller
             int bestRowEmptyCount = maxSize;
             int bestColEmptyCount = maxSize;
             int bestBoxEmptyCount = maxSize;
@@ -132,7 +132,7 @@ namespace OmegaSudoku.GameLogic
                 }
                 else
                 {
-                    // remove the cell from the mrv array
+                    // remove the cell from the mrv dict
                     RemoveCell(cell);
                 }
             }
