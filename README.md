@@ -3,7 +3,7 @@
 
 ![image](https://github.com/user-attachments/assets/0f0ae0fa-c6be-4623-b62f-25f67c8e4e57)
 
-This solver can solve any board that is smaller than 25*25 in less than a second, and it can also solve 25*25 boards fast.
+This solver can solve any board that is smaller than 25 by 25 in less than a second, and it can also solve 25 by 25 boards fast.
 The solver also tells you if the inputed board is unsolvable or illegal.
 
 ## Features
