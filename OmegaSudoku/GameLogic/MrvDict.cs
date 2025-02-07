@@ -142,7 +142,7 @@ namespace OmegaSudoku.GameLogic
         /// Func that checks if the dict is empty, this is signed by null
         /// </summary>
         /// <param name="rowColTuple"></param>
-        /// <returns></returns>
+        /// <returns>Returns true if the dict is empty else false</returns>
         public bool IsEmptyMap(ICell cell)
         {
             if (cell == null)

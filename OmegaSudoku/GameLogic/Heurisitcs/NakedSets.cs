@@ -139,7 +139,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// <param name="cells"></param>
         /// <param name="logicHandler"></param>
         /// <param name="boardSize"></param>
-        /// <returns>Hashset of cells that are the correct cells that are in the unit of the setcells</returns>
+        /// <returns>Hashset of cells that are the correct cells that are in the unit of the set cells</returns>
         private static HashSet<ICell> GetCorrectUnitCells(IEnumerable<ICell> cells, SudokuLogicHandler logicHandler, int boardSize)
         {
             HashSet<ICell> result = new HashSet<ICell>();

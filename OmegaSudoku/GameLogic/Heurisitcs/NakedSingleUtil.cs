@@ -27,7 +27,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
             // run while there are naked singles on the board
             while (mrvInstance.HasSinglePossibiltyCell())
             {
-                // get the row, col of the cell
+                // get the cell
                 ICell cell = mrvInstance.GetLowestPossibilityCell(logicHandler, board);
                 // get the cells value
                 int potentialValue = cell.GetFinalCellValue();

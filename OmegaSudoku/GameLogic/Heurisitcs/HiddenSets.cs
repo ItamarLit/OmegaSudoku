@@ -55,7 +55,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
                     else if (setCells.Count == _setSize)
                     {
                         finishedSuccessfully = HeuristicUtils.RemoveRedundantPossibilities(setCells, null, CreateFullSetBit(board.GetLength(0)), CreateSetMask(set), mrvInstance, currentState);
-                        // check if the board after removing possiblites is valid
+                        // check if the board is valid after removing possiblites
                         if (!finishedSuccessfully)
                         {
                             return finishedSuccessfully;
@@ -118,7 +118,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// </summary>
         /// <param name="list"></param>
         /// <param name="length"></param>
-        /// <returns></returns>
+        /// <returns>Returns a list of lists of ints (combos)</returns>
         private static List<List<int>> GetCombinationsInSet(List<int> list, int length)
         {
             List<List<int>> result = new List<List<int>>();
@@ -169,7 +169,7 @@ namespace OmegaSudoku.GameLogic.Heurisitcs
         /// A board of size 9 -> 1111111110, each bit symbols a valid possibility, bit 0 is always off
         /// </summary>
         /// <param name="boardSize"></param>
-        /// <returns></returns>
+        /// <returns>Returns a fully set bit mask</returns>
         public static int CreateFullSetBit(int boardSize)
         {
             return (1 << boardSize + 1) - 2;

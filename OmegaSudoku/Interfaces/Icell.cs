@@ -22,7 +22,8 @@
         public bool IsCellEmpty();
         // func thar returns if a cell has a specific value
         public bool HasValue(int value);
-        // func that returns the possiblites of a cell
+
+        // func that returns the possiblites of a cell as int in a list
         public List<int> GetPossibilites();
 
         // functions to get cell info

@@ -47,6 +47,8 @@ namespace OmegaSudoku.GameLogic
 
         /// <summary>
         /// This is the main solve func used to attempt to solve the given board
+        /// If the func solves the board then the board holds the correct possibilites
+        /// If the func doesnt solve the board then it holds the inputed values
         /// </summary>
         /// <returns>
         /// The func returns true if it solved the board and false if not
@@ -97,7 +99,7 @@ namespace OmegaSudoku.GameLogic
         /// 3. Hidden pairs
         /// 4. Naked pairs
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns a heuristic result based on changes made</returns>
         public HeuristicResult ApplyHeuristics()
         {
             if (_board.GetLength(0) == 1)
@@ -173,7 +175,7 @@ namespace OmegaSudoku.GameLogic
         }
 
         /// <summary>
-        /// This func attepts to solve the board by placing a value in a cell and recursivly calling the solve func
+        /// This func attempts to solve the board by placing a value in a cell and recursivly calling the solve func
         /// </summary>
         /// <param name="potentialValue"></param>
         /// <param name="row"></param>
