@@ -3,7 +3,8 @@
 
 ![image](https://github.com/user-attachments/assets/0f0ae0fa-c6be-4623-b62f-25f67c8e4e57)
 
-This solver can solve any board that is smaller than 25*25 in less than a second.
+This solver can solve any board that is smaller than 25*25 in less than a second, and it can also solve 25*25 boards fast.
+The solver also tells you if the inputed board is unsolvable or illegal.
 
 ## Features
 The solver uses bitwise operations and advanced sudoku heuristics to solve the boards fast.
@@ -29,7 +30,10 @@ In this project you can give input in two ways:
 1. By console, write "solve_c" input the board and watch the magic happen.
    
 3. By file, write "solve_f" input the path, you can see the output by console or go into the input file and see the output message there.
-   
+
+![image](https://github.com/user-attachments/assets/8b02f032-dbf1-4d0b-b6c0-acd2bd0f2017)
+
+
 **To see the rules of the project while running write 'rules'**
 ## Tests
 This project has tests using mstest, to run the tests go to SudokuTests right click and click "Run Tests", I have written many tests, including tests for invalid boards and exceptions.
