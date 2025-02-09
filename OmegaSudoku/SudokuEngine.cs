@@ -12,6 +12,13 @@ namespace OmegaSudoku
         /// 
         public static void RunEngine()
         {
+            // create an event handler to handle ctrl c
+            Console.CancelKeyPress += (sender, e) =>
+            {
+                Console.WriteLine("\nThe sudoku was forcefully closed, bye!");
+                // close with correct exit code
+                Environment.Exit(0);
+            };
             // main engine func, used to get the user input and choices
             bool endRunFlag = false;
             Console.WriteLine("*** Welcome to the Amazing Sudoku Solver ***\n");
