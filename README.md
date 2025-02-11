@@ -39,3 +39,8 @@ In this project you can give input in two ways:
 This project has tests using mstest, to run the tests go to SudokuTests right click and click "Run Tests", I have written many tests, including tests for invalid boards and exceptions.
 
 ![image](https://github.com/user-attachments/assets/e5977062-442b-4d6d-a726-1df6a7d11755)
+
+## Additional Information
+If you are using a laptop, connect it to charging as it manages resources differently when not and the solver runs slower (learned this the hard way).
+
+When running the tests, they run slower than the actual solver time because they include the time it takes to build the objects and check the board.
